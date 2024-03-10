@@ -7,6 +7,7 @@
   imports = [
     /etc/nixos/hardware-configuration.nix
     ./home-manager.nix
+    ./firefox.nix
   ];
 
   nix.settings.experimental-features = [ "flakes" "nix-command" ];
@@ -130,6 +131,7 @@
     emacs
     htop
     btop
+    wezterm
     gnomeExtensions.awesome-tiles
   ];
 

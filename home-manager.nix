@@ -79,6 +79,12 @@ in
           shortcut-tile-window-to-top-left = [ "<Control><Alt>KP_7" ];
           shortcut-tile-window-to-top-right = [ "<Control><Alt>KP_9" ];
         };
+
+        "org/gnome/settings-daemon/plugins/power" = {
+          power-button-action = "suspend";
+          sleep-inactive-ac-timeout = 3600;
+          sleep-inactive-ac-type = "nothing";
+        };
       };
     };
 
