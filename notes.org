@@ -1,3 +1,11 @@
 * misc
 ** TODO tryout emacs lsp booster
 https://github.com/blahgeek/emacs-lsp-booster
+
+
+* home manager
+** emacs
+get list of emacs packages
+#begin_src
+nix-env -f '<nixpkgs>' -qaP -A emacsPackages
+#end_src

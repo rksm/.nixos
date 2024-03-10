@@ -7,6 +7,8 @@ in
     (import "${home-manager}/nixos")
   ];
 
+  home-manager.useGlobalPkgs = true;
+
   home-manager.users.robert = { pkgs, lib, ... }: {
     programs.bash.enable = true;
 
@@ -36,6 +38,16 @@ in
           color-scheme = "prefer-dark";
         };
 
+        "org/gnome/shell/keybindings" = {
+          toggle-overview = ["<Super>space"];
+        };
+
+        "org/gnome/settings-daemon/plugins/media-keys" = {
+          area-screenshot = ["<Alt><Super>4"];
+          screencast = ["<Alt><Super>5"];
+          screensaver = ["<Primary><Super>q"];
+        };
+
         "org/gnome/desktop/peripherals/keyboard" = {
           numlock-state = lib.hm.gvariant.mkBoolean true;
           delay = lib.hm.gvariant.mkUint32 180;
@@ -44,6 +56,12 @@ in
 
         "org/gnome/shell" = {
           enabled-extensions = [ "awesome-tiles@velitasali.com" ];
+        };
+
+        "org/gnome/mutter" = {
+          # disable Super key
+          # dconf write /org/gnome/mutter/overlay-key "''"
+          overlay-key = "";
         };
 
         "org/gnome/shell/extensions/awesome-tiles" = {

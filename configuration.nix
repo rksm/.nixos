@@ -128,9 +128,9 @@
     wget
     curl
     emacs
-    gnomeExtensions.awesome-tiles
     htop
     btop
+    gnomeExtensions.awesome-tiles
   ];
 
   programs.dconf.enable = true;
