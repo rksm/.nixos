@@ -1,0 +1,3 @@
+* misc
+** TODO tryout emacs lsp booster
+https://github.com/blahgeek/emacs-lsp-booster
