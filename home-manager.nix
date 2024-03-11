@@ -18,9 +18,13 @@ in
 
     programs.emacs = {
       enable = true;
-      extraPackages = epkgs: [
-        epkgs.nix-mode
-        epkgs.magit
+      extraPackages = epkgs: with epkgs; [
+        nix-mode
+        magit
+        use-package
+        dash
+        dash-functional
+        s
       ];
     };
 
@@ -28,7 +32,7 @@ in
       enable = true;
       includes = [
         { path = "~/configs/git/.gitconfig"; }
-      ];      
+      ];
     };
 
     dconf = {
@@ -85,6 +89,11 @@ in
           sleep-inactive-ac-timeout = 3600;
           sleep-inactive-ac-type = "nothing";
         };
+
+        "org/gnome/desktop/session" = {
+          idle-delay = lib.hm.gvariant.mkUint32 0;
+        };
+
       };
     };
 

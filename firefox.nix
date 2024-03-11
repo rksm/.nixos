@@ -1,15 +1,15 @@
 { config, pkgs, ... }:
 
-  let
-    lock-false = {
-      Value = false;
-      Status = "locked";
-    };
-    lock-true = {
-      Value = true;
-      Status = "locked";
-    };
-  in
+let
+  lock-false = {
+    Value = false;
+    Status = "locked";
+  };
+  lock-true = {
+    Value = true;
+    Status = "locked";
+  };
+in
 {
   programs = {
     firefox = {
@@ -66,10 +66,10 @@
             installation_mode = "force_installed";
           };
         };
-  
+
         /* ---- PREFERENCES ---- */
         # Check about:config for options.
-        Preferences = { 
+        Preferences = {
           "browser.contentblocking.category" = { Value = "strict"; Status = "locked"; };
           "extensions.pocket.enabled" = lock-false;
           "extensions.screenshots.disabled" = lock-true;
