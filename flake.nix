@@ -15,7 +15,7 @@
         system = "x86_64-linux";
         specialArgs = { inherit inputs; };
         modules = [
-          ./configuration.nix
+          ./configuration
 
           home-manager.nixosModules.home-manager
           {

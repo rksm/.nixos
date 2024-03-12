@@ -7,10 +7,10 @@
   imports = [
     ./hardware-configuration.nix
     ./firefox.nix
-    ./configuration-users.nix
-    ./configuration-packages.nix
-    ./configuration-rust.nix
-    ./configuration-linux.nix
+    ./users.nix
+    ./packages.nix
+    ./rust.nix
+    ./linux.nix
   ];
 
   system.stateVersion = "24.05";
