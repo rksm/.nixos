@@ -27,9 +27,6 @@
     EDITOR = "emacsclient -n";
   };
 
-  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-  # bash
-
   programs.bash = {
     enable = true;
     initExtra = ''
@@ -39,8 +36,6 @@
       fi
     '';
   };
-
-  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   programs.fish = {
     enable = true;
@@ -54,10 +49,22 @@
     ];
   };
 
-  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   # https://discourse.nixos.org/t/command-not-found-unable-to-open-database/3807/4
   programs.nix-index = {
+    enable = true;
+    enableFishIntegration = true;
+    enableBashIntegration = true;
+  };
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+    # enableFishIntegration = true;
+    # enableBashIntegration = true;
+  };
+
+  programs.autojump = {
     enable = true;
     enableFishIntegration = true;
     enableBashIntegration = true;

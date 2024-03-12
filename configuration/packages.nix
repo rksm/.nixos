@@ -6,6 +6,7 @@
   environment.systemPackages = with pkgs; [
     # utils
     git
+    git-lfs
     wget
     curl
     htop
@@ -19,10 +20,8 @@
     ltrace # library call monitoring
     lsof # list open files
 
-    autojump
     ripgrep
     fd
-    direnv
 
     # misc
     nodejs
