@@ -27,6 +27,25 @@
     EDITOR = "emacsclient -n";
   };
 
+  programs.emacs = {
+    enable = true;
+    extraPackages = epkgs: with epkgs; [
+      nix-mode
+      magit
+      use-package
+      dash
+      dash-functional
+      s
+    ];
+  };
+
+  programs.git = {
+    enable = true;
+    includes = [
+      { path = "~/configs/git/.gitconfig"; }
+    ];
+  };
+
   programs.bash = {
     enable = true;
     initExtra = ''
@@ -68,6 +87,12 @@
     enable = true;
     enableFishIntegration = true;
     enableBashIntegration = true;
+  };
+
+  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+  programs.k9s = {
+    enable = true;
   };
 
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -117,26 +142,6 @@
     # misc
     killall
   ];
-
-
-  programs.emacs = {
-    enable = true;
-    extraPackages = epkgs: with epkgs; [
-      nix-mode
-      magit
-      use-package
-      dash
-      dash-functional
-      s
-    ];
-  };
-
-  programs.git = {
-    enable = true;
-    includes = [
-      { path = "~/configs/git/.gitconfig"; }
-    ];
-  };
 
   dconf = {
     enable = true;
