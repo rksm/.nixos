@@ -8,6 +8,9 @@
     packages = with pkgs; [
       firefox
     ];
+    # openssh.authorizedKeys.keys = [
+    #   "ssh-ed25519 <some-public-key> ryan@ryan-pc"
+    # ];
   };
   # password-less sudo
   security.sudo.wheelNeedsPassword = false;

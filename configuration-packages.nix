@@ -2,7 +2,7 @@
 {
 
   # List packages installed in system profile. To search, run:
-  # $ nix search wget
+  # nix search wget
   environment.systemPackages = with pkgs; [
     # utils
     git
@@ -18,17 +18,6 @@
     fd
     direnv
 
-    # # rust
-    # rustup
-    # sccache
-    # cargo
-    # rustc
-    # llvmPackages.bintools
-    # clang
-    # pkg-config
-    # openssl
-    # mold-wrapped
-
     # misc
     nodejs
     gnomeExtensions.awesome-tiles
@@ -37,7 +26,6 @@
     kubectl
     kubernetes-helm
   ];
-
 
   programs.dconf.enable = true;
   programs._1password.enable = true;
@@ -55,9 +43,14 @@
     enableSSHSupport = true;
   };
 
-  # List services that you want to enable:
-
-  # Enable the OpenSSH daemon.
-  services.openssh.enable = true;
-
+  # ssh
+  services.openssh = {
+    enable = true;
+    settings = {
+      X11Forwarding = true;
+      PermitRootLogin = "no";
+      PasswordAuthentication = false;
+    };
+    # openFirewall = true;
+  };
 }

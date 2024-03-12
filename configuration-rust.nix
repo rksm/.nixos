@@ -1,6 +1,19 @@
 { config, pkgs, ... }:
 {
 
+  environment.systemPackages = with pkgs; [
+    # # rust
+    # rustup
+    # sccache
+    # cargo
+    # rustc
+    # llvmPackages.bintools
+    # clang
+    # pkg-config
+    # openssl
+    # mold-wrapped
+  ];
+
   # To build rust packages that in turn pull in / build binaries
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [
