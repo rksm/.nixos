@@ -10,11 +10,55 @@ in
   home-manager.useGlobalPkgs = true;
 
   home-manager.users.robert = { pkgs, lib, ... }: {
-    programs.bash.enable = true;
+
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    # rust specific
+
+    home.file.".cargo/config.toml".text = ''
+      [target.x86_64-unknown-linux-gnu]
+      linker = "clang"
+      rustflags = ["-C", "link-arg=--ld-path=${pkgs.mold-wrapped}/bin/mold"]
+
+      # [build]
+      # rustc-wrapper = "sccache"
+
+      [registries]
+      krahn = { index = "sparse+https://crates.kra.hn/api/v1/crates/", token = "OAZuEQBTDexae5pVbWZYgfXwFCuNbMia" }
+    '';
+
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    # bash
+
+    programs.bash = {
+      enable = true;
+      initExtra = ''
+        if [ -f $HOME/configs/.bashrc ];
+        then
+          source $HOME/configs/.bashrc
+        fi
+      '';
+    };
+
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+    programs.fish = {
+      enable = true;
+
+      # plugins
+      # initExtra = ''
+      #   if test -f $HOME/configs/fish/config.fish
+      #     source $HOME/configs/fish/config.fish
+      #   end
+      # '';
+    };
+
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
     home.sessionVariables = {
       EDITOR = "emacs";
     };
+
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
     programs.emacs = {
       enable = true;
@@ -50,6 +94,7 @@ in
           area-screenshot = ["<Alt><Super>4"];
           screencast = ["<Alt><Super>5"];
           screensaver = ["<Primary><Super>q"];
+          logout = [];
         };
 
         "org/gnome/desktop/peripherals/keyboard" = {
@@ -66,6 +111,10 @@ in
           # disable Super key
           # dconf write /org/gnome/mutter/overlay-key "''"
           overlay-key = "";
+        };
+
+        "org/gnome/mutter/keybindings" = {
+          switch-monitor = [];
         };
 
         "org/gnome/shell/extensions/awesome-tiles" = {
@@ -94,9 +143,18 @@ in
           idle-delay = lib.hm.gvariant.mkUint32 0;
         };
 
+        "org/gnome/desktop/wm/keybindings" = {
+          switch-to-workspace-left = [];
+          switch-to-workspace-right = [];
+        };
+
+        "org/gnome/desktop/input-sources" = {
+          xkb-options = ["compose:caps"];
+        };
       };
     };
 
     home.stateVersion = "24.05";
+
   };
 }

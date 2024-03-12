@@ -12,7 +12,7 @@
 
   nix = {
     settings = {
-      trusted-users = ["root" "robert"];
+      trusted-users = [ "root" "robert" ];
 
       experimental-features = [ "flakes" "nix-command" ];
 
@@ -136,23 +136,71 @@
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
 
+  # To build rust packages that in turn pull in / build binaries
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    # Add any missing dynamic libraries for unpackaged programs
+    # here, NOT in environment.systemPackages
+  ];
+
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+    # utils
     git
     wget
     curl
     htop
     btop
+    autojump
     wezterm
+    just
     silver-searcher
     ripgrep
     fd
-    rustup
-    rust-analyzer
+    direnv
+
+    # # rust
+    # rustup
+    # sccache
+    # cargo
+    # rustc
+    # llvmPackages.bintools
+    # clang
+    # pkg-config
+    # openssl
+    # mold-wrapped
+
+    # misc
     nodejs
     gnomeExtensions.awesome-tiles
+    nil
+    nixpkgs-fmt # nix language server
+    kubectl
+    kubernetes-helm
   ];
+
+  # environment.sessionVariables = {
+  #   RUSTC_VERSION = "${pkgs.rustc.version}";
+  #   LIBCLANG_PATH = pkgs.lib.makeLibraryPath [ pkgs.llvmPackages_latest.libclang.lib ];
+  #   # Add precompiled library to rustc search path
+  #   RUSTFLAGS = (builtins.map (a: ''-L ${a}/lib'') [
+  #     # add libraries here (e.g. pkgs.libvmi)
+  #   ]);
+  #   # Add glibc, clang, glib, and other headers to bindgen search path
+  #   BINDGEN_EXTRA_CLANG_ARGS =
+  #     # Includes normal include path
+  #     (builtins.map (a: ''-I"${a}/include"'') [
+  #       # add dev libraries here (e.g. pkgs.libvmi.dev)
+  #       pkgs.glibc.dev
+  #     ])
+  #     # Includes with special directory paths
+  #     ++ [
+  #       ''-I"${pkgs.llvmPackages_latest.libclang.lib}/lib/clang/${pkgs.llvmPackages_latest.libclang.version}/include"''
+  #       ''-I"${pkgs.glib.dev}/include/glib-2.0"''
+  #       ''-I${pkgs.glib.out}/lib/glib-2.0/include/''
+  #     ];
+  # };
 
   programs.dconf.enable = true;
   programs._1password.enable = true;

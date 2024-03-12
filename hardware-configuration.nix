@@ -14,28 +14,29 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/ae1d7489-5ec3-4ad8-ba96-ddea9ef93dfd";
+    { device = "/dev/disk/by-uuid/377bb05d-554c-47a9-a0f6-3f0f031ab228";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/D4C1-6420";
+    { device = "/dev/disk/by-uuid/49BC-6054";
       fsType = "vfat";
     };
+
+  swapDevices =
+    [ { device = "/dev/disk/by-uuid/08ac8672-b5c0-4069-9871-fdef86d7250a"; }
+    ];
 
   fileSystems."/mnt/titan-linux-disk" =
     { device = "/dev/disk/by-uuid/3772ace1-c7f0-4924-b65a-d81b046f32c0";
       fsType = "ext4";
     };
 
-  fileSystems."/mnt/linux-data" =
+  fileSystems."/media/robert/LINUX_DATA" =
     { device = "/dev/disk/by-uuid/b5e50622-9d25-464a-98c9-346cc0e319f6";
       fsType = "ext4";
     };
 
-  swapDevices =
-    [ { device = "/dev/disk/by-uuid/b3eff0a5-de3b-4628-a928-9a56490af02e"; }
-    ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
