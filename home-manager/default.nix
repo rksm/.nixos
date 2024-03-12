@@ -113,6 +113,9 @@ in
 
       # fish
       oh-my-fish
+
+      # misc
+      killall
     ];
 
 

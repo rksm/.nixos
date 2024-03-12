@@ -10,12 +10,14 @@
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs: {
-
-    nixosConfigurations.titan-linux = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        ./configuration.nix
-      ];
+    
+    nixosConfigurations = {
+      titan-linux = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          ./configuration.nix
+        ];
+      };
     };
   };
 }
