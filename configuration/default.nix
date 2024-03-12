@@ -12,6 +12,7 @@
     ./rust.nix
     ./linux.nix
     ./docker.nix
+    ./infra.nix
   ];
 
   system.stateVersion = "24.05";
