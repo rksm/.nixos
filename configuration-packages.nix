@@ -10,10 +10,16 @@
     curl
     htop
     btop
+    iotop
+    iftop
+    nmap
+
+    # system call monitoring
+    strace # system call monitoring
+    ltrace # library call monitoring
+    lsof # list open files
+
     autojump
-    wezterm
-    just
-    silver-searcher
     ripgrep
     fd
     direnv

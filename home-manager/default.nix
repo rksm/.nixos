@@ -1,7 +1,7 @@
 { config, pkgs, ... }:
 let
   home-manager = builtins.fetchTarball "https://github.com/nix-community/home-manager/archive/master.tar.gz";
-  rust-overlay.url = "github:oxalica/rust-overlay";
+  # rust-overlay.url = "github:oxalica/rust-overlay";
 in
 {
   imports = [
@@ -27,6 +27,13 @@ in
       krahn = { index = "sparse+https://crates.kra.hn/api/v1/crates/", token = "OAZuEQBTDexae5pVbWZYgfXwFCuNbMia" }
     '';
 
+
+    # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+    home.sessionVariables = {
+      EDITOR = "emacsclient -n";
+    };
+
     # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
     # bash
 
@@ -44,22 +51,70 @@ in
 
     programs.fish = {
       enable = true;
+      shellInitLast = ''
+        set -gx OMF_PATH "${pkgs.oh-my-fish}/share/oh-my-fish"
+        source $OMF_PATH/init.fish
+      '';
 
-      # plugins
-      # initExtra = ''
-      #   if test -f $HOME/configs/fish/config.fish
-      #     source $HOME/configs/fish/config.fish
-      #   end
-      # '';
+      plugins = [
+        { name = "myfish"; src = /home/robert/configs/fish; }
+      ];
     };
 
     # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-    home.sessionVariables = {
-      EDITOR = "emacs";
+    # https://discourse.nixos.org/t/command-not-found-unable-to-open-database/3807/4
+    programs.nix-index = {
+      enable = true;
+      enableFishIntegration = true;
+      enableBashIntegration = true;
     };
 
     # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+    home.packages = with pkgs; [
+      # archives
+      zip
+      unzip
+      jq
+
+      # utils
+      wezterm
+      just
+      silver-searcher
+      eza
+      fzf
+      tree
+      gnused
+      gnutar
+
+      # networking tools
+      mtr # A network diagnostic tool
+      iperf3
+      dnsutils  # `dig` + `nslookup`
+      ldns # replacement of `dig`, it provide the command `drill`
+      aria2 # A lightweight multi-protocol & multi-source command-line download utility
+      socat # replacement of openbsd-netcat
+      nmap # A utility for network discovery and security auditing
+      ipcalc  # it is a calculator for the IPv4/v6 addresses
+
+      # nix related
+      #
+      # it provides the command `nom` works just like `nix`
+      # with more details log output
+      nix-output-monitor
+
+      # system tools
+      sysstat
+      lm_sensors # for `sensors` command
+      ethtool
+      pciutils # lspci
+      usbutils # lsusb
+
+      # fish
+      oh-my-fish
+    ];
+
 
     programs.emacs = {
       enable = true;
@@ -83,9 +138,9 @@ in
     dconf = {
       enable = true;
       settings = {
-        "org/gnome/desktop/interface" = {
-          color-scheme = "prefer-dark";
-        };
+        # "org/gnome/desktop/interface" = {
+        #   color-scheme = "prefer-dark";
+        # };
 
         "org/gnome/shell/keybindings" = {
           toggle-overview = ["<Super>space"];
