@@ -2,11 +2,10 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ inputs, config, pkgs, options, ... }:
 {
   imports = [
     ./hardware-configuration.nix
-    ./home-manager
     ./firefox.nix
     ./configuration-users.nix
     ./configuration-packages.nix
