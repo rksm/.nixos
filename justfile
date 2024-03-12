@@ -3,7 +3,7 @@ set dotenv-load
 default:
     just --list
 
-rebuild *args="":
+switch *args="":
     bash -c 'sudo nixos-rebuild switch {{ args }} |& nom'
 
 build:
