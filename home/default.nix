@@ -141,6 +141,9 @@
 
     # misc
     killall
+
+    # rust
+    # rustup
   ];
 
   dconf = {
@@ -152,6 +155,8 @@
 
       "org/gnome/shell/keybindings" = {
         toggle-overview = [ "<Super>space" ];
+        # unbind Super + N
+        focus-active-notification = [ "" ];
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
