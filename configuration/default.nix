@@ -13,6 +13,7 @@
     ./linux.nix
     ./docker.nix
     ./infra.nix
+    ./fhs.nix
   ];
 
   system.stateVersion = "24.05";
