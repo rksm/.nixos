@@ -20,6 +20,30 @@
     krahn = { index = "sparse+https://crates.kra.hn/api/v1/crates/", token = "OAZuEQBTDexae5pVbWZYgfXwFCuNbMia" }
   '';
 
+  home.file.".local/share/dprint/dprint.json".text = ''
+    {
+      "incremental": true,
+      "json": {
+      },
+      "markdown": {
+      },
+      "toml": {
+      },
+      "dockerfile": {
+      },
+      "includes": ["**/*.{json,md,toml,dockerfile}"],
+      "excludes": [
+        "**/*-lock.json"
+      ],
+      "plugins": [
+        "https://plugins.dprint.dev/json-0.19.2.wasm",
+        "https://plugins.dprint.dev/markdown-0.16.4.wasm",
+        "https://plugins.dprint.dev/toml-0.6.1.wasm",
+        "https://plugins.dprint.dev/dockerfile-0.3.0.wasm"
+      ]
+    }
+  '';
+
 
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -158,6 +182,8 @@
     rustup
     cargo-whatfeatures
     cargo-feature
+    cargo-release
+    dprint
     # nodejs
 
     # gnome / ui
