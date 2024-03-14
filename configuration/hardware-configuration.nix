@@ -5,7 +5,8 @@
 
 {
   imports =
-    [ (modulesPath + "/installer/scan/not-detected.nix")
+    [
+      (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
@@ -14,29 +15,39 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/377bb05d-554c-47a9-a0f6-3f0f031ab228";
+    {
+      device = "/dev/disk/by-uuid/377bb05d-554c-47a9-a0f6-3f0f031ab228";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/49BC-6054";
+    {
+      device = "/dev/disk/by-uuid/49BC-6054";
       fsType = "vfat";
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/08ac8672-b5c0-4069-9871-fdef86d7250a"; }
-    ];
+    [{ device = "/dev/disk/by-uuid/08ac8672-b5c0-4069-9871-fdef86d7250a"; }];
 
   fileSystems."/mnt/titan-linux-disk" =
-    { device = "/dev/disk/by-uuid/3772ace1-c7f0-4924-b65a-d81b046f32c0";
+    {
+      device = "/dev/disk/by-uuid/3772ace1-c7f0-4924-b65a-d81b046f32c0";
       fsType = "ext4";
     };
 
   fileSystems."/media/robert/LINUX_DATA" =
-    { device = "/dev/disk/by-uuid/b5e50622-9d25-464a-98c9-346cc0e319f6";
+    {
+      device = "/dev/disk/by-uuid/b5e50622-9d25-464a-98c9-346cc0e319f6";
       fsType = "ext4";
     };
 
+  # littlelinux
+  fileSystems."/mnt/k8s" =
+    {
+      device = "100.81.249.52:/mnt/DB_DISK/podwriter_k8s_nfs";
+      fsType = "nfs";
+      options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
+    };
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
@@ -59,7 +70,7 @@
   };
 
   # Load nvidia driver for Xorg and Wayland
-  services.xserver.videoDrivers = ["nvidia"]; # or "nvidiaLegacy470 etc.
+  services.xserver.videoDrivers = [ "nvidia" ]; # or "nvidiaLegacy470 etc.
 
   hardware.nvidia = {
     # Modesetting is required.
@@ -81,7 +92,7 @@
     # Currently alpha-quality/buggy, so false is currently the recommended setting.
     open = false;
     # Enable the Nvidia settings menu,
-	  # accessible via `nvidia-settings`.
+    # accessible via `nvidia-settings`.
     nvidiaSettings = true;
     # Optionally, you may need to select the appropriate driver version for your specific GPU.
     package = config.boot.kernelPackages.nvidiaPackages.stable;
