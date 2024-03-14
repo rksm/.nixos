@@ -1,16 +1,11 @@
 { config, pkgs, ... }:
+let
+  enableNvidia = config.networking.hostName == "titan-linux";
+in
 {
   virtualisation.docker = {
+    inherit enableNvidia;
     enable = true;
-    daemon.settings = {
-      "runtimes" = {
-        "nvidia" = {
-          "args" = [];
-          "path" = "${pkgs.nvidia-docker}/bin/nvidia-container-runtime";
-        };
-      };
-      "default-runtime" = "nvidia";
-      "insecure-registries" = ["docker-registry.podwriter:5000"];
-    };
+    daemon.settings.insecure-registries = [ "docker-registry.podwriter:5000" ];
   };
 }
