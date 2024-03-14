@@ -158,7 +158,7 @@
     rustup
     cargo-whatfeatures
     cargo-feature
-    nodejs
+    # nodejs
 
     # gnome / ui
     gnomeExtensions.awesome-tiles
