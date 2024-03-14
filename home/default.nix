@@ -61,6 +61,8 @@
     shellInitLast = ''
       set -gx OMF_PATH "${pkgs.oh-my-fish}/share/oh-my-fish"
       source $OMF_PATH/init.fish
+
+      source $HOME/configs/fish/config.fish
     '';
 
     plugins = [
@@ -103,8 +105,10 @@
     unzip
     jq
 
-    # utils
+    # shell / utils
     wezterm
+    oh-my-fish
+    tealdeer
     just
     silver-searcher
     eza
@@ -128,6 +132,7 @@
     # it provides the command `nom` works just like `nix`
     # with more details log output
     nix-output-monitor
+    nix-tree
 
     # system tools
     sysstat
@@ -136,14 +141,28 @@
     pciutils # lspci
     usbutils # lsusb
 
-    # fish
-    oh-my-fish
+    # emacs
+    tree-sitter-grammars.tree-sitter-yaml
 
     # misc
     killall
 
-    # rust
-    # rustup
+    # devops
+    ansible
+    nil
+    nixpkgs-fmt # nix language server
+    kubectl
+    kubernetes-helm
+
+    # rust / dev
+    rustup
+    cargo-whatfeatures
+    cargo-feature
+    nodejs
+
+    # gnome / ui
+    gnomeExtensions.awesome-tiles
+    gnomeExtensions.unite
   ];
 
   dconf = {
@@ -213,6 +232,8 @@
       };
 
       "org/gnome/desktop/wm/keybindings" = {
+        switch-windows = [ "<Alt>Tab" ];
+        switch-windows-backward = [ "<Shift><Alt>Tab" ];
         switch-to-workspace-left = [ ];
         switch-to-workspace-right = [ ];
       };

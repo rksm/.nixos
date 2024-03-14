@@ -14,6 +14,7 @@
     iotop
     iftop
     nmap
+    killall
 
     # system call monitoring
     strace # system call monitoring
@@ -22,14 +23,6 @@
 
     ripgrep
     fd
-
-    # misc
-    nodejs
-    gnomeExtensions.awesome-tiles
-    nil
-    nixpkgs-fmt # nix language server
-    kubectl
-    kubernetes-helm
   ];
 
   programs.dconf.enable = true;
