@@ -128,6 +128,7 @@
     zip
     unzip
     jq
+    fx
 
     # shell / utils
     wezterm
@@ -184,7 +185,7 @@
     cargo-feature
     cargo-release
     dprint
-    # nodejs
+    nodejs # for language server / copilot
 
     # gnome / ui
     gnomeExtensions.awesome-tiles
