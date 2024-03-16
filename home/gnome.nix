@@ -2,6 +2,8 @@
   home.packages = with pkgs; [
     gnomeExtensions.awesome-tiles
     gnomeExtensions.unite
+    # music
+    rhythmbox
   ];
 
   dconf = {
