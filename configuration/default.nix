@@ -2,14 +2,13 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ inputs, config, pkgs, options, ... }:
+{ inputs, config, pkgs, options, user, ... }:
 {
   imports = [
     ./hardware-configuration.nix
     ./firefox.nix
     ./users.nix
     ./packages.nix
-    ./rust.nix
     ./linux.nix
     ./docker.nix
     ./infra.nix
@@ -21,7 +20,7 @@
 
   nix = {
     settings = {
-      trusted-users = [ "root" "robert" ];
+      trusted-users = [ "root" user ];
 
       experimental-features = [ "flakes" "nix-command" ];
 

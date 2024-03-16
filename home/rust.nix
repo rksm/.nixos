@@ -10,6 +10,13 @@
     dprint
   ];
 
+  # # To build rust packages that in turn pull in / build binaries
+  # programs.nix-ld.enable = true;
+  # programs.nix-ld.libraries = with pkgs; [
+  #   # Add any missing dynamic libraries for unpackaged programs
+  #   # here, NOT in environment.systemPackages
+  # ];
+
   home.file.".cargo/config.toml".text = ''
     [target.x86_64-unknown-linux-gnu]
     linker = "clang"

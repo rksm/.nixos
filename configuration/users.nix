@@ -1,9 +1,9 @@
-{ config, pkgs, ... }:
+{ config, pkgs, user, ... }:
 {
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.robert = {
+  users.users.${user} = {
     isNormalUser = true;
-    description = "robert";
+    description = "${user} account";
     extraGroups = [ "networkmanager" "wheel" "docker" ];
     packages = with pkgs; [
       firefox
@@ -18,7 +18,7 @@
 
   # Enable automatic login for the user.
   services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.autoLogin.user = "robert";
+  services.xserver.displayManager.autoLogin.user = "${user}";
 
   # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
   systemd.services."getty@tty1".enable = false;

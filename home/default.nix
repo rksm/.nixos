@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, user, ... }:
 
 {
   imports = [
@@ -10,7 +10,7 @@
 
   home.stateVersion = "24.05";
   home.username = "robert";
-  home.homeDirectory = "/home/robert";
+  home.homeDirectory = "/home/${user}";
 
   home.packages = with pkgs; [
     # helpful

@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, user, ... }:
 {
 
   # List packages installed in system profile. To search, run:
@@ -29,7 +29,7 @@
   programs._1password.enable = true;
   programs._1password-gui = {
     enable = true;
-    polkitPolicyOwners = [ "robert" ];
+    polkitPolicyOwners = [ "${user}" ];
   };
 
   # some programs need SUID wrappers, can be configured further or are
