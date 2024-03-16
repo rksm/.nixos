@@ -8,7 +8,6 @@
     cargo-feature
     cargo-release
     dprint
-    nodejs # for language server / copilot
   ];
 
   home.file.".cargo/config.toml".text = ''
