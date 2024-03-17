@@ -1,2 +1,3 @@
 switch:
-    darwin-rebuild switch --flake .#Roberts-MacBook-Pro
+    # impure b/c hosts/Roberts-MacBook-Pro/packages.nix access abs path
+    darwin-rebuild switch --impure --flake .#Roberts-MacBook-Pro
