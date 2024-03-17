@@ -11,9 +11,14 @@ let
   };
 in
 {
+  home.packages = with pkgs; [
+    firefox-bin
+  ];
+
   programs = {
     firefox = {
       enable = true;
+      package = pkgs.firefox-bin;
 
       /* ---- POLICIES ---- */
       # Check about:policies#documentation for options.

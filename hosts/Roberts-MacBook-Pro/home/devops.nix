@@ -1,6 +1,8 @@
-{ config, pkgs, lib, ... }:
+{ user, config, pkgs, lib, ... }:
 
 {
+  home.file.".kube".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/.kube;
+
   programs.k9s = {
     enable = true;
   };

@@ -21,6 +21,10 @@
     nmap
     killall
     gnupg
+    zip
+    unzip
+    gnused
+    gnutar
 
     # system call monitoring
     lsof # list open files
