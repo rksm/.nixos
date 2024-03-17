@@ -89,6 +89,7 @@
     gnutar
     jq
     fx
+    entr
 
     # nix related
     #

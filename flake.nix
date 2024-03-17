@@ -17,7 +17,7 @@
     };
   };
 
-  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, ... }:
+  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, nixpkgs-firefox-darwin, ... }:
     let
       user = "robert";
       machine = "Roberts-MacBook-Pro";
@@ -25,13 +25,12 @@
     {
       darwinConfigurations.${machine} = nix-darwin.lib.darwinSystem {
 
-        specialArgs = { inherit inputs user; };
+        specialArgs = { inherit inputs user nixpkgs-firefox-darwin; };
         modules = [
           ./hosts/${machine}
 
           home-manager.darwinModules.home-manager
           {
-            nixpkgs.overlays = [ inputs.nixpkgs-firefox-darwin.overlay ];
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.extraSpecialArgs = {

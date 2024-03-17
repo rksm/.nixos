@@ -1,2 +1,2 @@
 switch:
-    darwin-rebuild switch --flake --flake .#Roberts-MacBook-Pro
+    darwin-rebuild switch --flake .#Roberts-MacBook-Pro
