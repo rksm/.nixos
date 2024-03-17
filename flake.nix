@@ -1,5 +1,5 @@
 {
-  description = "Example Darwin system flake";
+  description = "...";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -18,33 +18,32 @@
   };
 
   outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, ... }:
-  let
-    user = "robert";
-    machine = "Roberts-MacBook-Pro";
-    system = "x86_64-darwin";
-    pkgs = import nixpkgs {};
-    in {
-    darwinConfigurations.${machine} = nix-darwin.lib.darwinSystem {
+    let
+      user = "robert";
+      machine = "Roberts-MacBook-Pro";
+    in
+    {
+      darwinConfigurations.${machine} = nix-darwin.lib.darwinSystem {
 
-      specialArgs = { inherit inputs user; };
-      modules = [
-      	./hosts/${machine}
+        specialArgs = { inherit inputs user; };
+        modules = [
+          ./hosts/${machine}
 
-        home-manager.darwinModules.home-manager
-        {
-          nixpkgs.overlays = [ inputs.nixpkgs-firefox-darwin.overlay ];
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.extraSpecialArgs = {
-                inherit user;
-              };
-	      home-manager.users.${user} = import ./hosts/${machine}/home;
-        }
+          home-manager.darwinModules.home-manager
+          {
+            nixpkgs.overlays = [ inputs.nixpkgs-firefox-darwin.overlay ];
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.extraSpecialArgs = {
+              inherit user;
+            };
+            home-manager.users.${user} = import ./hosts/${machine}/home;
+          }
 
-      ];
+        ];
+      };
+
+      # Expose the package set, including overlays, for convenience.
+      darwinPackages = self.darwinConfigurations.${machine}.pkgs;
     };
-
-    # Expose the package set, including overlays, for convenience.
-    darwinPackages = self.darwinConfigurations.${machine}.pkgs;
-  };
 }

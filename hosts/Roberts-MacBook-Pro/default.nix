@@ -1,15 +1,15 @@
 { inputs, config, pkgs, options, user, nixpkgs-firefox-darwin, ... }:
 {
-      # List packages installed in system profile. To search by name, run:
-      # $ nix-env -qaP | grep wget
+  # List packages installed in system profile. To search by name, run:
+  # $ nix-env -qaP | grep wget
 
   users.users.${user} = {
     description = "${user} account";
     home = "/Users/${user}";
-    };
+  };
 
-####################
-# nix config
+  ####################
+  # nix config
 
   nix.settings.substituters = [
     "https://cache.nixos.org/"
@@ -58,25 +58,25 @@
   #    (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
   #  ];
 
-      # Auto upgrade nix package and the daemon service.
-      # nix.package = pkgs.nix;
+  # Auto upgrade nix package and the daemon service.
+  # nix.package = pkgs.nix;
 
-      # Necessary for using flakes on this system.
-      nix.settings.experimental-features = "nix-command flakes";
+  # Necessary for using flakes on this system.
+  nix.settings.experimental-features = "nix-command flakes";
 
-      # Set Git commit hash for darwin-version.
-      # system.configurationRevision = self.rev or self.dirtyRev or null;
+  # Set Git commit hash for darwin-version.
+  # system.configurationRevision = self.rev or self.dirtyRev or null;
 
-      # Used for backwards compatibility, please read the changelog before changing.
-      # $ darwin-rebuild changelog
-      system.stateVersion = 4;
+  # Used for backwards compatibility, please read the changelog before changing.
+  # $ darwin-rebuild changelog
+  system.stateVersion = 4;
 
-##############
+  ##############
 
-      # The platform the configuration will be used on.
-      nixpkgs.hostPlatform = "x86_64-darwin";
+  # The platform the configuration will be used on.
+  nixpkgs.hostPlatform = "x86_64-darwin";
 
-#https://github.com/LnL7/nix-darwin/blob/master/modules/examples/lnl.nix
+  #https://github.com/LnL7/nix-darwin/blob/master/modules/examples/lnl.nix
 
   system.defaults.NSGlobalDomain.AppleKeyboardUIMode = 3;
   system.defaults.NSGlobalDomain.ApplePressAndHoldEnabled = false;
@@ -89,11 +89,11 @@
   system.defaults.NSGlobalDomain.NSAutomaticSpellingCorrectionEnabled = false;
   system.defaults.NSGlobalDomain.NSNavPanelExpandedStateForSaveMode = true;
   system.defaults.NSGlobalDomain.NSNavPanelExpandedStateForSaveMode2 = true;
-  system.defaults.NSGlobalDomain._HIHideMenuBar = true;
+  # system.defaults.NSGlobalDomain._HIHideMenuBar = true;
 
   system.defaults.dock.autohide = true;
   system.defaults.dock.mru-spaces = false;
-  system.defaults.dock.orientation = "left";
+  # system.defaults.dock.orientation = "left";
   system.defaults.dock.showhidden = true;
 
   system.defaults.finder.AppleShowAllExtensions = true;
@@ -107,8 +107,8 @@
   # system.keyboard.remapCapsLockToControl = true;
 
 
-######################################
-# packages
+  ######################################
+  # packages
   nixpkgs.config.allowUnfree = true;
 
   environment.systemPackages = with pkgs;
@@ -141,31 +141,45 @@
 
 
 
-      # Create /etc/zshrc that loads the nix-darwin environment.
-      programs.zsh.enable = true;  # default shell on catalina
-      programs.fish.enable = true;
-      programs.bash.enableCompletion = true;
+  # Create /etc/zshrc that loads the nix-darwin environment.
+  programs.zsh.enable = true; # default shell on catalina
+  programs.fish.enable = true;
+  programs.bash.enableCompletion = true;
 
 
 
-######################################
-homebrew = {
-  enable = true;
-  # can make darwin-rebuild much slower
-  onActivation.autoUpdate = true;
-  # onActivation.upgrade = true;
+  ######################################
+  homebrew = {
+    enable = true;
+    # can make darwin-rebuild much slower
+    onActivation.autoUpdate = true;
+    # onActivation.upgrade = true;
 
-  casks = [
-    "rectangle"
-    "wezterm"
-    # "hammerspoon"
-    # "amethyst"
-    # "alfred"
-    # "logseq"
-    # "discord"
-    # "iina"
-  ];
-};
+    brews = [
+      "coreutils"
+    ];
 
+    casks = [
+      "rectangle"
+      "wezterm"
+      # "hammerspoon"
+      # "amethyst"
+      # "alfred"
+      # "logseq"
+      # "discord"
+      # "iina"
+    ];
+  };
 
+  # system.activationScripts.applications.text = pkgs.lib.mkForce (''
+  #     echo "setting up ~/Applications/Nix..."
+  #     rm -rf ~/Applications/Nix
+  #     mkdir -p ~/Applications/Nix
+  #     chown ${user} ~/Applications/Nix
+  #     find ${config.system.build.applications}/Applications -maxdepth 1 -type l | while read f; do
+  #       src="$(/usr/bin/stat -f%Y $f)"
+  #       appname="$(basename $src)"
+  #       osascript -e "tell app \"Finder\" to make alias file at POSIX file \"/Users/${user}/Applications/Nix/\" to POSIX file \"$src\" with properties {name: \"$appname\"}";
+  #   done
+  # '');
 }
