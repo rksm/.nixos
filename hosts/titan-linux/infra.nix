@@ -48,7 +48,7 @@
 
     # have the job run this shell script
     script =
-      let key = builtins.readFile ../secrets/tailscale-auth.key;
+      let key = builtins.readFile ../../shared/secrets/tailscale-auth.key;
       in
       with pkgs; ''
         # wait for tailscaled to settle
