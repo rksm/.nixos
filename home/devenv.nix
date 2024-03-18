@@ -87,6 +87,8 @@
     gnutar
     jq
     fx
+    entr
+    git-crypt
 
     # nix related
     #
