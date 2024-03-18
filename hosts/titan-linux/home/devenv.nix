@@ -2,22 +2,6 @@
 
 {
 
-  home.sessionVariables = {
-    EDITOR = "emacsclient -n";
-  };
-
-  programs.emacs = {
-    enable = true;
-    extraPackages = epkgs: with epkgs; [
-      nix-mode
-      magit
-      use-package
-      dash
-      dash-functional
-      s
-    ];
-  };
-
   programs.git = {
     enable = true;
     includes = [
@@ -101,11 +85,5 @@
     nix-tree
     nil
     nixpkgs-fmt # nix language server
-
-    # emacs
-    tree-sitter-grammars.tree-sitter-yaml
-    silver-searcher
-    nodejs # for language server / copilot
-    mu
   ];
 }
