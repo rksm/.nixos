@@ -62,6 +62,8 @@
     ];
   };
 
+  home.file.".local/share/fish/fish_history".source = config.lib.file.mkOutOfStoreSymlink /home/robert/configs/fish_history.linux;
+
   # find missing packages
   # https://discourse.nixos.org/t/command-not-found-unable-to-open-database/3807/4
   programs.nix-index = {
