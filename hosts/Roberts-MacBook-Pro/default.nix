@@ -2,6 +2,7 @@
 {
   imports = [
     ./packages.nix
+    ./infra.nix
   ];
 
   # Used for backwards compatibility, please read the changelog before changing.
