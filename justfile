@@ -4,8 +4,15 @@ default:
     just --list
 
 switch *args="":
-    # nixos-rebuild switch --flake . --use-remote-sudo
-    bash -c 'sudo nixos-rebuild switch {{ args }} |& nom'
+    #!/usr/bin/env sh
+    set -e
+    if [ "$(uname)" = "Darwin" ]; then
+        # impure b/c hosts/Roberts-MacBook-Pro/packages.nix access abs path
+        darwin-rebuild switch {{ args }} --impure --flake .#Roberts-MacBook-Pro
+    else
+        # nixos-rebuild switch --flake . --use-remote-sudo
+        bash -c 'sudo nixos-rebuild switch {{ args }} |& nom'
+    fi
 
 switch-debug:
     just switch --show-trace --print-build-logs --verbose
@@ -49,3 +56,4 @@ clean:
 gc:
   # garbage collect all unused nix store entries
   sudo nix-collect-garbage --delete-old
+

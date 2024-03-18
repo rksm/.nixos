@@ -2,20 +2,20 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # # darwin specific
-    # nix-darwin.url = "github:LnL7/nix-darwin/master";
-    # nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-    # nixpkgs-firefox-darwin = {
-    #   url = "github:bandithedoge/nixpkgs-firefox-darwin";
-    #   #inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    # darwin specific
+    nix-darwin.url = "github:LnL7/nix-darwin/master";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+    nixpkgs-firefox-darwin = {
+      url = "github:bandithedoge/nixpkgs-firefox-darwin";
+      #inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, ... }:
