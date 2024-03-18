@@ -1,7 +1,7 @@
-{ config, pkgs, lib, user, nixpkgs-firefox-darwin, ... }:
+{ config, pkgs, lib, user, inputs, ... }:
 
 {
-  nixpkgs.overlays = [ nixpkgs-firefox-darwin.overlay ];
+  nixpkgs.overlays = [ inputs.nixpkgs-firefox-darwin.overlay ];
 
   imports = [
     ./devenv.nix

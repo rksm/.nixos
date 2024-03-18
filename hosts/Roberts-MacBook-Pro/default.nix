@@ -1,4 +1,4 @@
-{ lib, inputs, config, pkgs, options, user, nixpkgs-firefox-darwin, ... }:
+{ lib, inputs, config, pkgs, options, user, ... }:
 {
   imports = [
     ./packages.nix
@@ -9,7 +9,7 @@
   # $ darwin-rebuild changelog
   system.stateVersion = 4;
 
-  nixpkgs.overlays = [ nixpkgs-firefox-darwin.overlay ];
+  nixpkgs.overlays = [ inputs.nixpkgs-firefox-darwin.overlay ];
 
   users.users.${user} = {
     description = "${user} account";

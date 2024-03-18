@@ -1,48 +1,79 @@
 {
-  description = "...";
+  description = "NixOS configuration";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nix-darwin.url = "github:LnL7/nix-darwin/master";
-    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
-
+    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # darwin specific
+    nix-darwin.url = "github:LnL7/nix-darwin/master";
+    nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
     nixpkgs-firefox-darwin = {
       url = "github:bandithedoge/nixpkgs-firefox-darwin";
       #inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, nixpkgs-firefox-darwin, ... }:
+  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, ... }:
     let
-      user = "robert";
-      machine = "Roberts-MacBook-Pro";
+
+      titan-linux =
+        let
+          machine = "titan-linux";
+          user = "robert";
+        in
+        {
+          ${machine} = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            specialArgs = { inherit inputs user; };
+            modules = [
+              ./hosts/${machine}
+
+              home-manager.nixosModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.extraSpecialArgs = { inherit user; };
+                home-manager.users.${user} = import ./hosts/${machine}/home;
+              }
+            ];
+          };
+        };
+
+
+      # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+      # macos / darwin
+      macbook =
+        let
+          machine = "Roberts-MacBook-Pro";
+          user = "robert";
+        in
+        {
+          ${machine} = nix-darwin.lib.darwinSystem {
+            specialArgs = { inherit inputs user; };
+            modules = [
+              ./hosts/${machine}
+
+              home-manager.darwinModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.extraSpecialArgs = { inherit user; };
+                home-manager.users.${user} = import ./hosts/${machine}/home;
+              }
+            ];
+          };
+
+        };
     in
+
     {
-      darwinConfigurations.${machine} = nix-darwin.lib.darwinSystem {
-
-        specialArgs = { inherit inputs user nixpkgs-firefox-darwin; };
-        modules = [
-          ./hosts/${machine}
-
-          home-manager.darwinModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.extraSpecialArgs = {
-              inherit user;
-            };
-            home-manager.users.${user} = import ./hosts/${machine}/home;
-          }
-
-        ];
-      };
-
-      # Expose the package set, including overlays, for convenience.
-      darwinPackages = self.darwinConfigurations.${machine}.pkgs;
+      darwinConfigurations = macbook;
+      nixosConfigurations = titan-linux;
     };
+
 }
