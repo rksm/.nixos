@@ -80,6 +80,11 @@
   system.defaults.NSGlobalDomain.NSNavPanelExpandedStateForSaveMode2 = true;
   system.defaults.NSGlobalDomain._HIHideMenuBar = false;
 
+  # to not have screen slide when going between fullscreen / normal apps
+  system.defaults.universalaccess.reduceMotion = true;
+  # to not have a white menu bar in dark mode
+  system.defaults.universalaccess.reduceTransparency = true;
+
   system.defaults.dock.autohide = true;
   system.defaults.dock.mru-spaces = false;
   # system.defaults.dock.orientation = "left";
@@ -88,6 +93,7 @@
   system.defaults.finder.AppleShowAllExtensions = true;
   system.defaults.finder.QuitMenuItem = true;
   system.defaults.finder.FXEnableExtensionChangeWarning = false;
+  system.defaults.finder.ShowPathbar = true;
 
   system.defaults.trackpad.Clicking = true;
   system.defaults.trackpad.TrackpadThreeFingerDrag = true;
