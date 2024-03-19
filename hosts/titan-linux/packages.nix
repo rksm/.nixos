@@ -54,6 +54,7 @@
 
 
   fonts.packages = with pkgs; [
+    hack-font
     fira-code
     fira-code-symbols
     ubuntu_font_family
