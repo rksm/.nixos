@@ -46,7 +46,8 @@
     {
       device = "100.81.249.52:/mnt/DB_DISK/podwriter_k8s_nfs";
       fsType = "nfs";
-      options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
+      options = [ "x-systemd.automount" "noauto" ];
+      # options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
     };
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
