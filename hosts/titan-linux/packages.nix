@@ -16,6 +16,11 @@
     nmap
     killall
 
+    # low priority so that we can to use trace from elsewhere
+    (pkgs.lowPrio config.boot.kernelPackages.perf)
+    config.boot.kernelPackages.tmon # thermal monitoring
+    config.boot.kernelPackages.cpupower
+
     # system call monitoring
     strace # system call monitoring
     ltrace # library call monitoring
