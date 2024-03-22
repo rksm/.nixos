@@ -3,6 +3,7 @@
   imports = [
     ./packages.nix
     ./infra.nix
+    ./syncthing.nix
   ];
 
   # Used for backwards compatibility, please read the changelog before changing.

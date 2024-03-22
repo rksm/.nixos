@@ -13,6 +13,7 @@
     ./docker.nix
     ./infra.nix
     ./fhs.nix
+    ./syncthing.nix
   ];
 
   system.stateVersion = "24.05";
