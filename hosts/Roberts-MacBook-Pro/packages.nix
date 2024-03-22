@@ -49,6 +49,7 @@
 
     brews = [
       "coreutils"
+      "syncthing"
     ];
 
     casks = [
