@@ -35,6 +35,14 @@
           path = "/home/robert/Documents";
           devices = [ "titan-linux" "mbp" ];
         };
+        "configs" = {
+          path = "/home/robert/configs";
+          devices = [ "titan-linux" "mbp" ];
+        };
+        ".emacs.d" = {
+          path = "/home/robert/.emacs.d";
+          devices = [ "titan-linux" "mbp" ];
+        };
         "projects/rust" = {
           path = "/home/robert/projects/rust";
           devices = [ "titan-linux" "mbp" ];
