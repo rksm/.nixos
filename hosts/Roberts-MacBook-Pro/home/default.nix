@@ -6,7 +6,7 @@
   imports = [
     ./devenv.nix
     ./devops.nix
-    #   ./rust.nix
+    ./rust.nix
     ./firefox.nix
   ];
 
