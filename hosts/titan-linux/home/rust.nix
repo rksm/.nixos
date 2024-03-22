@@ -10,17 +10,18 @@
     dprint
   ];
 
-  home.file.".cargo/config.toml".text = ''
-    [target.x86_64-unknown-linux-gnu]
-    linker = "clang"
-    rustflags = ["-C", "link-arg=--ld-path=${pkgs.mold-wrapped}/bin/mold"]
+  home.file.".cargo/config.toml".text =
+    let registry_key = builtins.readFile ../../../shared/secrets/crates.kra.hn.key; in ''
+      [target.x86_64-unknown-linux-gnu]
+      linker = "clang"
+      rustflags = ["-C", "link-arg=--ld-path=${pkgs.mold-wrapped}/bin/mold"]
 
-    # [build]
-    # rustc-wrapper = "sccache"
+      # [build]
+      # rustc-wrapper = "sccache"
 
-    [registries]
-    krahn = { index = "sparse+https://crates.kra.hn/api/v1/crates/", token = "OAZuEQBTDexae5pVbWZYgfXwFCuNbMia" }
-  '';
+      [registries]
+      krahn = { index = "sparse+https://crates.kra.hn/api/v1/crates/", token = "${registry_key}" }
+    '';
 
   # dprint mostly used for formatting toml files
   home.file.".local/share/dprint/dprint.json".text = ''

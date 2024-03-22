@@ -12,10 +12,11 @@
     dprint
   ];
 
-  home.file.".cargo/config.toml".text = ''
-    [registries]
-    krahn = { index = "sparse+https://crates.kra.hn/api/v1/crates/", token = "OAZuEQBTDexae5pVbWZYgfXwFCuNbMia" }
-  '';
+  home.file.".cargo/config.toml".text =
+    let registry_key = builtins.readFile ../../../shared/secrets/crates.kra.hn.key; in ''
+      [registries]
+      krahn = { index = "sparse+https://crates.kra.hn/api/v1/crates/", token = "${registry_key}" }
+    '';
 
   # dprint mostly used for formatting toml files
   home.file.".local/share/dprint/dprint.json".text = ''
