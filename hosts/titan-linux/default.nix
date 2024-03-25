@@ -14,6 +14,7 @@
     ./infra.nix
     ./fhs.nix
     ./syncthing.nix
+    ./virtualization.nix
   ];
 
   system.stateVersion = "24.05";

@@ -105,6 +105,12 @@
         show-window-title = "always";
       };
 
+      # for virtualization
+      # see https://nixos.wiki/wiki/Virt-manager
+      "org/virt-manager/virt-manager/connections" = {
+        autoconnect = ["qemu:///system"];
+        uris = ["qemu:///system"];
+      };
     };
   };
 }
