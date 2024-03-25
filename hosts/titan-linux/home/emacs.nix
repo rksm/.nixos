@@ -17,6 +17,10 @@
       dash-functional
       s
 
+      # pdf
+      pdf-tools
+      org-pdftools
+
       # email
       mu4e
     ];
