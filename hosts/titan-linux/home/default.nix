@@ -21,6 +21,8 @@
     gnused
     gnutar
     killall
+    mullvad-vpn
+    transmission_4-qt
   ];
 
   home.file.".config/karabiner".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/mac/karabiner;

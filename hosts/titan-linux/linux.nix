@@ -96,4 +96,11 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
+
+  # mullvad
+  # see also: https://mullvad.net/en/help/how-use-mullvad-cli
+  networking.resolvconf.enable = false; # see https://discourse.nixos.org/t/connected-to-mullvadvpn-but-no-internet-connection/35803/10?u=lion
+  services.resolved.enable = true;
+  networking.wireguard.enable = true;
+  services.mullvad-vpn.enable = true;
 }
