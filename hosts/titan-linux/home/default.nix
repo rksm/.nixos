@@ -23,6 +23,7 @@
     killall
     mullvad-vpn
     transmission_4-qt
+    wineWowPackages.staging
   ];
 
   home.file.".config/karabiner".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/mac/karabiner;
