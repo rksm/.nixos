@@ -3,5 +3,6 @@
   programs.virt-manager.enable = true;
   environment.systemPackages = with pkgs; [
     virtio-win
+    virtiofsd
   ];
 }
