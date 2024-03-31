@@ -64,6 +64,9 @@
     fira-code-symbols
     ubuntu_font_family
     monaspace
+    jetbrains-mono
+    iosevka-bin
+    (iosevka-bin.override { variant = "Aile"; })
   ];
 
 
