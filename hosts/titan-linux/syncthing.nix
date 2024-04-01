@@ -1,6 +1,5 @@
 { config, pkgs, lib, ... }:
 {
-
   services.syncthing = {
     enable = true;
     user = "robert";
@@ -22,6 +21,10 @@
         };
         "mbp" = {
           id = "ESRECEY-LRO4O4F-W6T4MCD-JJEUB23-UEMKLC6-3CAPFXO-B75BGCG-V2SIQA6";
+          autoAcceptFolders = false;
+        };
+        "nas" = {
+          id = "5WBWSJB-OUNGDKD-HMT7CDM-TTMOZ7J-3F7CJMA-ED6RHAQ-P2LYPKR-ISZ5JQY";
           autoAcceptFolders = false;
         };
       };

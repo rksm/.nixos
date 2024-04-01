@@ -6,6 +6,7 @@
 {
   imports = [
     ./hardware-configuration.nix
+    ./nvidia.nix
     ./firefox.nix
     ./users.nix
     ./packages.nix
@@ -15,10 +16,18 @@
     ./fhs.nix
     ./syncthing.nix
     ./virtualization.nix
+    ./mullvad.nix
   ];
 
   system.stateVersion = "24.05";
   nixpkgs.config.allowUnfree = true;
+
+  mount_linux_data.enable = true;
+  mount_k8s.enable = true;
+  nvidia.enable = true;
+  fhs.enable = false;
+  setup_docker.enable = true;
+  mullvad.enable = false;
 
   nix = {
     settings = {

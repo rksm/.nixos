@@ -25,6 +25,7 @@
         let
           machine = "titan-linux";
           user = "robert";
+          nixosConfig = self.nixosConfigurations.${machine}.config;
         in
         {
           ${machine} = nixpkgs.lib.nixosSystem {
@@ -37,7 +38,7 @@
               {
                 home-manager.useGlobalPkgs = true;
                 home-manager.useUserPackages = true;
-                home-manager.extraSpecialArgs = { inherit user; };
+                home-manager.extraSpecialArgs = { inherit user nixosConfig; };
                 home-manager.users.${user} = import ./hosts/${machine}/home;
               }
             ];

@@ -1,11 +1,14 @@
-{ config, pkgs, ... }:
-let
-  enableNvidia = config.networking.hostName == "titan-linux";
-in
+{ config, lib, pkgs, ... }:
 {
-  virtualisation.docker = {
-    inherit enableNvidia;
-    enable = true;
-    daemon.settings.insecure-registries = [ "docker-registry.podwriter:5000" ];
+  options = {
+    setup_docker.enable = lib.mkEnableOption "Docker";
+  };
+
+  config = {
+    virtualisation.docker = lib.mkIf config.setup_docker.enable {
+      enableNvidia = config.nvidia.enable;
+      enable = true;
+      daemon.settings.insecure-registries = [ "docker-registry.podwriter:5000" ];
+    };
   };
 }
