@@ -32,11 +32,11 @@
       folders = {
         "org" = {
           path = "/home/robert/org";
-          devices = [ "titan-linux" "mbp" ];
+          devices = [ "titan-linux" "mbp" "nas" ];
         };
         "Documents" = {
           path = "/home/robert/Documents";
-          devices = [ "titan-linux" "mbp" ];
+          devices = [ "titan-linux" "mbp" "nas" ];
         };
         "configs" = {
           path = "/home/robert/configs";
@@ -53,6 +53,10 @@
         "projects/biz" = {
           path = "/home/robert/projects/biz";
           devices = [ "titan-linux" "mbp" ];
+        };
+        "media" = {
+          path = "/media/robert/LINUX_DATA/media";
+          devices = [ "titan-linux" "nas" ];
         };
       };
 
