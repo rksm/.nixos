@@ -80,6 +80,16 @@
       helm-systemd
       helm-themes
 
+      # init-keybindings.el
+      key-chord
+      which-key
+      move-text
+      expand-region
+      avy
+      avy-zap
+      ace-jump-mode
+      ace-window
+      multiple-cursors
     ];
   };
 
