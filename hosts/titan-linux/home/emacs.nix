@@ -48,6 +48,7 @@
 
       # init-snippets.el
       yasnippet
+      helm-c-yasnippet
 
       # init-org.el
       org
