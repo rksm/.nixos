@@ -65,7 +65,8 @@
     ubuntu_font_family
     monaspace
     jetbrains-mono
-    iosevka-bin
+    etBook
+    montserrat
     (iosevka-bin.override { variant = "Aile"; })
   ];
 
