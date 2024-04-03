@@ -7,7 +7,7 @@
     ./devops.nix
     ./rust.nix
     ./gnome.nix
-    ./misc.nix
+    ./packages.nix
   ];
 
   home.stateVersion = "24.05";
