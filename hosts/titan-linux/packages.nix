@@ -28,6 +28,8 @@
 
     ripgrep
     fd
+
+    google-chrome
   ];
 
   programs.dconf.enable = true;
