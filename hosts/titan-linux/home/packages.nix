@@ -9,6 +9,7 @@
     wineWowPackages.staging
     vlc
     drawio
+    zoom-us
   ] ++ (lib.optionals nixosConfig.mullvad.enable [
     transmission_4-qt
     mullvad-vpn
