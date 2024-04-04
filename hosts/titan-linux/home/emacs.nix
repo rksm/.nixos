@@ -105,4 +105,8 @@
     mu
     isync # aka mbsync
   ];
+
+  programs.msmtp = {
+    enable = true;
+  };
 }
