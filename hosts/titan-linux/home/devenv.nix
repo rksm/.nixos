@@ -82,6 +82,7 @@
     fx
     entr
     git-crypt
+    gh
 
     # nix related
     #
