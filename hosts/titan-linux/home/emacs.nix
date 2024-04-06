@@ -91,6 +91,8 @@
       ace-jump-mode
       ace-window
       multiple-cursors
+
+      # init-natural-language.el
     ];
   };
 
@@ -104,6 +106,11 @@
     # email
     mu
     isync # aka mbsync
+
+    # spell checking
+    hunspell
+    hunspellDicts.en_US
+    hunspellDicts.de_DE
   ];
 
   programs.msmtp = {
