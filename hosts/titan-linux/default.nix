@@ -27,7 +27,7 @@
   nvidia.enable = true;
   fhs.enable = false;
   setup_docker.enable = true;
-  mullvad.enable = false;
+  mullvad.enable = true;
 
   nix = {
     settings = {
