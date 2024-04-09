@@ -5,6 +5,7 @@
   # nix search wget
   environment.systemPackages = with pkgs; [
     # utils
+    emacs
     git
     git-lfs
     wget
