@@ -10,6 +10,7 @@
     vlc
     drawio
     zoom-us
+    libreoffice
   ] ++ (lib.optionals nixosConfig.mullvad.enable [
     transmission_4-qt
     mullvad-vpn
