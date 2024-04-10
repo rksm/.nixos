@@ -67,6 +67,10 @@
     enable = true;
   };
 
+  # programs.gh = {
+  #   enable = true;
+  # };
+
   home.packages = with pkgs; [
     # shell / utils
     wezterm
@@ -82,7 +86,6 @@
     fx
     entr
     git-crypt
-    gh
 
     # nix related
     #
@@ -92,5 +95,7 @@
     nix-tree
     nil
     nixpkgs-fmt # nix language server
+
+    devbox
   ];
 }
