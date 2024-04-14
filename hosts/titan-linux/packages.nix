@@ -8,6 +8,7 @@
     emacs
     git
     git-lfs
+    git-filter-repo
     wget
     curl
     htop
