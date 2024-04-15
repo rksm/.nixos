@@ -27,6 +27,10 @@
     # 192.168.137.9 t430.podwriter
     # 192.168.137.100 iphone
     100.109.127.110 docker-registry.podwriter # tailscale ubuntu-p50
+
+    2a01:4f9:c011:bb54::1 greenesy01
+    2a01:4f8:c0c:5a50::1 greenesy02
+    2a01:4f8:c2c:aed8::1 greenesy03
   '';
 
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
