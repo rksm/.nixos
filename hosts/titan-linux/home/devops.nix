@@ -12,6 +12,7 @@
     ansible
     kubectl
     kubernetes-helm
+    kdash
 
     # networking tools
     mtr # A network diagnostic tool
