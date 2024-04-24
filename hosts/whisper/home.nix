@@ -2,6 +2,6 @@
 
 {
   imports = [
-    ../../shared/linux/home
+    ../../shared/linux-home
   ];
 }

@@ -15,7 +15,7 @@
       overrideDevices = true; # overrides any devices added or deleted through the WebUI
       overrideFolders = true; # overrides any folders added or deleted through the WebUI
       settings = {
-        gui = let password = builtins.readFile ../../shared/secrets/syncthing-password.key; in {
+        gui = let password = builtins.readFile ../secrets/syncthing-password.key; in {
           user = "robert";
           password = "${password}";
         };

@@ -45,22 +45,7 @@
   # started in user sessions.
   # programs.mtr.enable = true;
 
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = false;
-  };
-
-  # ssh
-  services.openssh = {
-    enable = true;
-    settings = {
-      X11Forwarding = true;
-      PermitRootLogin = "no";
-      PasswordAuthentication = false;
-    };
-    # openFirewall = true;
-  };
-
+  programs.gnupg.agent.enable = true;
 
   fonts.packages = with pkgs; [
     hack-font

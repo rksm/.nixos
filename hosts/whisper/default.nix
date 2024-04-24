@@ -5,6 +5,7 @@
     ../../shared/linux
   ];
 
+  ssh-password-auth.enable = true;
   mount_k8s.enable = false;
   nvidia.enable = true;
   fhs.enable = false;

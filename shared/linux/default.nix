@@ -9,6 +9,7 @@
     ./firefox.nix
     ./users.nix
     ./packages.nix
+    ./ssh.nix
     ./linux.nix
     ./docker.nix
     ./infra.nix
