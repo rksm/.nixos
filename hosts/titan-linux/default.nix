@@ -7,7 +7,7 @@
 
   mount_linux_data.enable = true;
 
-  ssh-password-auth.enable = true;
+  ssh-password-auth.enable = false;
   mount_k8s.enable = true;
   nvidia.enable = false;
   fhs.enable = false;
