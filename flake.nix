@@ -21,29 +21,36 @@
   outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, ... }:
     let
 
-      titan-linux =
+      linux =
         let
-          machine = "titan-linux";
+          machines = [ "titan-linux" "whisper" ];
           user = "robert";
-          nixosConfig = self.nixosConfigurations.${machine}.config;
         in
-        {
-          ${machine} = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
-            specialArgs = { inherit inputs user; };
-            modules = [
-              ./hosts/${machine}
-
-              home-manager.nixosModules.home-manager
+        builtins.listToAttrs
+          (map
+            (machine:
+              let
+                nixosConfig = self.nixosConfigurations.${machine}.config;
+              in
               {
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.extraSpecialArgs = { inherit user nixosConfig; };
-                home-manager.users.${user} = import ./hosts/${machine}/home;
-              }
-            ];
-          };
-        };
+                name = machine;
+                value = nixpkgs.lib.nixosSystem {
+                  system = "x86_64-linux";
+                  specialArgs = { inherit inputs user machine; };
+                  modules = [
+                    ./hosts/${machine}
+
+                    home-manager.nixosModules.home-manager
+                    {
+                      home-manager.useGlobalPkgs = true;
+                      home-manager.useUserPackages = true;
+                      home-manager.extraSpecialArgs = { inherit user nixosConfig; };
+                      home-manager.users.${user} = import ./hosts/${machine}/home.nix;
+                    }
+                  ];
+                };
+              })
+            machines);
 
 
       # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -74,7 +81,7 @@
 
     {
       darwinConfigurations = macbook;
-      nixosConfigurations = titan-linux;
+      nixosConfigurations = linux;
     };
 
 }
