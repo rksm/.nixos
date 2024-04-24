@@ -1,4 +1,4 @@
-{ inputs, config, pkgs, options, user, ... }:
+{ inputs, config, pkgs, options, user, machine, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -6,6 +6,7 @@
   ];
 
   mount_linux_data.enable = true;
+
   mount_k8s.enable = true;
   nvidia.enable = false;
   fhs.enable = false;
