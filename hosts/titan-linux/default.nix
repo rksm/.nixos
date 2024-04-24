@@ -10,5 +10,7 @@
   nvidia.enable = false;
   fhs.enable = false;
   setup_docker.enable = true;
+  syncthing.enable = true;
+  tailscale.enable = true;
   mullvad.enable = true;
 }
