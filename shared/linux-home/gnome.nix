@@ -17,11 +17,13 @@
         toggle-overview = [ "<Super>space" ];
         # unbind Super + N
         focus-active-notification = [ "" ];
+        show-screenshot-ui = [ "<Shift><Super>4" ];
+        show-screen-recording-ui = [ "<Shift><Super>5" ];
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
-        area-screenshot = [ "<Alt><Super>4" ];
-        screencast = [ "<Alt><Super>5" ];
+        # area-screenshot = [ "<Alt><Super>4" ];
+        # screencast = [ "<Alt><Super>5" ];
         screensaver = [ "<Primary><Super>q" ];
         logout = [ ];
       };
