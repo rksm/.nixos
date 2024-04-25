@@ -23,14 +23,15 @@
 
       linux =
         let
-          machines = [ "titan-linux" "whisper" ];
+          machines = [ "titan-linux" "storm" ];
           user = "robert";
         in
         builtins.listToAttrs
           (map
-            (machine:
+            (machinex:
               let
-                nixosConfig = self.nixosConfigurations.${machine}.config;
+                machine = "storm";
+                nixosConfig = self.nixosConfigurations.storm.config;
               in
               {
                 name = machine;
@@ -81,7 +82,9 @@
 
     {
       darwinConfigurations = macbook;
-      nixosConfigurations = linux;
+      nixosConfigurations = linux // {
+        titan-linux = linux.storm;
+      };
     };
 
 }

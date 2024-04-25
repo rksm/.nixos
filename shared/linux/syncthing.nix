@@ -21,6 +21,10 @@
         };
 
         devices = {
+          "storm" = {
+            id = "CLPXG4D-HFUVBBU-UVFTOKW-K6RTSPB-4SRS3V2-FAEOK5Y-W577FYA-LG4PTAQ";
+            autoAcceptFolders = false;
+          };
           "titan-linux" = {
             id = "RYQZGHF-73GMHMW-UC6U4U7-FR5AXRH-MOIM7VY-DWVVYCH-JENHYTW-4LBYKAN";
             autoAcceptFolders = false;
