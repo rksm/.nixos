@@ -28,10 +28,9 @@
         in
         builtins.listToAttrs
           (map
-            (machinex:
+            (machine:
               let
-                machine = "storm";
-                nixosConfig = self.nixosConfigurations.storm.config;
+                nixosConfig = self.nixosConfigurations.${machine}.config;
               in
               {
                 name = machine;
