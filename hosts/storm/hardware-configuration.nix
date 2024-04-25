@@ -51,6 +51,7 @@
     # networking.useDHCP = lib.mkDefault true;
     networking.interfaces.enp5s0.useDHCP = true;
     networking.interfaces.eno2.useDHCP = false;
+    networking.dhcpcd.wait = "background";
     # networking.interfaces.wlo1.useDHCP = lib.mkDefault true;
 
     nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
