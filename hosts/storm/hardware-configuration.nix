@@ -57,5 +57,11 @@
     nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
     hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
+    # Bootloader.
+    boot.loader.systemd-boot.enable = false;
+    boot.loader.efi.canTouchEfiVariables = true;
+    boot.loader.grub.enable = true;
+    boot.loader.grub.devices = [ "nodev" ];
+    boot.loader.grub.useOSProber = true;
   };
 }

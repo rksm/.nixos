@@ -1,10 +1,8 @@
 { config, pkgs, machine, ... }:
 {
-  # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-
   networking.hostName = "${machine}";
+  time.timeZone = "Europe/Berlin";
+
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -15,8 +13,6 @@
   networking.networkmanager.enable = true;
   networking.wireless.enable = false;
 
-  # Set your time zone.
-  time.timeZone = "Europe/Berlin";
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
