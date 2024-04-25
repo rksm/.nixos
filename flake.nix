@@ -21,7 +21,7 @@
   outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, ... }:
     let
 
-      linux =
+      nixosConfigurations =
         let
           machines = [ "titan-linux" "storm" ];
           user = "robert";
@@ -56,7 +56,7 @@
 
       # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
       # macos / darwin
-      macbook =
+      darwinConfigurations =
         let
           machine = "Roberts-MacBook-Pro";
           user = "robert";
@@ -81,10 +81,7 @@
     in
 
     {
-      darwinConfigurations = macbook;
-      nixosConfigurations = linux // {
-        titan-linux = linux.storm;
-      };
+      inherit nixosConfigurations darwinConfigurations;
     };
 
 }
