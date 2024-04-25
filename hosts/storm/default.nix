@@ -10,6 +10,7 @@
   nvidia.enable = true;
   fhs.enable = false;
   setup_docker.enable = false;
+  virt-manager.enable = false;
   syncthing.enable = true;
   tailscale.enable = false;
   mullvad.enable = false;
