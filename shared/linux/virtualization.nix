@@ -3,7 +3,7 @@
     virt-manager.enable = lib.mkEnableOption "Enable virt-manager";
   };
 
-  config = {
+  config = lib.mkIf config.virt-manager.enable {
     programs.virt-manager.enable = true;
 
     environment.systemPackages = with pkgs; [
