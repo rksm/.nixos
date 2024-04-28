@@ -17,6 +17,7 @@
     ./fhs.nix
     ./syncthing.nix
     ./mullvad.nix
+    ./gaming.nix
   ];
 
   system.stateVersion = "24.05";

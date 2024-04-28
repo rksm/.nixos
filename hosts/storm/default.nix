@@ -14,4 +14,5 @@
   syncthing.enable = true;
   tailscale.enable = false;
   mullvad.enable = false;
+  gaming.enable = true;
 }
