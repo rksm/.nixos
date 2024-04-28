@@ -1,4 +1,4 @@
-{ inputs, config, pkgs, lib, options, user, ... }: {
+{ inputs, config, pkgs, lib, options, user, machine, ... }: {
   options = {
     virt-manager.enable = lib.mkEnableOption "Enable virt-manager";
   };
@@ -36,7 +36,7 @@
     networking.interfaces.br0.useDHCP = true;
     networking.bridges = {
       "br0" = {
-        interfaces = [ "eno2" ];
+        interfaces = [ (if machine == "titan-linux" then "eno2" else "enp5s0") ];
       };
     };
 

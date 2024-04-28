@@ -44,14 +44,8 @@
     swapDevices =
       [{ device = "/dev/disk/by-uuid/27dd2751-e2e7-44a7-ab08-44ea012a4dd1"; }];
 
-    # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
-    # (the default) this is the recommended approach. When using systemd-networkd it's
-    # still possible to use this option, but it's recommended to use it in conjunction
-    # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
     networking.useDHCP = lib.mkDefault true;
-    # networking.interfaces.enp5s0.useDHCP = true;
-    networking.dhcpcd.wait = "background";
-    # networking.interfaces.wlo1.useDHCP = lib.mkDefault true;
+    networking.interfaces.enp5s0.wakeOnLan.enable = lib.mkDefault true;
 
     nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
     hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;

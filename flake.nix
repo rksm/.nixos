@@ -28,28 +28,27 @@
         in
         builtins.listToAttrs
           (map
-            (machine:
-              let
-                nixosConfig = self.nixosConfigurations.${machine}.config;
-              in
-              {
-                name = machine;
-                value = nixpkgs.lib.nixosSystem {
-                  system = "x86_64-linux";
-                  specialArgs = { inherit inputs user machine; };
-                  modules = [
-                    ./hosts/${machine}
+            (machine: {
+              name = machine;
+              value = nixpkgs.lib.nixosSystem {
+                system = "x86_64-linux";
+                specialArgs = { inherit inputs user machine; };
+                modules = [
+                  ./hosts/${machine}
 
-                    home-manager.nixosModules.home-manager
-                    {
-                      home-manager.useGlobalPkgs = true;
-                      home-manager.useUserPackages = true;
-                      home-manager.extraSpecialArgs = { inherit user nixosConfig; };
-                      home-manager.users.${user} = import ./hosts/${machine}/home.nix;
-                    }
-                  ];
-                };
-              })
+                  home-manager.nixosModules.home-manager
+                  {
+                    home-manager.useGlobalPkgs = true;
+                    home-manager.useUserPackages = true;
+                    home-manager.extraSpecialArgs = {
+                      inherit user machine;
+                      nixosConfig = self.nixosConfigurations.${machine}.config;
+                    };
+                    home-manager.users.${user} = import ./hosts/${machine}/home.nix;
+                  }
+                ];
+              };
+            })
             machines);
 
 

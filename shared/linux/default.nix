@@ -5,17 +5,17 @@
 { inputs, config, pkgs, options, user, ... }:
 {
   imports = [
+    ./linux.nix
+    ./virtualization.nix
     ./nvidia.nix
     ./firefox.nix
     ./users.nix
     ./packages.nix
     ./ssh.nix
-    ./linux.nix
     ./docker.nix
     ./infra.nix
     ./fhs.nix
     ./syncthing.nix
-    ./virtualization.nix
     ./mullvad.nix
   ];
 
