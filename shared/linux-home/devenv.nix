@@ -48,11 +48,11 @@
     '';
 
     plugins = [
-      { name = "myfish"; src = /home/robert/configs/fish; }
+      { name = "myfish"; src = /home/${user}/configs/fish; }
     ];
   };
 
-  home.file.".local/share/fish/fish_history".source = config.lib.file.mkOutOfStoreSymlink /home/robert/configs/fish_history.linux;
+  home.file.".local/share/fish/fish_history".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/fish_history.linux;
 
 
   # find missing packages
