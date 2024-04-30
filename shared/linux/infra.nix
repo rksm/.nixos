@@ -32,6 +32,7 @@
       2a01:4f9:c011:bb54::1 greenesy01
       2a01:4f8:c0c:5a50::1 greenesy02
       2a01:4f8:c2c:aed8::1 greenesy03
+      2a01:4f8:1c1c:8d25::1 greenesy04
     '';
   } // (lib.mkIf config.tailscale.enable {
 

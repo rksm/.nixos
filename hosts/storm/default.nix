@@ -9,7 +9,7 @@
   mount_k8s.enable = false;
   nvidia.enable = true;
   fhs.enable = false;
-  setup_docker.enable = false;
+  setup_docker.enable = true;
   virt-manager.enable = false;
   syncthing.enable = true;
   tailscale.enable = false;
