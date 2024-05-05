@@ -17,8 +17,8 @@
   security.polkit.enable = true;
 
   # Enable automatic login for the user.
-  services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.autoLogin.user = "${user}";
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "${user}";
 
   # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
   systemd.services."getty@tty1".enable = false;
