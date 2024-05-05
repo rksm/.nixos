@@ -10,5 +10,9 @@
       enable = true;
       daemon.settings.insecure-registries = [ "docker-registry.podwriter:5000" ];
     };
+
+    environment.systemPackages = with pkgs; [
+      docker-compose
+    ];
   };
 }
