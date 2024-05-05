@@ -12,7 +12,7 @@
   setup_docker.enable = true;
   virt-manager.enable = false;
   syncthing.enable = true;
-  tailscale.enable = false;
+  tailscale.enable = true;
   mullvad.enable = false;
   gaming.enable = true;
 }
