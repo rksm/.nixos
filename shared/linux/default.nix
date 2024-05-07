@@ -7,14 +7,15 @@
   imports = [
     ./linux.nix
     ./virtualization.nix
+    ./fhs.nix
     ./nvidia.nix
     ./firefox.nix
     ./users.nix
     ./packages.nix
     ./ssh.nix
     ./docker.nix
-    ./infra.nix
-    ./fhs.nix
+    ./network.nix
+    ./tailscale.nix
     ./syncthing.nix
     ./mullvad.nix
     ./gaming.nix
