@@ -67,9 +67,10 @@
     enable = true;
   };
 
-  # programs.gh = {
-  #   enable = true;
-  # };
+  programs.gh = {
+    enable = true;
+    settings.git_protocol = "ssh";
+  };
 
   home.packages = with pkgs; [
     # shell / utils
