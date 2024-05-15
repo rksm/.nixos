@@ -13,6 +13,11 @@
     includes = [
       { path = "~/configs/git/.gitconfig"; }
     ];
+    difftastic = {
+      enable = true;
+      # one of "side-by-side", "side-by-side-show-both", "inline"
+      display = "side-by-side";
+    };
   };
 
   programs.direnv = {
@@ -87,6 +92,7 @@
     fx
     entr
     git-crypt
+    difftastic
 
     # nix related
     #
