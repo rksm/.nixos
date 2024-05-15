@@ -6,7 +6,7 @@
   ];
 
   ssh-password-auth.enable = false;
-  mount_k8s.enable = false;
+  mount_k8s.enable = true;
   nvidia.enable = true;
   fhs.enable = false;
   setup_docker.enable = true;
