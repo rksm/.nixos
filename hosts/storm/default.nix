@@ -15,4 +15,5 @@
   tailscale.enable = true;
   mullvad.enable = false;
   gaming.enable = true;
+  printing.enable = true;
 }

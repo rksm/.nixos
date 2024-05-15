@@ -19,6 +19,7 @@
     ./syncthing.nix
     ./mullvad.nix
     ./gaming.nix
+    ./printing.nix
   ];
 
   system.stateVersion = "24.05";
