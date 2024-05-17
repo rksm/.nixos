@@ -64,6 +64,7 @@
       # init-vc.el
       magit
       magit-lfs
+      magit-section
       gist
       git-link
 
