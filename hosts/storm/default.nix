@@ -13,7 +13,7 @@
   virt-manager.enable = false;
   syncthing.enable = true;
   tailscale.enable = true;
-  mullvad.enable = false;
+  mullvad.enable = true;
   gaming.enable = true;
   printing.enable = true;
 }
