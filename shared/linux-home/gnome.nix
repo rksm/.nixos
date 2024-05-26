@@ -59,6 +59,8 @@
         switch-windows-backward = [ "<Shift><Alt>Tab" ];
         switch-to-workspace-left = [ ];
         switch-to-workspace-right = [ ];
+        switch-input-source = [ ]; # interferes with <Super>space
+        switch-input-source-backward = [ ];
       };
 
       "org/gnome/desktop/input-sources" = {
