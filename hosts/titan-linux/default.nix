@@ -5,15 +5,13 @@
     ../../shared/linux
   ];
 
-  mount_linux_data.enable = true;
-
   ssh-password-auth.enable = false;
   mount_k8s.enable = true;
   nvidia.enable = true;
-  fhs.enable = false;
-  setup_docker.enable = true;
-  virt-manager.enable = true;
+  setup_docker.enable = false;
+  virt-manager.enable = false;
   syncthing.enable = true;
   tailscale.enable = true;
-  mullvad.enable = true;
+
+  mount_linux_data.enable = true;
 }
