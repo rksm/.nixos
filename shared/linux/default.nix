@@ -16,6 +16,7 @@
     ./docker.nix
     ./network.nix
     ./tailscale.nix
+    ./k3s.nix
     ./syncthing.nix
     ./mullvad.nix
     ./gaming.nix

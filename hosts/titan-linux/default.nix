@@ -12,6 +12,7 @@
   virt-manager.enable = false;
   syncthing.enable = true;
   tailscale.enable = true;
+  k3s.enable = true;
 
   mount_linux_data.enable = true;
 }
