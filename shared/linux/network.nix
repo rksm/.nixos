@@ -33,4 +33,6 @@ let
 in
 {
   networking.extraHosts = podwriter-hosts + "\n" + greenesy-hosts;
+  networking.resolvconf.enable = lib.mkForce false;
+  services.resolved.enable = true;
 }

@@ -16,6 +16,8 @@
     services.xserver.videoDrivers = [ "nvidia" ]; # or "nvidiaLegacy470 etc.
 
     hardware.nvidia = {
+      # Enable the Nvidia headless
+      nvidiaPersistenced = true;
       # Modesetting is required.
       modesetting.enable = true;
       # Nvidia power management. Experimental, and can cause sleep/suspend to fail.
