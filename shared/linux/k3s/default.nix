@@ -19,6 +19,9 @@
           - "http://docker-registry.podwriter:5000"
     '';
 
+    # tailscale: ensure that routes are accessible! (should be done by the key
+    # but can fail if logged in already... "edit route settings" in the
+    # tailscale web interface)
     services.k3s = {
       enable = true;
       role = "agent";
