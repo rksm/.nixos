@@ -10,7 +10,7 @@
   nvidia.enable = true;
   setup_docker.enable = false;
   virt-manager.enable = false;
-  syncthing.enable = true;
+  syncthing.enable = false;
   tailscale.enable = true;
   k3s.enable = true;
 
