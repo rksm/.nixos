@@ -24,7 +24,16 @@
       role = "agent";
       serverAddr = "https://linuxmini.tail2787e.ts.net:6443";
       tokenFile = ../../../shared/secrets/k3s-token.key;
+      extraFlags = "--vpn-auth=name=tailscale,joinKey=tskey-auth-kHggjB4CNTRL-WKJ8T47VNiSbmfvNX37PhSVsNJjHz4ag";
+
+      package = let
+        callPackage = pkgs.callPackage;
+        args = { inherit lib callPackage; };
+      in
+        (import ../../../packages/k3s args).k3s_1_30;
     };
+
+    systemd.services.k3s.path = with pkgs; [ tailscale ];
 
     virtualisation.containers = {
       enable = true;
