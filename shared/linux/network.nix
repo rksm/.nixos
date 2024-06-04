@@ -21,7 +21,7 @@ let
     # 192.168.137.8 littlelinux-ff-1.podwriter
     # 192.168.137.9 t430.podwriter
     # 192.168.137.100 iphone
-    100.109.127.110 docker-registry.podwriter # tailscale ubuntu-p50
+    100.80.198.76 docker-registry.podwriter # tailscale ubuntu-p50
   '';
 
   greenesy-hosts = ''
