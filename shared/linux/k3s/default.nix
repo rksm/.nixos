@@ -12,6 +12,12 @@
   # FIXME: make  tailscale optional!
   config = lib.mkIf config.k3s.enable {
 
+    environment.etc."rancher/k3s/registries.yaml".text = ''
+    mirrors:
+      "docker-registry.podwriter:5000":
+        endpoint:
+          - "http://docker-registry.podwriter:5000"
+    '';
 
     services.k3s = {
       enable = true;
