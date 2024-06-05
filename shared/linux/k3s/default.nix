@@ -13,10 +13,10 @@
   config = lib.mkIf config.k3s.enable {
 
     environment.etc."rancher/k3s/registries.yaml".text = ''
-    mirrors:
-      "docker-registry.podwriter:5000":
-        endpoint:
-          - "http://docker-registry.podwriter:5000"
+      mirrors:
+        "docker-registry.podwriter:5000":
+          endpoint:
+            - "http://docker-registry.podwriter:5000"
     '';
 
     # tailscale: ensure that routes are accessible! (should be done by the key
@@ -27,12 +27,14 @@
       role = "agent";
       serverAddr = "https://linuxmini.tail2787e.ts.net:6443";
       tokenFile = ../../../shared/secrets/k3s-token.key;
-      extraFlags = "--vpn-auth=name=tailscale,joinKey=tskey-auth-kHggjB4CNTRL-WKJ8T47VNiSbmfvNX37PhSVsNJjHz4ag";
+      extraFlags = let key = builtins.readFile ../../../shared/secrets/tailscale-auth.key; in
+        "--vpn-auth=name=tailscale,joinKey=${key}";
 
-      package = let
-        callPackage = pkgs.callPackage;
-        args = { inherit lib callPackage; };
-      in
+      package =
+        let
+          callPackage = pkgs.callPackage;
+          args = { inherit lib callPackage; };
+        in
         (import ../../../packages/k3s args).k3s_1_29;
     };
 
