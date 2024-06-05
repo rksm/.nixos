@@ -33,7 +33,7 @@
         callPackage = pkgs.callPackage;
         args = { inherit lib callPackage; };
       in
-        (import ../../../packages/k3s args).k3s_1_30;
+        (import ../../../packages/k3s args).k3s_1_29;
     };
 
     systemd.services.k3s.path = with pkgs; [ tailscale ];
