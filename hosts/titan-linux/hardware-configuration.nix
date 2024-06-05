@@ -51,7 +51,7 @@
     # littlelinux
     fileSystems."/mnt/k8s" = lib.mkIf config.mount_k8s.enable
       {
-        device = "100.81.249.52:/mnt/DB_DISK/podwriter_k8s_nfs";
+        device = "littlelinux2.tail2787e.ts.net:/mnt/DB_DISK/podwriter_k8s_nfs";
         fsType = "nfs";
         options = [ "x-systemd.automount" "noauto" ];
         # options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
