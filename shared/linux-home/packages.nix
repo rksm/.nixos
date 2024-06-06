@@ -22,9 +22,13 @@
     enable = true;
     associations.added = {
       "application/pdf" = ["org.gnome.Evince.desktop"];
+      "text/html" = ["firefox.desktop"];
+      "image/png" = ["org.gnome.Loupe.desktop"];
     };
     defaultApplications = {
       "application/pdf" = ["org.gnome.Evince.desktop"];
+      "text/html" = ["firefox.desktop"];
+      "image/png" = ["org.gnome.Loupe.desktop"];
     };
   };
 
