@@ -2,6 +2,7 @@
   home.packages = with pkgs; [
     gnomeExtensions.awesome-tiles
     gnomeExtensions.unite
+    gnomeExtensions.hide-top-bar
     # music
     rhythmbox
   ];
