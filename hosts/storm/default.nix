@@ -16,4 +16,5 @@
   gaming.enable = true;
   printing.enable = true;
   postgres.enable = true;
+  audio-video-image-editing.enable = true;
 }

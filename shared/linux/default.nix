@@ -22,6 +22,7 @@
     ./gaming.nix
     ./printing.nix
     ./postgres.nix
+    ./audio-video-image-editing.nix
   ];
 
   system.stateVersion = "24.05";
