@@ -15,4 +15,5 @@
   mullvad.enable = true;
   gaming.enable = true;
   printing.enable = true;
+  postgres.enable = true;
 }

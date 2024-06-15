@@ -21,6 +21,7 @@
     ./mullvad.nix
     ./gaming.nix
     ./printing.nix
+    ./postgres.nix
   ];
 
   system.stateVersion = "24.05";
