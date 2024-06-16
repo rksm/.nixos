@@ -73,7 +73,7 @@
       # gnome extensions
 
       "org/gnome/shell" = {
-        enabled-extensions = [ "awesome-tiles@velitasali.com" "unite@hardpixel.eu" ];
+        enabled-extensions = [ "awesome-tiles@velitasali.com" "unite@hardpixel.eu" "hidetopbar@mathieu.bidon.ca"];
       };
 
       "org/gnome/shell/extensions/awesome-tiles" = {
@@ -113,8 +113,16 @@
       # for virtualization
       # see https://nixos.wiki/wiki/Virt-manager
       "org/virt-manager/virt-manager/connections" = {
-        autoconnect = ["qemu:///system"];
-        uris = ["qemu:///system"];
+        autoconnect = [ "qemu:///system" ];
+        uris = [ "qemu:///system" ];
+      };
+
+      "org/gnome/shell/extensions/hidetopbar" = {
+        animation-time-autohide = 0.0;
+        animation-time-overview = 0.0;
+        hot-corner = true;
+        mouse-sensitive = true;
+        show-in-overview = true;
       };
     };
   };
