@@ -93,7 +93,6 @@
     entr
     git-crypt
     difftastic
-    imhex
 
     # nix related
     #
