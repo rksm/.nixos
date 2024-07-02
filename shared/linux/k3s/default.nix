@@ -23,6 +23,10 @@
       openiscsi
     ];
 
+    # services.openiscsi = {
+    #   enable = true;
+    # };
+
     # tailscale: ensure that routes are accessible! (should be done by the key
     # but can fail if logged in already... "edit route settings" in the
     # tailscale web interface)
@@ -42,9 +46,6 @@
         (import ../../../packages/k3s args).k3s_1_30;
     };
 
-    services.openiscsi = {
-      enable = true;
-    };
 
     systemd.services.k3s.path = with pkgs; [ tailscale ];
 
