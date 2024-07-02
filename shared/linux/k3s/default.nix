@@ -38,6 +38,10 @@
         (import ../../../packages/k3s args).k3s_1_30;
     };
 
+    services.openiscsi = {
+      enable = true;
+    };
+
     systemd.services.k3s.path = with pkgs; [ tailscale ];
 
     virtualisation.containers = {
