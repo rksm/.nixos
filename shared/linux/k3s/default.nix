@@ -19,6 +19,10 @@
             - "http://docker-registry.podwriter:5000"
     '';
 
+    environment.systemPackages = with pkgs; [
+      openiscsi
+    ];
+
     # tailscale: ensure that routes are accessible! (should be done by the key
     # but can fail if logged in already... "edit route settings" in the
     # tailscale web interface)
