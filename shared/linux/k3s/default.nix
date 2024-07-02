@@ -19,14 +19,6 @@
             - "http://docker-registry.podwriter:5000"
     '';
 
-    environment.systemPackages = with pkgs; [
-      openiscsi
-    ];
-
-    # services.openiscsi = {
-    #   enable = true;
-    # };
-
     # tailscale: ensure that routes are accessible! (should be done by the key
     # but can fail if logged in already... "edit route settings" in the
     # tailscale web interface)
@@ -56,5 +48,21 @@
     virtualisation.containerd = {
       enable = true;
     };
+
+    ##############################
+    # needed for longhorn
+    environment.systemPackages = with pkgs; [
+      openiscsi
+    ];
+    # as per https://takingnotes.net/kubernetes/longhorn/
+    system.activationScripts.usrlocalbin = ''
+        mkdir -m 0755 -p /usr/local
+        ln -nsf /run/current-system/sw/bin /usr/local/
+    '';
+    services.openiscsi = {
+      enable = true;
+      name = "iqn.2016-04.com.open-iscsi:${config.networking.hostName}";
+    };
+    ##############################
   };
 }
