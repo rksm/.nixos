@@ -53,7 +53,9 @@
     # needed for longhorn
     environment.systemPackages = with pkgs; [
       openiscsi
+      nfs-ganesha
     ];
+    services.rpcbind.enable = true; # needed for NFS
     # as per https://takingnotes.net/kubernetes/longhorn/
     system.activationScripts.usrlocalbin = ''
         mkdir -m 0755 -p /usr/local
