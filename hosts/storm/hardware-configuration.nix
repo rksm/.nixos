@@ -11,6 +11,7 @@
 
   options = {
     mount_k8s.enable = lib.mkEnableOption "Mount k8s nfs disk";
+    mount_nas_nfs.enable = lib.mkEnableOption "Mount the nas nfs backup directory";
   };
 
   config = {
@@ -39,6 +40,14 @@
         fsType = "nfs";
         # options = [ "x-systemd.automount" "noauto" ];
         # options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
+      };
+
+    # nas
+    fileSystems."/mnt/nas-nfs" = lib.mkIf config.mount_nas_nfs.enable
+      {
+        device = "nas.tail2787e.ts.net:/volume3/nfs";
+        fsType = "nfs";
+        options = [ "x-systemd.automount" "noauto" "uid=1000" "gid=100" ];
       };
 
     swapDevices =

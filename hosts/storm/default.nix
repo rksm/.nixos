@@ -6,7 +6,6 @@
   ];
 
   ssh-password-auth.enable = false;
-  mount_k8s.enable = true;
   nvidia.enable = true;
   setup_docker.enable = true;
   virt-manager.enable = false;
@@ -17,4 +16,7 @@
   printing.enable = true;
   postgres.enable = true;
   audio-video-image-editing.enable = true;
+
+  mount_k8s.enable = true;
+  mount_nas_nfs.enable = true;
 }
