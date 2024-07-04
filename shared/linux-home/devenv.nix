@@ -94,6 +94,17 @@
     git-crypt
     difftastic
 
+    # useful python packages
+    (pkgs.python312.withPackages (packages: with packages; [
+      loguru
+      requests
+      pydantic
+      polars
+      matplotlib
+      seaborn
+      plotly
+    ]))
+
     # nix related
     #
     # it provides the command `nom` works just like `nix`
