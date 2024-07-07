@@ -15,6 +15,8 @@
       dash
       dash-functional
       s
+      quelpa
+      quelpa-use-package
 
       # pdf
       pdf-tools
@@ -52,14 +54,16 @@
 
       # init-org.el
       org
+      org-ql
       org-bullets
       org-download
       ob-mermaid
       # ob-rust
       # ob-typescript
       helm-org
-      helm-org-rifle
+      helm-org-ql
       htmlize
+      ebib
 
       # init-vc.el
       magit
@@ -92,6 +96,19 @@
       ace-jump-mode
       ace-window
       multiple-cursors
+      embark
+
+      # init-web.el
+      google-this
+      helm-google
+      helm-wikipedia
+      hnreader
+      hydra
+      helm-lobsters
+      wttrin
+      dictcc
+      powerthesaurus
+      mediawiki
 
       # init-natural-language.el
     ];
