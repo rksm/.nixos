@@ -47,7 +47,8 @@
       {
         device = "nas.tail2787e.ts.net:/volume3/nfs";
         fsType = "nfs";
-        options = [ "x-systemd.automount" "noauto" "uid=1000" "gid=100" ];
+        # options = [ "x-systemd.automount" "noauto" "uid=1000" "gid=100" ];
+        options = [ "uid=1000" "gid=100" ];
       };
 
     swapDevices =
