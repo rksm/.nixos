@@ -112,6 +112,9 @@
     hunspell
     hunspellDicts.en_US
     hunspellDicts.de_DE
+
+    # web / reading
+    lynx # for rk/eww-extract-all-links
   ];
 
   programs.msmtp = {
