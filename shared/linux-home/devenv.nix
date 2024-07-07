@@ -103,6 +103,7 @@
       matplotlib
       seaborn
       plotly
+      pdftotext
     ]))
 
     # nix related
