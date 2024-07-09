@@ -50,6 +50,12 @@
         # options = [ "x-systemd.automount" "noauto" "uid=1000" "gid=100" ];
         options = [ "uid=1000" "gid=100" ];
       };
+    fileSystems."/mnt/podwriter_data" = lib.mkIf config.mount_nas_nfs.enable
+      {
+        device = "nas.tail2787e.ts.net:/volume3/nfs/podwriter";
+        fsType = "nfs";
+        # options = [ "uid=1000" "gid=100" ];
+      };
 
     swapDevices =
       [{ device = "/dev/disk/by-uuid/27dd2751-e2e7-44a7-ab08-44ea012a4dd1"; }];
