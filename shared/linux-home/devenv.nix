@@ -93,6 +93,7 @@
     entr
     git-crypt
     difftastic
+    tokei
 
     # useful python packages
     (pkgs.python312.withPackages (packages: with packages; [
