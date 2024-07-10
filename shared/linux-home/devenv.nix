@@ -94,6 +94,7 @@
     git-crypt
     difftastic
     tokei
+    mkcert
 
     # useful python packages
     (pkgs.python312.withPackages (packages: with packages; [
@@ -118,4 +119,9 @@
 
     devbox
   ];
+
+
+  # mkcert suuport
+  home.file.".local/share/mkcert/rooCA-key.pem".source = config.lib.file.mkOutOfStoreSymlink /etc/nixos/shared/secrets/mkcert/rootCA-key.pem;
+  home.file.".local/share/mkcert/rootCA.pem".source = config.lib.file.mkOutOfStoreSymlink /etc/nixos/shared/secrets/mkcert/rootCA.pem;
 }
