@@ -14,7 +14,7 @@
     calibre
     pandoc
   ] ++ (lib.optionals nixosConfig.mullvad.enable [
-    transmission_4-qt
+    # transmission_4-qt
     mullvad-vpn
   ]);
 
