@@ -50,6 +50,7 @@
     brews = [
       "coreutils"
       "syncthing"
+      "wakeonlan"
     ];
 
     casks = [
