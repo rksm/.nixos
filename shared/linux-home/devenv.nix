@@ -92,9 +92,11 @@
     fx
     entr
     git-crypt
+    git-extras
     difftastic
     tokei
     mkcert
+    shell-gpt
 
     # useful python packages
     (pkgs.python312.withPackages (packages: with packages; [
