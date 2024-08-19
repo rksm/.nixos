@@ -8,7 +8,7 @@
   ssh-password-auth.enable = false;
   nvidia.enable = true;
   setup_docker.enable = true;
-  virt-manager.enable = false;
+  virt-manager.enable = true;
   syncthing.enable = true;
   tailscale.enable = true;
   mullvad.enable = true;

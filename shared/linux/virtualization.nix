@@ -10,6 +10,7 @@
       spice
       spice-gtk
       spice-protocol
+      virt-manager
       virt-viewer
       virtio-win
       virtiofsd
