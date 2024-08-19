@@ -1,5 +1,7 @@
 { config, pkgs, machine, ... }:
 {
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   networking.hostName = "${machine}";
   time.timeZone = "Europe/Berlin";
 
