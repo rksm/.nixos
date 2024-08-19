@@ -97,6 +97,7 @@
     tokei
     mkcert
     shell-gpt
+    mermaid-cli
 
     # useful python packages
     (pkgs.python312.withPackages (packages: with packages; [
