@@ -9,7 +9,6 @@
     wineWowPackages.staging
     vlc
     drawio
-    zoom-us
     libreoffice
     calibre
     pandoc
