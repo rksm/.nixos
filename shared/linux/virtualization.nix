@@ -34,13 +34,6 @@
       spiceUSBRedirection.enable = true;
     };
 
-    networking.interfaces.br0.useDHCP = true;
-    networking.bridges = {
-      "br0" = {
-        interfaces = [ (if machine == "titan-linux" then "eno2" else "enp5s0") ];
-      };
-    };
-
     users.users.${user}.extraGroups = [ "libvirtd" ];
   };
 }
