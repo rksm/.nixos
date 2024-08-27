@@ -32,6 +32,7 @@ in
     cargo-whatfeatures
     cargo-feature
     cargo-release
+    cargo-generate
     dprint
   ];
 
