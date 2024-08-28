@@ -1,5 +1,6 @@
 { config, pkgs, lib, ... }: {
   home.packages = with pkgs; [
+    dconf-editor
     gnomeExtensions.awesome-tiles
     gnomeExtensions.unite
     gnomeExtensions.hide-top-bar
