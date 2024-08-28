@@ -7,7 +7,6 @@
   config = lib.mkIf config.setup_docker.enable {
     virtualisation.docker = {
       enable = true;
-      enableNvidia = config.nvidia.enable;
       daemon.settings.insecure-registries = [ "docker-registry.podwriter:5000" ];
     };
 
