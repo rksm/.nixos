@@ -14,7 +14,7 @@
   mullvad.enable = true;
   gaming.enable = true;
   printing.enable = true;
-  postgres.enable = true;
+  postgres.enable = false;
   audio-video-image-editing.enable = true;
 
   mount_k8s.enable = true;
