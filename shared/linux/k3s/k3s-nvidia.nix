@@ -90,7 +90,6 @@
     #     ln -sf /etc/k3s/containerd/config.toml.tmpl /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
     #   '';
 
-
     environment.systemPackages = with pkgs; [
       nvidia-container-toolkit
       libnvidia-container
