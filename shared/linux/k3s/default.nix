@@ -30,12 +30,7 @@
       extraFlags = let key = builtins.readFile ../../../shared/secrets/tailscale-auth.key; in
         "--vpn-auth=name=tailscale,joinKey=${key}";
 
-      package =
-        let
-          callPackage = pkgs.callPackage;
-          args = { inherit lib callPackage; };
-        in
-        (import ../../../packages/k3s args).k3s_1_30;
+      package = pkgs.k3s;
     };
 
 
