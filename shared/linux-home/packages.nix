@@ -12,6 +12,7 @@
     libreoffice
     calibre
     pandoc
+    normcap # ocr from screenshots
   ] ++ (lib.optionals nixosConfig.mullvad.enable [
     qbittorrent
     mullvad-vpn
