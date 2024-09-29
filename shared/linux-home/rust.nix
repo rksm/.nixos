@@ -34,6 +34,7 @@ in
     cargo-release
     cargo-generate
     dprint
+    cargo-features-manager
   ];
 
   home.file.".cargo/config.toml".text =
