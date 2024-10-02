@@ -50,7 +50,6 @@
     epiphany # web browser
     geary # email reader
     yelp # Help view
-  ]) ++ (with pkgs.gnome; [
     gnome-music
     gnome-characters
     tali # poker game
