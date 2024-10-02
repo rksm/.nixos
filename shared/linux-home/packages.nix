@@ -13,6 +13,7 @@
     calibre
     pandoc
     normcap # ocr from screenshots
+    pavucontrol
   ] ++ (lib.optionals nixosConfig.mullvad.enable [
     qbittorrent
     mullvad-vpn
