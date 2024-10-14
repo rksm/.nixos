@@ -14,6 +14,7 @@
     pandoc
     normcap # ocr from screenshots
     pavucontrol
+    kdenlive
   ] ++ (lib.optionals nixosConfig.mullvad.enable [
     qbittorrent
     mullvad-vpn
