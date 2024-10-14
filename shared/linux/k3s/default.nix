@@ -25,12 +25,21 @@
     services.k3s = {
       enable = true;
       role = "agent";
-      serverAddr = "https://linuxmini.tail2787e.ts.net:6443";
+      serverAddr = "https://podwriter-master-1:6443";
       tokenFile = ../../../shared/secrets/k3s-token.key;
       extraFlags = let key = builtins.readFile ../../../shared/secrets/tailscale-auth.key; in
         "--vpn-auth=name=tailscale,joinKey=${key}";
 
-      package = pkgs.k3s;
+      # package = (pkgs.k3s lib).override {
+      #   containerdVersion = "1.7.14";
+	    #   containerdSha256 = "";
+      # };
+      # package =
+      #   let
+      #     callPackage = pkgs.callPackage;
+      #     args = { inherit lib callPackage; };
+      #   in
+      #     (import ../../../packages/k3s args).k3s_1_30;
     };
 
 

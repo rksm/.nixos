@@ -73,32 +73,32 @@
 
     hardware.nvidia-container-toolkit.enable = true;
 
-    environment.etc."k3s/containerd/config.toml.tmpl".text = ''
-        {{ template "base" . }}
+    # environment.etc."k3s/containerd/config.toml.tmpl".text = ''
+    #     {{ template "base" . }}
 
-        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
-          privileged_without_host_devices = false
-          runtime_engine = ""
-          runtime_root = ""
-          runtime_type = "io.containerd.runc.v2"
+    #     [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia]
+    #       privileged_without_host_devices = false
+    #       runtime_engine = ""
+    #       runtime_root = ""
+    #       runtime_type = "io.containerd.runc.v2"
 
-        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
-          BinaryName = "/run/current-system/sw/bin/nvidia-container-runtime"
-      '';
+    #     [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.nvidia.options]
+    #       BinaryName = "/run/current-system/sw/bin/nvidia-container-runtime"
+    #   '';
 
-    system.activationScripts.script.text = ''
-        ln -sf /etc/k3s/containerd/config.toml.tmpl /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
-      '';
+    # system.activationScripts.script.text = ''
+    #     ln -sf /etc/k3s/containerd/config.toml.tmpl /var/lib/rancher/k3s/agent/etc/containerd/config.toml.tmpl
+    #   '';
 
 
     environment.systemPackages = with pkgs; [
       nvidia-container-toolkit
       libnvidia-container
-      cudaPackages.fabricmanager
+      # cudaPackages.fabricmanager
     ];
 
     systemd.services.k3s.path = with pkgs; [
-      cudaPackages.fabricmanager
+      # cudaPackages.fabricmanager
       nvidia-container-toolkit
       libnvidia-container
     ];
@@ -106,7 +106,7 @@
     systemd.services.containerd.path = with pkgs; [
       containerd
       runc
-      cudaPackages.fabricmanager
+      # cudaPackages.fabricmanager
       nvidia-container-toolkit
       libnvidia-container
     ];
