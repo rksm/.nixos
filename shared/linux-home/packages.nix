@@ -10,7 +10,8 @@
     vlc
     drawio
     libreoffice
-    calibre
+    # see https://github.com/NixOS/nixpkgs/issues/348845
+    stable.calibre
     pandoc
     normcap # ocr from screenshots
     pavucontrol

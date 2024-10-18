@@ -9,7 +9,7 @@
   programs.emacs = {
     enable = true;
 
-    package = pkgs.emacs.override { withImageMagick = true; };
+    package = pkgs.emacs;
 
     extraPackages = epkgs: with epkgs; [
       # for bootstrapping my .emacs.d

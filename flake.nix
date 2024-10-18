@@ -2,8 +2,8 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    # nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -18,20 +18,28 @@
     };
   };
 
-  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, ... }:
+  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, nixpkgs-stable, ... }:
     let
+
 
       nixosConfigurations =
         let
+          system = "x86_64-linux";
           machines = [ "titan-linux" "storm" ];
           user = "robert";
+          overlays-nixpkgs = final: prev: {
+            stable = import nixpkgs-stable {
+              inherit system;
+              config.allowUnfree = true;
+            };
+          };
         in
         builtins.listToAttrs
           (map
             (machine: {
               name = machine;
               value = nixpkgs.lib.nixosSystem {
-                system = "x86_64-linux";
+                inherit system;
                 specialArgs = { inherit inputs user machine; };
                 modules = [
                   ./hosts/${machine}
@@ -46,6 +54,8 @@
                     };
                     home-manager.users.${user} = import ./hosts/${machine}/home.nix;
                   }
+
+                  ({ ... }: { nixpkgs.overlays = [ overlays-nixpkgs ]; })
                 ];
               };
             })
