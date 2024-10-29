@@ -5,6 +5,7 @@
     unzip
     gnused
     gnutar
+    rclone
     killall
     wineWowPackages.staging
     vlc
