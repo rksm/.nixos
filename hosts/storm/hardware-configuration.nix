@@ -34,28 +34,28 @@
       };
 
     # littlelinux
-    fileSystems."/mnt/k8s" = lib.mkIf config.mount_k8s.enable
-      {
-        device = "100.70.116.122:/mnt/DB_DISK/podwriter_k8s_nfs";
-        fsType = "nfs";
-        # options = [ "x-systemd.automount" "noauto" ];
-        # options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
-      };
+    # fileSystems."/mnt/k8s" = lib.mkIf config.mount_k8s.enable
+    #   {
+    #     device = "100.70.116.122:/mnt/DB_DISK/podwriter_k8s_nfs";
+    #     fsType = "nfs";
+    #     # options = [ "x-systemd.automount" "noauto" ];
+    #     # options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
+    #   };
 
     # nas
-    fileSystems."/mnt/nas-nfs" = lib.mkIf config.mount_nas_nfs.enable
-      {
-        device = "nas.tail2787e.ts.net:/volume3/nfs";
-        fsType = "nfs";
-        # options = [ "x-systemd.automount" "noauto" "uid=1000" "gid=100" ];
-        options = [ "uid=1000" "gid=100" ];
-      };
-    fileSystems."/mnt/podwriter_data" = lib.mkIf config.mount_nas_nfs.enable
-      {
-        device = "nas.tail2787e.ts.net:/volume3/nfs/podwriter";
-        fsType = "nfs";
-        # options = [ "uid=1000" "gid=100" ];
-      };
+    # fileSystems."/mnt/nas-nfs" = lib.mkIf config.mount_nas_nfs.enable
+    #   {
+    #     device = "nas.tail2787e.ts.net:/volume3/nfs";
+    #     fsType = "nfs";
+    #     # options = [ "x-systemd.automount" "noauto" "uid=1000" "gid=100" ];
+    #     options = [ "uid=1000" "gid=100" ];
+    #   };
+    # fileSystems."/mnt/podwriter_data" = lib.mkIf config.mount_nas_nfs.enable
+    #   {
+    #     device = "nas.tail2787e.ts.net:/volume3/nfs/podwriter";
+    #     fsType = "nfs";
+    #     # options = [ "uid=1000" "gid=100" ];
+    #   };
 
     swapDevices =
       [{ device = "/dev/disk/by-uuid/27dd2751-e2e7-44a7-ab08-44ea012a4dd1"; }];
