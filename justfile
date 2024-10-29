@@ -11,7 +11,7 @@ switch *args="":
         darwin-rebuild switch {{ args }} --impure --flake .#Roberts-MacBook-Pro
     else
         # nixos-rebuild switch --flake . --use-remote-sudo
-        bash -c 'sudo nixos-rebuild switch {{ args }} |& nom'
+        bash -c 'sudo nixos-rebuild switch --impure {{ args }} |& nom'
     fi
 
 switch-debug:
