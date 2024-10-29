@@ -11,6 +11,10 @@ let
   };
 in
 {
+  environment.systemPackages = with pkgs; [
+    latest.firefox-nightly-bin
+  ];
+
   programs = {
     firefox = {
       enable = true;
@@ -22,7 +26,7 @@ in
         DisableTelemetry = true;
         DisableFirefoxStudies = true;
         EnableTrackingProtection = {
-          Value= true;
+          Value = true;
           Locked = false;
           Cryptomining = true;
           Fingerprinting = true;
