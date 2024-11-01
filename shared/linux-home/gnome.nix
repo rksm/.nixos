@@ -4,6 +4,7 @@
     gnomeExtensions.awesome-tiles
     gnomeExtensions.unite
     gnomeExtensions.hide-top-bar
+    gnomeExtensions.simple-timer
     # music
     rhythmbox
   ];
