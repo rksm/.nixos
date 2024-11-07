@@ -135,6 +135,9 @@
 
     # web / reading
     lynx # for rk/eww-extract-all-links
+
+    # spell checking
+    enchant
   ];
 
   programs.msmtp = {
