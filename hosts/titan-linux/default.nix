@@ -6,13 +6,14 @@
   ];
 
   ssh-password-auth.enable = false;
-  mount_k8s.enable = true;
   nvidia.enable = true;
   setup_docker.enable = false;
   virt-manager.enable = false;
   syncthing.enable = false;
   tailscale.enable = true;
   k3s.enable = true;
+  firewall.enable = false;
 
+  mount_k8s.enable = true;
   mount_linux_data.enable = true;
 }

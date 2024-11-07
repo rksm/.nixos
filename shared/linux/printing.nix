@@ -20,7 +20,7 @@
     services.avahi = {
       enable = true;
       nssmdns4 = true;
-      openFirewall = true;
+      openFirewall = config.firewall.enable; # open the firewall if we have a firewall
     };
   };
 

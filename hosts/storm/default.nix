@@ -17,6 +17,7 @@
   postgres.enable = false;
   audio-video-image-editing.enable = true;
 
+  firewall.enable = false;
   mount_k8s.enable = true;
   mount_nas_nfs.enable = true;
 }
