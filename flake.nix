@@ -16,12 +16,9 @@
       url = "github:bandithedoge/nixpkgs-firefox-darwin";
       #inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    nixpkgs-mozilla.url = "github:mozilla/nixpkgs-mozilla/master";
-    nixpkgs-mozilla.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-mozilla, ... }:
+  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, nixpkgs-stable, ... }:
     let
 
 
@@ -36,8 +33,6 @@
               config.allowUnfree = true;
             };
           };
-
-          ff-overlay = nixpkgs-mozilla.overlays.firefox;
 
         in
         builtins.listToAttrs
@@ -61,7 +56,7 @@
                     home-manager.users.${user} = import ./hosts/${machine}/home.nix;
                   }
 
-                  ({ ... }: { nixpkgs.overlays = [ overlays-nixpkgs ff-overlay ]; })
+                  ({ ... }: { nixpkgs.overlays = [ overlays-nixpkgs ]; })
                 ];
               };
             })

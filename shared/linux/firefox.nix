@@ -11,10 +11,6 @@ let
   };
 in
 {
-  environment.systemPackages = with pkgs; [
-    latest.firefox-nightly-bin
-  ];
-
   programs = {
     firefox = {
       enable = true;
