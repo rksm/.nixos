@@ -3,15 +3,15 @@ set dotenv-load
 default:
     just --list
 
-switch *args="":
+switch cmd="switch" *args="":
     #!/usr/bin/env sh
     set -e
     if [ "$(uname)" = "Darwin" ]; then
         # impure b/c hosts/Roberts-MacBook-Pro/packages.nix access abs path
-        darwin-rebuild switch {{ args }} --impure --flake .#Roberts-MacBook-Pro
+        darwin-rebuild {{ cmd }} {{ args }} --impure --flake .#Roberts-MacBook-Pro
     else
         # nixos-rebuild switch --flake . --use-remote-sudo
-        bash -c 'sudo nixos-rebuild switch --impure {{ args }} |& nom'
+        bash -c 'sudo nixos-rebuild {{ cmd }} --impure {{ args }} |& nom'
     fi
 
 switch-debug:

@@ -23,6 +23,7 @@ let
         maintainers = with maintainers; [ ivan-babrou matthiasbeyer ];
       };
     };
+
 in
 
 {
@@ -30,7 +31,7 @@ in
     # rust / dev
     rustup
     cargo-whatfeatures
-    cargo-feature
+    (cargo-feature.overrideAttrs (oldAttrs: { doCheck = false; }))
     cargo-release
     cargo-generate
     dprint
