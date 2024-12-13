@@ -17,6 +17,7 @@
     normcap # ocr from screenshots
     pavucontrol
     kdenlive
+    flare-signal
   ] ++ (lib.optionals nixosConfig.mullvad.enable [
     qbittorrent
     mullvad-vpn
