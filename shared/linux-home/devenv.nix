@@ -120,6 +120,7 @@
     nil
     nixpkgs-fmt # nix language server
 
+    attic-client
     devbox
   ];
 
