@@ -18,6 +18,7 @@
     pavucontrol
     kdenlive
     flare-signal
+    parsec-bin # remote control
   ] ++ (lib.optionals nixosConfig.mullvad.enable [
     qbittorrent
     mullvad-vpn
