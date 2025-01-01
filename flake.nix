@@ -16,11 +16,12 @@
       url = "github:bandithedoge/nixpkgs-firefox-darwin";
       #inputs.nixpkgs.follows = "nixpkgs";
     };
+    attic.url = "github:zhaofengli/attic";
+    attic.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, nixpkgs-stable, ... }:
+  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, nixpkgs-stable, attic, ... }:
     let
-
 
       nixosConfigurations =
         let
@@ -32,6 +33,10 @@
               inherit system;
               config.allowUnfree = true;
             };
+
+            attic = inputs.attic.packages.${system}.attic;
+            attic-client = inputs.attic.packages.${system}.attic-client;
+            attic-server = inputs.attic.packages.${system}.attic-server;
           };
 
         in

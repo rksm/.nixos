@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ inputs, config, pkgs, options, user, ... }:
+{ inputs, config, pkgs, options, user, lib, ... }:
 {
   imports = [
     ./linux.nix
@@ -23,6 +23,7 @@
     ./printing.nix
     ./postgres.nix
     ./audio-video-image-editing.nix
+    ./nix-cache.nix
   ];
 
   system.stateVersion = "24.05";
@@ -40,12 +41,16 @@
         "https://cache.nixos.org/"
         "https://cuda-maintainers.cachix.org"
         "https://nix-cache.dev.hyper.video/hyper"
+      ] ++ lib.optionals config.local-nix-cache.enable [
+        "http://storm.fritz.box:8180/local"
       ];
       trusted-public-keys = [
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
         "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
         "hyper:DjxBNvAnvX4QkO9tsA9NykspiVhqfYbxAqnNWr+FUNE="
+      ] ++ lib.optionals config.local-nix-cache.enable [
+        "local:p0ZZsZhdZwWzeJJDuSD/HL5pMmEW+UO7aMAXm25XPCo="
       ];
     };
   };
