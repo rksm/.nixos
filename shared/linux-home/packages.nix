@@ -7,7 +7,6 @@
     gnutar
     rclone
     killall
-    wineWowPackages.staging
     vlc
     drawio
     libreoffice

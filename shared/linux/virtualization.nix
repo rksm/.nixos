@@ -17,11 +17,21 @@
       virtiofsd
       win-spice
       win-virtio
+
+      # wineWowPackages.staging
+      wineWow64Packages.unstableFull
+      virtualbox
     ];
 
     services.spice-vdagentd.enable = true;
 
     virtualisation = {
+      # sharedDirectories = {
+      #   my-share = {
+      #     source = "/home/robert/Downloads";
+      #     target = "/mnt/shared";
+      #   };
+      # };
       libvirtd = {
         enable = true;
         allowedBridges = [ "br0" ];
