@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -12,15 +13,20 @@
     # darwin specific
     nix-darwin.url = "github:LnL7/nix-darwin/master";
     nix-darwin.inputs.nixpkgs.follows = "nixpkgs";
+
     nixpkgs-firefox-darwin = {
       url = "github:bandithedoge/nixpkgs-firefox-darwin";
       #inputs.nixpkgs.follows = "nixpkgs";
     };
+
     attic.url = "github:zhaofengli/attic";
     attic.inputs.nixpkgs.follows = "nixpkgs";
+
+    nixpkgs-rksm.url = "github:https://github.com/rksm/nixpkgs-rksm";
+    nixpkgs-rksm.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, nixpkgs-stable, attic, ... }:
+  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-rksm, attic, ... }:
     let
 
       nixosConfigurations =
@@ -30,6 +36,11 @@
           user = "robert";
           overlays-nixpkgs = final: prev: {
             stable = import nixpkgs-stable {
+              inherit system;
+              config.allowUnfree = true;
+            };
+
+            rksm = import nixpkgs-rksm {
               inherit system;
               config.allowUnfree = true;
             };
