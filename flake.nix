@@ -22,7 +22,7 @@
     attic.url = "github:zhaofengli/attic";
     attic.inputs.nixpkgs.follows = "nixpkgs";
 
-    nixpkgs-rksm.url = "github:https://github.com/rksm/nixpkgs-rksm";
+    nixpkgs-rksm.url = "github:rksm/nixpkgs-rksm";
     nixpkgs-rksm.inputs.nixpkgs.follows = "nixpkgs";
   };
 
@@ -41,8 +41,7 @@
             };
 
             rksm = import nixpkgs-rksm {
-              inherit system;
-              config.allowUnfree = true;
+              inherit system nixpkgs;
             };
 
             attic = inputs.attic.packages.${system}.attic;

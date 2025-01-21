@@ -18,6 +18,7 @@
     kdenlive
     flare-signal
     parsec-bin # remote control
+    rksm.uniclip # share clipboard over network
   ] ++ (lib.optionals nixosConfig.mullvad.enable [
     qbittorrent
     mullvad-vpn
