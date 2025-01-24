@@ -122,6 +122,7 @@
 
     attic-client
     devbox
+    jetbrains.rust-rover
   ];
 
 
