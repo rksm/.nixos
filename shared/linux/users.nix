@@ -4,7 +4,7 @@
   users.users.${user} = {
     isNormalUser = true;
     description = "${user} account";
-    extraGroups = [ "networkmanager" "wheel" "docker" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "fuse"];
     packages = with pkgs; [
       firefox
     ];
