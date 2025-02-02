@@ -40,18 +40,22 @@
 
         folders = {
           "org" = {
+            id = "org";
             path = "/home/${user}/org";
             devices = [ "titan-linux" "storm" "mbp" "nas" ];
           };
           "Documents" = {
+            id = "Documents";
             path = "/home/${user}/Documents";
             devices = [ "titan-linux" "storm" "mbp" "nas" ];
           };
           "configs" = {
+            id = "configs";
             path = "/home/${user}/configs";
             devices = [ "titan-linux" "storm" "mbp" "nas" ];
           };
           ".emacs.d" = {
+            id = ".emacs.d";
             path = "/home/${user}/.emacs.d";
             devices = [ "titan-linux" "storm" "mbp" "nas" ];
           };
@@ -60,6 +64,7 @@
           #   devices = [ "titan-linux" "storm" "mbp" "nas" ];
           # };
           "projects/biz" = {
+            id = "projects/biz";
             path = "/home/${user}/projects/biz";
             devices = [ "titan-linux" "storm" "mbp" "nas" ];
           };
@@ -84,27 +89,38 @@
           #   devices = [ "titan-linux" "storm" "mbp" "nas" ];
           # };
           "projects/infra" = {
+            id = "projects/infra";
             path = "/home/${user}/projects/infra";
             devices = [ "titan-linux" "storm" "mbp" "nas" ];
           };
           "projects/python" = {
+            id = "projects/python";
             path = "/home/${user}/projects/python";
             devices = [ "titan-linux" "storm" "mbp" "nas" ];
           };
           "projects/rust" = {
+            id = "projects/rust";
             path = "/home/${user}/projects/rust";
             devices = [ "titan-linux" "storm" "mbp" "nas" ];
           };
           "projects/typescript" = {
+            id = "projects/typescript";
             path = "/home/${user}/projects/typescript";
             devices = [ "titan-linux" "storm" "mbp" "nas" ];
           };
           "projects/website" = {
+            id = "projects/website";
             path = "/home/${user}/projects/website";
             devices = [ "titan-linux" "storm" "mbp" "nas" ];
           };
+          "projects/shuttle" = {
+            id = "projects/shuttle";
+            path = "/home/${user}/projects/shuttle";
+            devices = [ "storm" "nas" ];
+          };
         } // (if machine == "titan-linux" then {
           "media" = {
+            id = "media";
             path = "/media/robert/LINUX_DATA/media";
             devices = [ "titan-linux" "nas" ];
           };
