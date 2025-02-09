@@ -17,21 +17,36 @@
 
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
-  ssh-password-auth.enable = false;
-  nvidia.enable = true;
-  setup_docker.enable = true;
-  virt-manager.enable = true;
-  syncthing.enable = true;
-  tailscale.enable = true;
-  mullvad.enable = true;
-  gaming.enable = true;
-  printing.enable = true;
-  postgres.enable = false;
   audio-video-image-editing.enable = true;
+  gaming.enable = true;
+  local-nix-cache.enable = true;
+  mullvad.enable = true;
+  nvidia.enable = true;
+  postgres.enable = false;
+  printing.enable = true;
+  setup_docker.enable = true;
+  ssh-password-auth.enable = false;
+  tailscale.enable = true;
+  virt-manager.enable = true;
 
   firewall.enable = false;
   mount_k8s.enable = true;
   mount_nas_nfs.enable = true;
 
-  local-nix-cache.enable = true;
+  syncthing = {
+    enable = true;
+    enable-org = true;
+    enable-documents = true;
+    enable-configs = true;
+    enable-emacs = true;
+    enable-projects-biz = true;
+    enable-projects-infra = true;
+    enable-projects-python = true;
+    enable-projects-rust = true;
+    enable-projects-typescript = true;
+    enable-projects-website = true;
+    enable-projects-shuttle = true;
+    enable-media = false;
+  };
+
 }

@@ -12,8 +12,8 @@
   boot.loader.efi.canTouchEfiVariables = true;
   services.thermald.enable = true;
   hardware.tuxedo-rs = {
-    enable = true;
-    tailor-gui.enable = true;
+    enable = false;
+    tailor-gui.enable = false;
   };
   hardware.tuxedo-drivers.enable = true;
   # boot.kernelParams = [
@@ -37,7 +37,22 @@
   printing.enable = false;
   setup_docker.enable = false;
   ssh-password-auth.enable = true;
-  syncthing.enable = false;
   tailscale.enable = false;
   virt-manager.enable = false;
+
+  syncthing = {
+    enable = true;
+    enable-org = true;
+    enable-documents = true;
+    enable-configs = true;
+    enable-emacs = true;
+    enable-projects-biz = true;
+    enable-projects-infra = true;
+    enable-projects-python = false;
+    enable-projects-rust = true;
+    enable-projects-typescript = false;
+    enable-projects-website = true;
+    enable-projects-shuttle = true;
+    enable-media = false;
+  };
 }
