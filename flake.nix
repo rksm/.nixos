@@ -24,29 +24,23 @@
 
     nixpkgs-rksm.url = "github:rksm/nixpkgs-rksm";
     nixpkgs-rksm.inputs.nixpkgs.follows = "nixpkgs";
+
+    tuxedo-nixos.url = "github:blitz/tuxedo-nixos";
   };
 
-  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-rksm, attic, ... }:
+  outputs = inputs@{ self, nix-darwin, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-rksm, attic, tuxedo-nixos, ... }:
     let
 
       nixosConfigurations =
         let
           system = "x86_64-linux";
-          machines = [ "titan-linux" "storm" ];
+          machines = [ "titan-linux" "storm" "tuxedo" ];
           user = "robert";
           overlays-nixpkgs = final: prev: {
-            stable = import nixpkgs-stable {
-              inherit system;
-              config.allowUnfree = true;
-            };
-
-            rksm = import nixpkgs-rksm {
-              inherit system nixpkgs;
-            };
-
-            attic = inputs.attic.packages.${system}.attic;
-            attic-client = inputs.attic.packages.${system}.attic-client;
-            attic-server = inputs.attic.packages.${system}.attic-server;
+            stable = import nixpkgs-stable { inherit system; config.allowUnfree = true; };
+            rksm = import nixpkgs-rksm { inherit system nixpkgs; };
+            inherit (inputs.attic.packages.${system}) attic attic-client attic-server;
+            tuxedo-control-center = tuxedo-nixos.packages.x86_64-linux.default;
           };
 
         in
@@ -59,6 +53,8 @@
                 specialArgs = { inherit inputs user machine; };
                 modules = [
                   ./hosts/${machine}
+
+                  tuxedo-nixos.nixosModules.default
 
                   home-manager.nixosModules.home-manager
                   {

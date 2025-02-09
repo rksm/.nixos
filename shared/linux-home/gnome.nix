@@ -5,7 +5,7 @@
     gnomeExtensions.unite
     gnomeExtensions.hide-top-bar
     # music
-    rhythmbox
+    # rhythmbox
   ];
 
   dconf = {

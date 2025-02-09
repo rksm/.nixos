@@ -5,6 +5,11 @@
     ../../shared/linux
   ];
 
+  system.stateVersion = "24.05";
+  networking.wireless.enable = false;
+
+  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
   ssh-password-auth.enable = false;
   nvidia.enable = true;
   setup_docker.enable = false;

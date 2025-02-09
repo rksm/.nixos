@@ -44,9 +44,6 @@ in
       linker = "clang"
       rustflags = ["-C", "link-arg=--ld-path=${pkgs.mold-wrapped}/bin/mold"]
 
-      # [build]
-      # rustc-wrapper = "sccache"
-
       [registries]
       krahn = { index = "sparse+https://crates.kra.hn/api/v1/crates/", token = "${registry_key}" }
     '';

@@ -5,6 +5,18 @@
     ../../shared/linux
   ];
 
+  system.stateVersion = "24.05";
+
+  more-nix-substituters = [
+    "http://storm.fritz.box:8180/local"
+  ];
+  more-nix-trusted-public-keys = [
+    "local:p0ZZsZhdZwWzeJJDuSD/HL5pMmEW+UO7aMAXm25XPCo="
+  ];
+  networking.wireless.enable = false;
+
+  # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
   ssh-password-auth.enable = false;
   nvidia.enable = true;
   setup_docker.enable = true;

@@ -119,10 +119,10 @@
     nix-tree
     nil
     nixpkgs-fmt # nix language server
-
     attic-client
-    devbox
-    jetbrains.rust-rover
+    # devbox
+
+    # jetbrains.rust-rover
   ];
 
 
