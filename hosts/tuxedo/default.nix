@@ -31,14 +31,14 @@
   firewall.enable = false;
   gaming.enable = false;
   local-nix-cache.enable = false;
-  mullvad.enable = false;
+  mullvad.enable = true;
   nvidia-laptop.enable = true;
   postgres.enable = false;
   printing.enable = false;
-  setup_docker.enable = false;
-  ssh-password-auth.enable = true;
-  tailscale.enable = false;
-  virt-manager.enable = false;
+  setup_docker.enable = true;
+  ssh-password-auth.enable = false;
+  tailscale.enable = true;
+  virt-manager.enable = true;
 
   syncthing = {
     enable = true;
