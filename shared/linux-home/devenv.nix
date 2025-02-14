@@ -96,7 +96,7 @@
     difftastic
     tokei
     mkcert
-    shell-gpt
+    llm
     mermaid-cli
 
     # useful python packages
