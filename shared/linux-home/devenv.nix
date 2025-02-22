@@ -8,18 +8,6 @@
   home.file.".npmrc".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.npmrc;
   home.file.".style.yapf".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.style.yapf;
 
-  programs.git = {
-    enable = true;
-    includes = [
-      { path = "~/configs/git/.gitconfig"; }
-    ];
-    difftastic = {
-      enable = true;
-      # one of "side-by-side", "side-by-side-show-both", "inline"
-      display = "side-by-side";
-    };
-  };
-
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
@@ -72,6 +60,13 @@
     enable = true;
   };
 
+  programs.git = {
+    enable = true;
+    includes = [
+      { path = "~/configs/git/.gitconfig"; }
+    ];
+  };
+
   programs.gh = {
     enable = true;
     settings.git_protocol = "ssh";
@@ -91,13 +86,16 @@
     jq
     fx
     entr
-    git-crypt
-    git-extras
-    difftastic
     tokei
     mkcert
     llm
     mermaid-cli
+
+    jujutsu
+    (lazyjj.overrideAttrs (oldAttrs: { doCheck = false; }))
+    git-crypt
+    git-extras
+    difftastic
 
     # useful python packages
     (pkgs.python312.withPackages (packages: with packages; [
