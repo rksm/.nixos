@@ -8,7 +8,9 @@ switch cmd="switch" *args="":
     set -e
     if [ "$(uname)" = "Darwin" ]; then
         # impure b/c hosts/Roberts-MacBook-Pro/packages.nix access abs path
-        darwin-rebuild {{ cmd }} {{ args }} --impure --flake .#Roberts-MacBook-Pro
+        cd macos
+        echo "building for darwin on $(hostname)"
+        darwin-rebuild {{ cmd }} {{ args }} --impure --flake ".#$(hostname)"
     else
         # nixos-rebuild switch --flake . --use-remote-sudo
         bash -c 'sudo nixos-rebuild {{ cmd }} --impure {{ args }} |& nom'

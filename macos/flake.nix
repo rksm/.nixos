@@ -22,10 +22,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixpkgs-firefox-darwin = {
-      url = "github:bandithedoge/nixpkgs-firefox-darwin";
-    };
-
     attic.url = "github:zhaofengli/attic";
     attic.inputs.nixpkgs.follows = "nixpkgs";
   };
@@ -35,7 +31,6 @@
     , nixpkgs
     , darwin
     , home-manager
-    , nixpkgs-firefox-darwin
     , attic
     , ...
     }:
