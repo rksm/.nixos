@@ -30,7 +30,7 @@
       "@admin"
     ];
   };
-  nix.package = pkgs.nixUnstable;
+  nix.package = pkgs.nixVersions.latest;
   nix.extraOptions = ''
     auto-optimise-store = true
     experimental-features = nix-command flakes

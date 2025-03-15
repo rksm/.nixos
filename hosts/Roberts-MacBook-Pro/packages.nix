@@ -50,6 +50,7 @@
     brews = [
       "coreutils"
       "syncthing"
+      "wakeonlan"
     ];
 
     casks = [
@@ -58,7 +59,7 @@
       "1password"
       "1password-cli"
       "karabiner-elements"
-      "google-chrome"
+      # "google-chrome"
     ];
   };
 

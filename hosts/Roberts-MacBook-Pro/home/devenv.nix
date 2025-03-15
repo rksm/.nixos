@@ -17,6 +17,10 @@
       s
       modus-themes
       uuidgen
+      helm-org-ql
+      ebib
+      helm-google
+      helm-wikipedia
     ];
   };
 
@@ -104,6 +108,6 @@
     # emacs
     tree-sitter-grammars.tree-sitter-yaml
     silver-searcher
-    nodejs # for language server / copilot
+    nodejs_latest # for language server / copilot
   ];
 }
