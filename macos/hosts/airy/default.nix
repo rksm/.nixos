@@ -26,6 +26,14 @@
     extra-substituters = https://nix-cache.dev.hyper.video/hyper
     extra-trusted-public-keys = hyper:DjxBNvAnvX4QkO9tsA9NykspiVhqfYbxAqnNWr+FUNE=
   '';
+  # Determinate uses its own daemon to manage the Nix installation that
+  # conflicts with nix-darwin’s native Nix management.
+  # To turn off nix-darwin’s management of the Nix installation, set:
+  # This will allow you to use nix-darwin with Determinate. Some nix-darwin
+  # functionality that relies on managing the Nix installation, like the
+  # `nix.*` options to adjust Nix settings or configure a Linux builder,
+  # will be unavailable.
+  nix.enable = false;
 
   # Non-Determinate Nix settings
   # nix = {
@@ -50,9 +58,8 @@
   #   '';
   #   configureBuildUsers = true;
   # };
-
   # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
+  # services.nix-daemon.enable = true;
 
   # Add ability to used TouchID for sudo authentication
   # security.pam.enableSudoTouchIdAuth = true;
@@ -106,6 +113,10 @@
 
       trackpad.Clicking = true;
       trackpad.TrackpadThreeFingerDrag = true;
+
+      menuExtraClock.Show24Hour = true; # show 24 hour clock
+
+      NSGlobalDomain."com.apple.keyboard.fnState" = true;
     };
 
     keyboard = {
@@ -113,7 +124,6 @@
       # remapCapsLockToControl = true;
     };
 
-    menuExtraClock.Show24Hour = true; # show 24 hour clock
 
     # activationScripts are executed every time you boot the system or run `nixos-rebuild` / `darwin-rebuild`.
     activationScripts.postUserActivation.text = ''
@@ -139,5 +149,4 @@
     #   ''
     # );
   };
-
 }

@@ -11,24 +11,24 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-24.11-darwin";
+    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-24.11-darwin";
     darwin = {
-      url = "github:lnl7/nix-darwin";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:lnl7/nix-darwin/nix-darwin-24.11";
+      inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:nix-community/home-manager/release-24.11";
+      inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
 
     attic.url = "github:zhaofengli/attic";
-    attic.inputs.nixpkgs.follows = "nixpkgs";
+    attic.inputs.nixpkgs.follows = "nixpkgs-darwin";
   };
 
   outputs =
     inputs @ { self
-    , nixpkgs
+    , nixpkgs-darwin
     , darwin
     , home-manager
     , attic
@@ -68,11 +68,17 @@
               ];
             };
 
-          }))
-        machines;
+          })
+        machines);
     in
 
     {
       inherit darwinConfigurations;
+
+      devShells.aarch64-darwin.default = {
+        packages = [
+          nixpkgs-darwin.pkgs.hello
+        ];
+      };
     };
 }

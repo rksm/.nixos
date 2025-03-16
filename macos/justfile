@@ -1,0 +1,11 @@
+default:
+    just --list
+
+switch cmd="switch" *args="":
+    #!/usr/bin/env sh
+    set -e
+
+    # impure b/c hosts/Roberts-MacBook-Pro/packages.nix access abs path
+    echo "building for darwin on $(hostname)"
+    [ -f /etc/nix/nix.custom.conf ] && sudo rm /etc/nix/nix.custom.conf
+    nix run nix-darwin -- {{ cmd }} {{ args }} --impure --flake ".#$(hostname)"

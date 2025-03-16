@@ -13,7 +13,7 @@
   ];
 
   home.file.".cargo/config.toml".text =
-    let registry_key = builtins.readFile ../../../shared/secrets/crates.kra.hn.key; in ''
+    let registry_key = builtins.readFile ../../../../shared/secrets/crates.kra.hn.key; in ''
       [registries]
       krahn = { index = "sparse+https://crates.kra.hn/api/v1/crates/", token = "${registry_key}" }
     '';
