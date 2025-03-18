@@ -54,6 +54,10 @@
             id = "ZBIN2HO-EGA5WIN-UVJES3W-VMQJWSR-YKCZ5LS-ZZLZHHK-NTR75Z3-SDMGXA4";
             autoAcceptFolders = false;
           };
+          "airy" = {
+            id = "3RES5O5-HOBSBFM-WGADO2O-ODCAW7Y-PRP3FGS-POM2OTY-XUP5WZG-SVJUYAW";
+            autoAcceptFolders = false;
+          };
         };
 
         folders = { }
@@ -61,96 +65,96 @@
           "org" = {
             id = "org";
             path = "/home/${user}/org";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-documents {
           "Documents" = {
             id = "Documents";
             path = "/home/${user}/Documents";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-configs {
           "configs" = {
             id = "configs";
             path = "/home/${user}/configs";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-emacs {
           ".emacs.d" = {
             id = ".emacs.d";
             path = "/home/${user}/.emacs.d";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
 
           # "projects/ai" = {
           #   path = "/home/${user}/projects/biz";
-          #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+          #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           # };
 
           // (lib.optionalAttrs config.syncthing.enable-projects-biz {
           "projects/biz" = {
             id = "projects/biz";
             path = "/home/${user}/projects/biz";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
           # "projects/clojure" = {
           #   path = "/home/${user}/projects/clojure";
-          #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+          #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           # };
           # "projects/common-lisp" = {
           #   path = "/home/${user}/projects/common-lisp";
-          #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+          #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           # };
           # "projects/coscreen" = {
           #   path = "/home/${user}/projects/coscreen";
-          #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+          #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           # };
           # "projects/coscreen-win" = {
           #   path = "/home/${user}/projects/coscreen-win";
-          #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+          #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           # };
           # "projects/gamedev" = {
           #   path = "/home/${user}/projects/gamedev";
-          #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+          #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           # };
           // (lib.optionalAttrs config.syncthing.enable-projects-infra {
           "projects/infra" = {
             id = "projects/infra";
             path = "/home/${user}/projects/infra";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-projects-python {
           "projects/python" = {
             id = "projects/python";
             path = "/home/${user}/projects/python";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-projects-rust {
           "projects/rust" = {
             id = "projects/rust";
             path = "/home/${user}/projects/rust";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-projects-typescript {
           "projects/typescript" = {
             id = "projects/typescript";
             path = "/home/${user}/projects/typescript";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-projects-website {
           "projects/website" = {
             id = "projects/website";
             path = "/home/${user}/projects/website";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" ];
+            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-projects-shuttle {
