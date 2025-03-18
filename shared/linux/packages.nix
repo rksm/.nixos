@@ -32,7 +32,7 @@
     ripgrep
     fd
 
-    # pkgs.unstable.google-chrome
+    # pkgs.latest.google-chrome
     google-chrome
   ];
 

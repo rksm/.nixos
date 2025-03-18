@@ -121,6 +121,7 @@
     # devbox
 
     # jetbrains.rust-rover
+    code-cursor
   ];
 
 
