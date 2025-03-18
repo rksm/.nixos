@@ -65,7 +65,7 @@
       "1password"
       "1password-cli"
       "karabiner-elements"
-      # "google-chrome"
+      "scroll-reverser"
     ];
   };
 }

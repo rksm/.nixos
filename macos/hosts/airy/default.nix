@@ -18,48 +18,55 @@
   ####################
   # nix config
 
-  # Needed since Determinate Nix manages the main config file for system.
-  environment.etc."nix/nix.custom.conf".text = pkgs.lib.mkForce ''
-    # Add nix settings to seperate conf file
-    # since we use Determinate Nix on our systems.
-    trusted-users = robert
-    extra-substituters = https://nix-cache.dev.hyper.video/hyper
-    extra-trusted-public-keys = hyper:DjxBNvAnvX4QkO9tsA9NykspiVhqfYbxAqnNWr+FUNE=
-  '';
-  # Determinate uses its own daemon to manage the Nix installation that
-  # conflicts with nix-darwin’s native Nix management.
-  # To turn off nix-darwin’s management of the Nix installation, set:
-  # This will allow you to use nix-darwin with Determinate. Some nix-darwin
-  # functionality that relies on managing the Nix installation, like the
-  # `nix.*` options to adjust Nix settings or configure a Linux builder,
-  # will be unavailable.
-  nix.enable = false;
+  # # Needed since Determinate Nix manages the main config file for system.
+  # environment.etc."nix/nix.custom.conf".text = pkgs.lib.mkForce ''
+  #   # Add nix settings to seperate conf file
+  #   # since we use Determinate Nix on our systems.
+  #   trusted-users = ${user}
+  #   accept-flake-config = true
+  #   substituters = https://nix-cache.dev.hyper.video/hyper https://cache.nixos.org
+  #   trusted-substituters = https://nix-cache.dev.hyper.video/hyper
+  #   trusted-public-keys = hyper:DjxBNvAnvX4QkO9tsA9NykspiVhqfYbxAqnNWr+FUNE= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+  # '';
+  # # Determinate uses its own daemon to manage the Nix installation that
+  # # conflicts with nix-darwin's native Nix management.
+  # # To turn off nix-darwin's management of the Nix installation, set:
+  # # This will allow you to use nix-darwin with Determinate. Some nix-darwin
+  # # functionality that relies on managing the Nix installation, like the
+  # # `nix.*` options to adjust Nix settings or configure a Linux builder,
+  # # will be unavailable.
+  # nix.enable = false;
 
   # Non-Determinate Nix settings
-  # nix = {
-  #   settings = {
-  #     substituters = [
-  #       "https://cache.nixos.org/"
-  #     ];
-  #     trusted-public-keys = [
-  #       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-  #     ];
-  #     trusted-users = [
-  #       "@admin"
-  #     ];
-  #     experimental-features = "nix-command flakes";
-  #   };
-  #   package = pkgs.nixVersions.latest;
-  #   extraOptions = ''
-  #     auto-optimise-store = true
-  #     experimental-features = nix-command flakes
-  #   '' + lib.optionalString (pkgs.system == "x86_64-darwin") ''
-  #     extra-platforms = x86_64-darwin aarch64-darwin
-  #   '';
-  #   configureBuildUsers = true;
-  # };
+  nix = {
+    settings = {
+      substituters = [
+        "https://cache.nixos.org/"
+      ];
+      trusted-public-keys = [
+        "hyper:DjxBNvAnvX4QkO9tsA9NykspiVhqfYbxAqnNWr+FUNE="
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      ];
+      trusted-substituters = [
+        "https://nix-cache.dev.hyper.video/hyper"
+      ];
+      trusted-users = [
+        "@admin" "${user}"
+      ];
+      experimental-features = "nix-command flakes";
+    };
+    package = pkgs.nixVersions.latest;
+    extraOptions = ''
+      auto-optimise-store = true
+    '' + lib.optionalString (pkgs.system == "x86_64-darwin") ''
+      extra-platforms = x86_64-darwin aarch64-darwin
+    '';
+    configureBuildUsers = true;
+    # https://github.com/NixOS/nix/issues/2982#issuecomment-2477618346
+    channel.enable = false;
+  };
   # Auto upgrade nix package and the daemon service.
-  # services.nix-daemon.enable = true;
+  services.nix-daemon.enable = true;
 
   # Add ability to used TouchID for sudo authentication
   # security.pam.enableSudoTouchIdAuth = true;
@@ -79,6 +86,7 @@
 
   # The platform the configuration will be used on.
   # nixpkgs.hostPlatform = "x86_64-darwin";
+  nixpkgs.hostPlatform = "aarch64-darwin";
 
   #https://github.com/LnL7/nix-darwin/blob/master/modules/examples/lnl.nix
   system = {
