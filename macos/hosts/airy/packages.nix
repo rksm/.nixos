@@ -25,6 +25,7 @@
     unzip
     gnused
     gnutar
+    rsync
 
     # system call monitoring
     lsof # list open files
@@ -66,6 +67,7 @@
       "1password-cli"
       "karabiner-elements"
       "scroll-reverser"
+      "alt-tab"
     ];
   };
 }

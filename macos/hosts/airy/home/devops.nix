@@ -5,6 +5,7 @@
 
   programs.k9s = {
     enable = true;
+    package = pkgs.unstable.k9s;
   };
 
   home.packages = with pkgs; [

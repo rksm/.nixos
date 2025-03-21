@@ -12,6 +12,7 @@
 
   inputs = {
     nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-24.11-darwin";
+    nixpkgs-latest.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     darwin = {
       url = "github:lnl7/nix-darwin/nix-darwin-24.11";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
@@ -29,6 +30,7 @@
   outputs =
     inputs @ { self
     , nixpkgs-darwin
+    , nixpkgs-latest
     , darwin
     , home-manager
     , attic
@@ -50,26 +52,35 @@
 
       darwinConfigurations = builtins.listToAttrs
         (map
-          (machine: {
-            name = machine.name;
-            value = darwin.lib.darwinSystem {
-              system = machine.system;
-              specialArgs = { inherit inputs user; };
-              modules = [
-                ./hosts/${machine.name}
+          (machine:
+            let
+              overlays-nixpkgs = final: prev: {
+                inherit (inputs.attic.packages.${machine.system}) attic attic-client attic-server;
+                unstable = import nixpkgs-latest { system = machine.system; config.allowUnfree = true; };
+              };
+            in
+            {
+              name = machine.name;
+              value = darwin.lib.darwinSystem {
+                system = machine.system;
+                specialArgs = { inherit inputs user; };
+                modules = [
+                  ./hosts/${machine.name}
 
-                home-manager.darwinModules.home-manager
-                {
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                  home-manager.extraSpecialArgs = { inherit user; };
-                  home-manager.users.${user} = import ./hosts/${machine.name}/home;
-                }
-              ];
-            };
+                  home-manager.darwinModules.home-manager
+                  {
+                    home-manager.useGlobalPkgs = true;
+                    home-manager.useUserPackages = true;
+                    home-manager.extraSpecialArgs = { inherit user; };
+                    home-manager.users.${user} = import ./hosts/${machine.name}/home;
+                  }
 
-          })
-        machines);
+                  ({ ... }: { nixpkgs.overlays = [ overlays-nixpkgs ]; })
+                ];
+              };
+
+            })
+          machines);
     in
 
     {

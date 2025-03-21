@@ -192,6 +192,7 @@
     nix-tree
     nil
     nixpkgs-fmt # nix language server
+    attic-client
 
     # emacs
     tree-sitter-grammars.tree-sitter-yaml
