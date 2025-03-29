@@ -37,10 +37,14 @@
   ];
 
   programs.dconf.enable = true;
-  programs._1password.enable = true;
+  programs._1password = {
+    enable = true;
+    package = pkgs.latest._1password;
+  };
   programs._1password-gui = {
     enable = true;
     polkitPolicyOwners = [ "${user}" ];
+    package = pkgs.latest._1password-gui;
   };
 
   # some programs need SUID wrappers, can be configured further or are
