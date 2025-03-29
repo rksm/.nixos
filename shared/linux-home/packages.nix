@@ -13,9 +13,8 @@
     # see https://github.com/NixOS/nixpkgs/issues/348845
     stable.calibre
     pandoc
-    normcap # ocr from screenshots
+    # normcap # ocr from screenshots # 2025-03-26 python dep issue
     pavucontrol
-    kdenlive
     flare-signal
     parsec-bin # remote control
     rksm.uniclip # share clipboard over network

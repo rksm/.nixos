@@ -11,7 +11,7 @@
         krita
         inkscape
         # for video editing
-        kdenlive
+        # kdenlive
         audacity
 
         simplescreenrecorder
