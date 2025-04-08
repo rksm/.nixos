@@ -56,10 +56,6 @@
     enableBashIntegration = true;
   };
 
-  programs.k9s = {
-    enable = true;
-  };
-
   programs.git = {
     enable = true;
     includes = [

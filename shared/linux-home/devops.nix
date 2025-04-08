@@ -5,6 +5,7 @@
 
   programs.k9s = {
     enable = true;
+    package = pkgs.latest.k9s;
   };
 
   home.packages = with pkgs; [
