@@ -19,6 +19,7 @@
     flare-signal
     parsec-bin # remote control
     rksm.uniclip # share clipboard over network
+    rksm.unsure # calculator for uncertain numbers
   ] ++ (lib.optionals nixosConfig.mullvad.enable [
     qbittorrent
     mullvad-vpn
