@@ -119,6 +119,7 @@
 
     # jetbrains.rust-rover
     code-cursor
+    latest.aider-chat
   ];
 
 
