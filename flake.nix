@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.05";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
     nixpkgs-latest.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     home-manager = {
@@ -12,7 +12,7 @@
     };
 
     attic.url = "github:zhaofengli/attic";
-    attic.inputs.nixpkgs.follows = "nixpkgs";
+    attic.inputs.nixpkgs.follows = "nixpkgs-stable";
 
     nixpkgs-rksm.url = "github:rksm/nixpkgs-rksm";
     nixpkgs-rksm.inputs.nixpkgs.follows = "nixpkgs";
@@ -33,7 +33,7 @@
             latest = import nixpkgs-latest { inherit system; config.allowUnfree = true; };
             rksm = import nixpkgs-rksm { inherit system nixpkgs; };
             inherit (inputs.attic.packages.${system}) attic attic-client attic-server;
-            tuxedo-control-center = tuxedo-nixos.packages.x86_64-linux.default;
+            tuxedo-control-center = tuxedo-nixos.packages.${system}.default;
           };
 
         in
@@ -47,8 +47,6 @@
                 modules = [
                   ./hosts/${machine}
 
-                  tuxedo-nixos.nixosModules.default
-
                   home-manager.nixosModules.home-manager
                   {
                     home-manager.useGlobalPkgs = true;
@@ -59,6 +57,8 @@
                     };
                     home-manager.users.${user} = import ./hosts/${machine}/home.nix;
                   }
+
+                  tuxedo-nixos.nixosModules.default
 
                   ({ ... }: { nixpkgs.overlays = [ overlays-nixpkgs ]; })
                 ];
