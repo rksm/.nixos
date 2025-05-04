@@ -21,6 +21,9 @@
         focus-active-notification = [ "" ];
         show-screenshot-ui = [ "<Shift><Super>4" ];
         show-screen-recording-ui = [ "<Shift><Super>5" ];
+        toggle-application-view = [ "" ]; # unbind Super + A
+        toggle-quick-settings = [ "" ]; # unbind Super + S
+        toggle-message-tray = [ "" ]; # unbind Super + m, Super + v
       };
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
@@ -74,7 +77,7 @@
       # gnome extensions
 
       "org/gnome/shell" = {
-        enabled-extensions = [ "awesome-tiles@velitasali.com" "unite@hardpixel.eu" "hidetopbar@mathieu.bidon.ca"];
+        enabled-extensions = [ "awesome-tiles@velitasali.com" "unite@hardpixel.eu" "hidetopbar@mathieu.bidon.ca" ];
       };
 
       "org/gnome/shell/extensions/awesome-tiles" = {
