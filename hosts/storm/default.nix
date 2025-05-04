@@ -31,7 +31,7 @@
 
   firewall.enable = false;
   mount_k8s.enable = true;
-  mount_nas_nfs.enable = true;
+  mount_nas_nfs.enable = false;
 
   syncthing = {
     enable = true;

@@ -34,13 +34,12 @@
       };
 
     # littlelinux
-    # fileSystems."/mnt/k8s" = lib.mkIf config.mount_k8s.enable
-    #   {
-    #     device = "100.70.116.122:/mnt/DB_DISK/podwriter_k8s_nfs";
-    #     fsType = "nfs";
-    #     # options = [ "x-systemd.automount" "noauto" ];
-    #     # options = [ "x-systemd.automount" "noauto" "x-systemd.idle-timeout=600" ];
-    #   };
+    fileSystems."/mnt/k8s" = lib.mkIf config.mount_k8s.enable
+      {
+        device = "littlelinux2.tail2787e.ts.net:/mnt/DB_DISK/podwriter_k8s_nfs";
+        fsType = "nfs";
+        options = [ "x-systemd.automount" "noauto" ];
+      };
 
     # nas
     # fileSystems."/mnt/nas-nfs" = lib.mkIf config.mount_nas_nfs.enable
