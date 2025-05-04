@@ -10,7 +10,7 @@
 
   home.packages = with pkgs; [
     # devops
-    ansible
+    # ansible
     kubectl
     kubernetes-helm
 
