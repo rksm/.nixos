@@ -15,7 +15,6 @@
     pandoc
     normcap # ocr from screenshots
     pavucontrol
-    kdenlive
     flare-signal
     parsec-bin # remote control
     rksm.uniclip # share clipboard over network

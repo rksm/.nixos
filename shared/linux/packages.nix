@@ -37,9 +37,10 @@
   ];
 
   programs.dconf.enable = true;
+
   programs._1password = {
     enable = true;
-    package = pkgs.latest._1password;
+    package = pkgs.latest._1password-cli;
   };
   programs._1password-gui = {
     enable = true;
