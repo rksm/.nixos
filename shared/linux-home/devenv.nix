@@ -103,6 +103,7 @@
       seaborn
       plotly
       pdftotext
+      tqdm
     ]))
 
     # nix related
