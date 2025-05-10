@@ -85,6 +85,7 @@
     tokei
     mkcert
     llm
+    shell-gpt
     mermaid-cli
 
     jujutsu
