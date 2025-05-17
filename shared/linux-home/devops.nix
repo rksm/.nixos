@@ -17,6 +17,9 @@
     # networking tools
     mtr # A network diagnostic tool
     iperf3
+    gping # A ping tool with a graph
+    oha # A load testing tool, parallelized HTTP requests: oha -- -z 2s -w https://latest.dev.hyper.video/assets/hyper_video_web_bg-CMMjGOCS.wasm
+    bandwhich # A bandwidth measurement tool
     dnsutils # `dig` + `nslookup`
     ldns # replacement of `dig`, it provide the command `drill`
     aria2 # A lightweight multi-protocol & multi-source command-line download utility
