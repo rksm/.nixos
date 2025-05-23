@@ -13,6 +13,7 @@
     # see https://github.com/NixOS/nixpkgs/issues/348845
     stable.calibre
     pandoc
+    zettlr # markdown editor
     normcap # ocr from screenshots
     pavucontrol
     flare-signal
