@@ -42,6 +42,19 @@
 
       # init-autocomplete.el
       company
+      company-go
+      company-glsl
+      company-qml
+      company-shell
+      company-terraform
+
+      # init-shell.el
+      direnv
+      bash-completion
+      with-editor
+      flash-region
+      fish-mode
+      fish-completion
 
       # init-projects.el
       projectile
@@ -69,6 +82,7 @@
       ebib
 
       # init-vc.el
+      transient
       magit
       magit-lfs
       magit-section
