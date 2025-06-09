@@ -32,8 +32,7 @@
     ripgrep
     fd
 
-    # pkgs.latest.google-chrome
-    google-chrome
+    pkgs.latest.google-chrome
   ];
 
   programs.dconf.enable = true;

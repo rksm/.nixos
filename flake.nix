@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-24.11";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-latest.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     home-manager = {
@@ -12,7 +12,6 @@
     };
 
     attic.url = "github:zhaofengli/attic";
-    attic.inputs.nixpkgs.follows = "nixpkgs-stable";
 
     nixpkgs-rksm.url = "github:rksm/nixpkgs-rksm";
     nixpkgs-rksm.inputs.nixpkgs.follows = "nixpkgs";
