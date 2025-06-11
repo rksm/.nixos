@@ -1,9 +1,9 @@
 { config, pkgs, lib, ... }: {
   home.packages = with pkgs; [
     dconf-editor
-    gnomeExtensions.awesome-tiles
     gnomeExtensions.unite
     gnomeExtensions.hide-top-bar
+    gnomeExtensions.tiling-shell
     # music
     # rhythmbox
   ];
@@ -77,7 +77,7 @@
       # gnome extensions
 
       "org/gnome/shell" = {
-        enabled-extensions = [ "awesome-tiles@velitasali.com" "unite@hardpixel.eu" "hidetopbar@mathieu.bidon.ca" ];
+        enabled-extensions = [ "tilingshell@ferrarodomenico.com" "unite@hardpixel.eu" "hidetopbar@mathieu.bidon.ca" ];
       };
 
       "org/gnome/shell/extensions/awesome-tiles" = {
