@@ -1,9 +1,8 @@
 { pkgs
 , lib
 , stdenv
-, fetchgit
 , nixosTests
-,
+, unzip
 }:
 
 let
@@ -21,28 +20,15 @@ let
     , # Extension version numbers are integers
       version
     , # Hex-encoded string of JSON bytes
-      metadata
+      src
     ,
     }:
 
     stdenv.mkDerivation {
       pname = "gnome-shell-extension-${pname}";
       version = builtins.toString version;
-      src = fetchgit {
-        url = "https://github.com/velitasali/gnome-shell-extension-awesome-tiles";
-        rev = "231aaa99844a7101c54fb1444564e40e863fdc47";
-        sha256 = "sha256-4PyxlK3qIQOKVjcoch+ifLSZLJ2BdcXhwSA26s2sevs=";
-
-        # The download URL may change content over time. This is because the
-        # metadata.json is automatically generated, and parts of it can be changed
-        # without making a new release. We simply substitute the possibly changed fields
-        # with their content from when we last updated, and thus get a deterministic output
-        # hash.
-        postFetch = ''
-          echo "${metadata}" | base64 --decode > $out/metadata.json
-        '';
-      };
-      nativeBuildInputs = with pkgs; [ buildPackages.glib ];
+      inherit src;
+      nativeBuildInputs = with pkgs; [ buildPackages.glib unzip ];
       buildPhase = ''
         runHook preBuild
         if [ -d schemas ]; then
@@ -80,10 +66,10 @@ let
   pname = "awesome-tiles";
   description = "Tile windows using keyboard shortcuts.";
   link = "https://extensions.gnome.org/extension/4702/awesome-tiles/";
-  version = 15;
-  metadata = "ewogICJfZ2VuZXJhdGVkIjogIkdlbmVyYXRlZCBieSBTd2VldFRvb3RoLCBkbyBub3QgZWRpdCIsCiAgImRlc2NyaXB0aW9uIjogIlRpbGUgd2luZG93cyB1c2luZyBrZXlib2FyZCBzaG9ydGN1dHMuIiwKICAiZ2V0dGV4dC1kb21haW4iOiAiYXdlc29tZS10aWxlc0B2ZWxpdGFzYWxpLmNvbSIsCiAgIm5hbWUiOiAiQXdlc29tZSBUaWxlcyIsCiAgInNldHRpbmdzLXNjaGVtYSI6ICJvcmcuZ25vbWUuc2hlbGwuZXh0ZW5zaW9ucy5hd2Vzb21lLXRpbGVzIiwKICAic2hlbGwtdmVyc2lvbiI6IFsKICAgICI0NSIsCiAgICAiNDYiLAogICAgIjQ3IiwKICAgICI0OCIKICBdLAogICJ1cmwiOiAiaHR0cHM6Ly9naXRodWIuY29tL3ZlbGl0YXNhbGkvZ25vbWUtYXdlc29tZS10aWxlcy1leHRlbnNpb24iLAogICJ1dWlkIjogImF3ZXNvbWUtdGlsZXNAdmVsaXRhc2FsaS5jb20iLAogICJ2ZXJzaW9uIjogMTUKfQo=";
+  version = 14;
+  src = ../../../packages/awesome-tiles;
 
 in
 buildGnomeExtension {
-  inherit uuid name pname description link version metadata;
+  inherit uuid name pname description link version src;
 }
