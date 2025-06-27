@@ -1,0 +1,3 @@
+[submodule "custom/gnome-shell-extension-awesome-tiles"]
+	path = custom/gnome-shell-extension-awesome-tiles
+	url = git@github.com:rksm/gnome-shell-extension-awesome-tiles.git
