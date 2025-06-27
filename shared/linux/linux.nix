@@ -3,6 +3,10 @@
   boot.kernelPackages = pkgs.linuxPackages_latest;
   time.timeZone = "Europe/Berlin";
 
+  # workaround for clickhouse emacs client:
+  # https://github.com/ClickHouse/ClickHouse/issues/55998
+  boot.kernel.sysctl = { "kernel.task_delayacct" = 1; };
+
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 
