@@ -3,8 +3,11 @@
     dconf-editor
     gnomeExtensions.unite
     gnomeExtensions.hide-top-bar
+
+    # workaround for https://github.com/velitasali/gnome-shell-extension-awesome-tiles/issues/58
     # gnomeExtensions.awesome-tiles
     (pkgs.callPackage ./packages/awesome-tiles.nix { })
+
     # music
     # rhythmbox
   ];
