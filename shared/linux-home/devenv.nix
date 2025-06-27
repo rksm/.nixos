@@ -71,6 +71,7 @@
   home.packages = with pkgs; [
     # shell / utils
     wezterm
+    latest.warp-terminal
     oh-my-fish
     tealdeer
     just
