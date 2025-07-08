@@ -17,10 +17,11 @@
         simplescreenrecorder
 
         # obs-studio
-        (pkgs.wrapOBS {
-          plugins = with pkgs.obs-studio-plugins; [
+        (pkgs.latest.wrapOBS {
+          plugins = with pkgs.latest.obs-studio-plugins; [
             obs-backgroundremoval
             obs-source-record
+            obs-pipewire-audio-capture
           ];
         })
       ];
