@@ -33,6 +33,8 @@
     fd
 
     pkgs.latest.google-chrome
+
+    pulseaudio
   ];
 
   programs.dconf.enable = true;
