@@ -11,6 +11,9 @@
       enable32Bit = true;
     };
 
+    nixpkgs.config.cudaSupport = true;
+    nixpkgs.config.nvidia.acceptLicense = true;
+
     # Load nvidia driver for Xorg and Wayland
     services.xserver.videoDrivers = [ "nvidia" ]; # or "nvidiaLegacy470 etc.
 
