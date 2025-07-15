@@ -11,7 +11,7 @@
         krita
         inkscape
         # for video editing
-        kdePackages.kdenlive
+        latest.kdePackages.kdenlive
         audacity
 
         simplescreenrecorder
