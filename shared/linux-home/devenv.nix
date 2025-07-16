@@ -103,7 +103,6 @@
       polars
       matplotlib
       seaborn
-      plotly
       pdftotext
       tqdm
     ]))
@@ -121,8 +120,8 @@
     # devbox
 
     # jetbrains.rust-rover
-    code-cursor
-    latest.aider-chat
+    # code-cursor
+    pkgs.aider.aider-chat
   ];
 
 

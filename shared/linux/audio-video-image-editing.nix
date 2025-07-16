@@ -8,7 +8,7 @@
   config = lib.mkIf config.audio-video-image-editing.enable
     {
       environment.systemPackages = with pkgs; [
-        krita
+        stable.krita
         inkscape
         # for video editing
         latest.kdePackages.kdenlive

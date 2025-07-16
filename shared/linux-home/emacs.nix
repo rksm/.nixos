@@ -91,17 +91,17 @@
 
       # init-helm.el
       helm
-      helm-ag
+      # helm-ag
       helm-company
       helm-core
       helm-dictionary
       helm-eww
       helm-lsp
       helm-nixos-options
-      helm-swoop
+      # helm-swoop
       helm-system-packages
       helm-systemd
-      helm-themes
+      # helm-themes
 
       # init-keybindings.el
       key-chord
@@ -117,7 +117,7 @@
 
       # init-web.el
       google-this
-      helm-google
+      # helm-google
       helm-wikipedia
       hnreader
       hydra
@@ -156,5 +156,6 @@
 
   programs.msmtp = {
     enable = true;
+    package = pkgs.stable.msmtp;
   };
 }

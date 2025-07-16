@@ -5,6 +5,8 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-latest.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    # TODO: Fix for 2025-07-14 and https://github.com/NixOS/nixpkgs/issues/425560
+    nixpkgs-aider.url = "github:NixOS/nixpkgs/2a2130494ad647f953593c4e84ea4df839fbd68c";
 
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -19,7 +21,7 @@
     tuxedo-nixos.url = "github:blitz/tuxedo-nixos";
   };
 
-  outputs = inputs@{ self, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-latest, nixpkgs-rksm, attic, tuxedo-nixos, ... }:
+  outputs = inputs@{ self, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-latest, nixpkgs-aider, nixpkgs-rksm, attic, tuxedo-nixos, ... }:
     let
 
       nixosConfigurations =
@@ -30,6 +32,7 @@
           overlays-nixpkgs = final: prev: {
             stable = import nixpkgs-stable { inherit system; config.allowUnfree = true; };
             latest = import nixpkgs-latest { inherit system; config.allowUnfree = true; };
+            aider = import nixpkgs-aider { inherit system; config.allowUnfree = true; };
             rksm = import nixpkgs-rksm { inherit system nixpkgs; };
             inherit (inputs.attic.packages.${system}) attic attic-client attic-server;
             tuxedo-control-center = tuxedo-nixos.packages.${system}.default;

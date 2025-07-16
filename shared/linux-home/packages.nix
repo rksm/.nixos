@@ -14,7 +14,8 @@
     stable.calibre
     pandoc
     texlive.combined.scheme-small # for pandoc pdf support: https://discourse.nixos.org/t/what-are-the-best-practices-regarding-pandoc-when-one-simply-wants-a-conversion-to-pdf/11889/2
-    zettlr # markdown editor
+    stable.zettlr # markdown editor
+    typora # markdown editor
     normcap # ocr from screenshots
     pavucontrol
     flare-signal

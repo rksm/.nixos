@@ -19,7 +19,7 @@
 
   audio-video-image-editing.enable = true;
   gaming.enable = true;
-  local-nix-cache.enable = true;
+  local-nix-cache.enable = false;
   mullvad.enable = true;
   nvidia.enable = true;
   postgres.enable = false;
