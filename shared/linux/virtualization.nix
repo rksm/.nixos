@@ -20,7 +20,7 @@
 
       # wineWowPackages.staging
       wineWow64Packages.unstableFull
-      virtualbox
+      stable.virtualbox
     ];
 
     services.spice-vdagentd.enable = true;

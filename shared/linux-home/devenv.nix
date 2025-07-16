@@ -121,7 +121,7 @@
 
     # jetbrains.rust-rover
     # code-cursor
-    pkgs.aider.aider-chat
+    aider-chat
   ];
 
 

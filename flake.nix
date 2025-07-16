@@ -32,7 +32,10 @@
           overlays-nixpkgs = final: prev: {
             stable = import nixpkgs-stable { inherit system; config.allowUnfree = true; };
             latest = import nixpkgs-latest { inherit system; config.allowUnfree = true; };
-            aider = import nixpkgs-aider { inherit system; config.allowUnfree = true; };
+            inherit (import nixpkgs-aider { inherit system; config.allowUnfree = true; })
+              aider-chat aider-chat-with-browser
+              aider-chat-full aider-chat-with-help
+              aider-chat-with-bedrock aider-chat-with-playwright;
             rksm = import nixpkgs-rksm { inherit system nixpkgs; };
             inherit (inputs.attic.packages.${system}) attic attic-client attic-server;
             tuxedo-control-center = tuxedo-nixos.packages.${system}.default;
