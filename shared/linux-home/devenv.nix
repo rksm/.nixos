@@ -122,6 +122,7 @@
     # jetbrains.rust-rover
     # code-cursor
     aider-chat
+    latest.claude-code
   ];
 
 
