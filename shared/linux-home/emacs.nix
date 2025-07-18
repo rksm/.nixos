@@ -118,6 +118,10 @@
       mediawiki
 
       # init-natural-language.el
+
+      # init-ai.el
+      eat
+      vterm
     ];
   };
 
