@@ -7,19 +7,19 @@
 
   system.stateVersion = "24.05";
 
-  more-nix-substituters = [
-    "http://storm.fritz.box:8180/local"
-  ];
-  more-nix-trusted-public-keys = [
-    "local:p0ZZsZhdZwWzeJJDuSD/HL5pMmEW+UO7aMAXm25XPCo="
-  ];
-  networking.wireless.enable = false;
+  # more-nix-substituters = [
+  #   "http://storm.fritz.box:8180/local"
+  # ];
+  # more-nix-trusted-public-keys = [
+  #   "local:p0ZZsZhdZwWzeJJDuSD/HL5pMmEW+UO7aMAXm25XPCo="
+  # ];
+  local-nix-cache.enable = false;
 
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   audio-video-image-editing.enable = true;
   gaming.enable = true;
-  local-nix-cache.enable = false;
+  networking.wireless.enable = false;
   mullvad.enable = true;
   nvidia.enable = true;
   postgres.enable = false;

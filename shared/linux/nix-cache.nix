@@ -6,6 +6,7 @@
   config = lib.mkIf config.local-nix-cache.enable {
     services.atticd = {
       enable = true;
+      package = pkgs.stable.attic-server;
       user = "atticd";
       group = "atticd";
 
