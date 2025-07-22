@@ -96,6 +96,7 @@
     llm
     shell-gpt
     mermaid-cli
+    graphviz
 
     jujutsu
     (lazyjj.overrideAttrs (oldAttrs: { doCheck = false; }))
@@ -113,6 +114,7 @@
       seaborn
       pdftotext
       tqdm
+      networkx
     ]))
 
     # nix related
