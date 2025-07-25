@@ -23,14 +23,6 @@
 
   programs.bash = {
     enable = true;
-    bashrcExtra = ''
-      if command -v direnv >/dev/null 2>&1; then
-        if [ -n "$CLAUDECODE" ]; then
-          eval "$(direnv hook bash)"
-          eval "$(DIRENV_LOG_FORMAT= direnv export bash)"
-        fi
-      fi
-    '';
     initExtra = ''
       if [ -f $HOME/configs/.bashrc ];
       then
