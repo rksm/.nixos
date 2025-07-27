@@ -123,8 +123,9 @@
 
     # jetbrains.rust-rover
     # code-cursor
-    aider-chat
-    latest.claude-code
+    ai.aider-chat
+    ai.claude-code
+    ai.gemini-cli
   ];
 
 
