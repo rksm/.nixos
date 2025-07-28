@@ -109,6 +109,10 @@
       dictcc
       powerthesaurus
       mediawiki
+
+      # shell
+      eat
+      vterm
     ];
   };
 
@@ -163,9 +167,11 @@
     enableBashIntegration = true;
   };
 
+
   home.packages = with pkgs; [
     # shell / utils
     # wezterm
+    latest.warp-terminal
     oh-my-fish
     tealdeer
     just
@@ -177,8 +183,31 @@
     jq
     fx
     entr
+    tokei
+    mkcert
+    llm
+    shell-gpt
+    mermaid-cli
+    graphviz
     git-crypt
     gh
+
+    # dev tools
+    httpie
+    ngrok
+
+    # python
+    (python3.withPackages (ps: with ps; [
+      pip
+      pyyaml
+      rich
+      polars
+      matplotlib
+      seaborn
+      pdftotext
+      tqdm
+      networkx
+    ]))
 
     # nix related
     #
@@ -188,7 +217,13 @@
     nix-tree
     nil
     nixpkgs-fmt # nix language server
+    nixfmt-rfc-style
     attic-client
+    # devbox
+
+    # jetbrains.rust-rover
+    # code-cursor
+    ai.aider-chat
 
     # emacs
     tree-sitter-grammars.tree-sitter-yaml

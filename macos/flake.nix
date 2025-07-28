@@ -4,22 +4,22 @@
   # the nixConfig here only affects the flake itself, not the system configuration!
   nixConfig = {
     substituters = [
-      # Query the mirror of USTC first, and then the official cache.
-      "https://mirrors.ustc.edu.cn/nix-channels/store"
-      "https://cache.nixos.org"
+      "https://nix-community.cachix.org"
+      "https://cache.nixos.org/"
     ];
   };
 
   inputs = {
-    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-24.11-darwin";
+    nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-25.05-darwin";
     nixpkgs-latest.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-ai.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     darwin = {
-      url = "github:lnl7/nix-darwin/nix-darwin-24.11";
+      url = "github:lnl7/nix-darwin/nix-darwin-25.05";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.11";
+      url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
     };
 
@@ -31,6 +31,7 @@
     inputs @ { self
     , nixpkgs-darwin
     , nixpkgs-latest
+    , nixpkgs-ai
     , darwin
     , home-manager
     , attic
@@ -56,7 +57,8 @@
             let
               overlays-nixpkgs = final: prev: {
                 inherit (inputs.attic.packages.${machine.system}) attic attic-client attic-server;
-                unstable = import nixpkgs-latest { system = machine.system; config.allowUnfree = true; };
+                latest = import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
+                ai = import nixpkgs-ai { inherit (machine) system; config.allowUnfree = true; };
               };
             in
             {

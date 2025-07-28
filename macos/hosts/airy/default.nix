@@ -1,5 +1,7 @@
 { lib, inputs, config, pkgs, options, user, ... }:
 {
+  # Set primary user for nix-darwin options that require it
+  system.primaryUser = user;
   imports = [
     ./packages.nix
   ];
@@ -61,12 +63,12 @@
     '' + lib.optionalString (pkgs.system == "x86_64-darwin") ''
       extra-platforms = x86_64-darwin aarch64-darwin
     '';
-    configureBuildUsers = true;
+    # configureBuildUsers is deprecated and removed in newer nix-darwin
     # https://github.com/NixOS/nix/issues/2982#issuecomment-2477618346
     channel.enable = false;
   };
   # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
+  # services.nix-daemon.enable is deprecated and removed in newer nix-darwin
 
   # Add ability to used TouchID for sudo authentication
   # security.pam.enableSudoTouchIdAuth = true;
@@ -134,10 +136,11 @@
 
 
     # activationScripts are executed every time you boot the system or run `nixos-rebuild` / `darwin-rebuild`.
-    activationScripts.postUserActivation.text = ''
+    # postUserActivation is deprecated, now all activation runs as root
+    activationScripts.postActivation.text = ''
       # activateSettings -u will reload the settings from the database and apply them to the current session,
       # so we do not need to logout and login again to make the changes take effect.
-      /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+      sudo -u ${user} /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
     '';
 
     # activationScripts.applications.text = pkgs.lib.mkForce (
