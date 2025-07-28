@@ -122,12 +122,14 @@
     # devbox
 
     # jetbrains.rust-rover
-    # code-cursor
     ai.aider-chat
-    ai.claude-code
-    ai.gemini-cli
   ];
 
+  # npm global
+  home.sessionPath = [
+    "$HOME/npm/bin"
+    "$HOME/.local/bin"
+  ];
 
   # mkcert suuport
   home.file.".local/share/mkcert/rootCA-key.pem".source = config.lib.file.mkOutOfStoreSymlink /etc/nixos/shared/secrets/mkcert/rootCA-key.pem;
