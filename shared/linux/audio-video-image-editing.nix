@@ -15,6 +15,7 @@
         audacity
 
         simplescreenrecorder
+        latest.yt-dlp
       ];
 
       programs.obs-studio = {
