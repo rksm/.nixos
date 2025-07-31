@@ -22,6 +22,7 @@
     parsec-bin # remote control
     rksm.uniclip # share clipboard over network
     rksm.unsure # calculator for uncertain numbers
+    (callPackage ../../packages/dsnote { }) # speech-to-text note taking app
     slack
   ] ++ (lib.optionals nixosConfig.mullvad.enable [
     qbittorrent
