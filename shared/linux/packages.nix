@@ -18,6 +18,7 @@
     nmap
     killall
     xclip # for xclip -selection clipboard
+    notify-desktop
 
     # low priority so that we can to use trace from elsewhere
     (pkgs.lowPrio config.boot.kernelPackages.perf)
