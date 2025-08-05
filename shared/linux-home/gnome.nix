@@ -3,6 +3,7 @@
     dconf-editor
     gnomeExtensions.unite
     gnomeExtensions.hide-top-bar
+    gnomeExtensions.appindicator
 
     # workaround for https://github.com/velitasali/gnome-shell-extension-awesome-tiles/issues/58
     # gnomeExtensions.awesome-tiles
@@ -81,7 +82,12 @@
       # gnome extensions
 
       "org/gnome/shell" = {
-        enabled-extensions = [ "awesome-tiles@velitasali.com" "unite@hardpixel.eu" "hidetopbar@mathieu.bidon.ca" ];
+        enabled-extensions = [
+          "awesome-tiles@velitasali.com"
+          "unite@hardpixel.eu"
+          "hidetopbar@mathieu.bidon.ca"
+          "appindicatorsupport@rgcjonas.gmail.com"
+        ];
       };
 
       "org/gnome/shell/extensions/awesome-tiles" = {
