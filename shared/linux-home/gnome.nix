@@ -119,7 +119,7 @@
         reduce-panel-spacing = false;
         restrict-to-primary-screen = true;
         show-desktop-name = true;
-        show-legacy-tray = true;
+        show-legacy-tray = false;
         show-window-buttons = "always";
         show-window-title = "always";
       };

@@ -136,11 +136,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1754436205,
-        "narHash": "sha256-RYeQQHj17UVJOazz5N/BeqDLWuykYmLrxkuKuSCd0as=",
+        "lastModified": 1754656734,
+        "narHash": "sha256-ml6TXmSfmtm1kLFhWjIxZiVC8iqMOs0Du8BtdZ20044=",
         "owner": "rksm",
         "repo": "gnome-voice-input",
-        "rev": "4e361375c03436eb61e9cf76e57c36fa49b6f99a",
+        "rev": "5c695ec4b525501d17613655d6b8eeddc3cb3826",
         "type": "github"
       },
       "original": {
