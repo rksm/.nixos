@@ -6,6 +6,10 @@
     EDITOR = "emacsclient -n";
   };
 
+  home.sessionPath = [
+    "$HOME/npm/bin"
+  ];
+
   programs.emacs = {
     enable = true;
     extraPackages = epkgs: with epkgs; [
