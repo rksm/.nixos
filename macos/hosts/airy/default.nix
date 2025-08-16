@@ -46,11 +46,11 @@
         "https://cache.nixos.org/"
       ];
       trusted-public-keys = [
-        "hyper:DjxBNvAnvX4QkO9tsA9NykspiVhqfYbxAqnNWr+FUNE="
+        "hyper-video.cachix.org-1:47YSCAg+fJBEH3oAhSzlcZAbjTMgnHTmQ6gI1la0Su4="
         "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       ];
       trusted-substituters = [
-        "https://nix-cache.dev.hyper.video/hyper"
+        "https://hyper-video.cachix.org"
       ];
       trusted-users = [
         "@admin" "${user}"

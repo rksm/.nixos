@@ -219,6 +219,7 @@
     nixpkgs-fmt # nix language server
     nixfmt-rfc-style
     attic-client
+    cachix
     # devbox
 
     # jetbrains.rust-rover
