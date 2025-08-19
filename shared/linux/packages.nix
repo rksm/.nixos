@@ -10,7 +10,7 @@
     git-lfs
     git-filter-repo
     wget
-    (curl.override { idnSupport = true; brotliSupport = true; })
+    (curl.override { c-aresSupport = true; brotliSupport = true; })
     htop
     btop
     iotop
