@@ -15,7 +15,7 @@ switch cmd="switch" *args="":
     fi
 
 switch-debug:
-    just switch --show-trace --print-build-logs --verbose
+    just switch --print-build-logs --verbose
 
 build:
      nix build '/etc/nixos/#nixosConfigurations.titan-linux.config.system.build.toplevel --impure'

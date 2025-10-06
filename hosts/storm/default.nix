@@ -3,6 +3,7 @@
   imports = [
     ./hardware-configuration.nix
     ../../shared/linux
+    ../../services/podwriter.nix
   ];
 
   system.stateVersion = "24.05";
@@ -30,7 +31,7 @@
   virt-manager.enable = true;
 
   firewall.enable = false;
-  mount_k8s.enable = true;
+  mount_k8s.enable = false;
   mount_nas_nfs.enable = false;
 
   syncthing = {
