@@ -25,7 +25,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    podwriter.url = "path:/home/robert/projects/biz/podwriter-nix-deploy";
+    podwriter.url = "path:/home/robert/projects/biz/podwriter-nix";
   };
 
   outputs =

@@ -2,40 +2,26 @@
 { config, pkgs, lib, ... }:
 
 {
-  # Enable the podwriter-controller service
   services.podwriter-controller = {
     enable = false;
-
-    # Package from the podwriter flake
-    package = pkgs.podwriter;
-
-    # Data directory
-    dataDir = "/home/robert/projects/biz/podwriter-deploy-test-data/transcription-jobs";
-
-    # Environment
+    logLevel = "info,sqlx=warn,podwriter=debug";
     environment = "development";
 
-    # Database connection
-    # For security, consider using sops-nix or agenix for secrets
+    dataDir = /home/robert/projects/biz/podwriter-deploy-test-data/transcription-jobs;
     databaseUrl = "postgresql://podwriter:AK2YD3*_3qla!pla@podwriter-1:5432/podwriter";
-
-    # Service endpoints
-    natsUrl = "nats://podwriter:9BueebFpVBDTtoK2isi@nats.transcripts.cloud:4222";
+    natsUrl = "nats://nats.transcripts.cloud:4222";
+    natsUser = "podwriter";
+    natsPassword = "9BueebFpVBDTtoK2isi";
     elasticsearchHost = "http://localhost:9200";
 
-    # AI model
     transcriptionChatModel = "gpt-4o";
 
-    # Spotify credentials - CHANGE THESE
     spotify = {
       username = "YOUR_SPOTIFY_USERNAME";
       password = "YOUR_SPOTIFY_PASSWORD";
       clientId = "YOUR_SPOTIFY_CLIENT_ID";
       clientSecret = "YOUR_SPOTIFY_CLIENT_SECRET";
     };
-
-    # Logging
-    logLevel = "info,sqlx=warn,podwriter=debug";
 
     # Additional environment variables if needed
     extraEnvironment = {
@@ -50,4 +36,26 @@
   # services.postgresql.enable = true;
   # services.nats.enable = true;
   # services.elasticsearch.enable = true;
+
+
+  services.podwriter-web-app = {
+    enable = false;
+    logLevel = "info,sqlx=warn,podwriter=debug,firebase=debug";
+
+    host = "0.0.0.0";
+    port = 3003;
+    environment = "development";
+
+    sessionDb = /home/robert/projects/biz/podwriter/data/sessions.sqlite;
+    dataDir = /home/robert/projects/biz/podwriter-deploy-test-data/transcription-jobs;
+    databaseUrl = "postgresql://podwriter:AK2YD3*_3qla!pla@podwriter-1:5432/podwriter";
+    natsUrl = "nats://podwriter:9BueebFpVBDTtoK2isi@nats.transcripts.cloud:4222";
+    natsUser = "podwriter";
+    natsPassword = "9BueebFpVBDTtoK2isi";
+
+    transcriptionChatModel = "gpt-4o";
+
+    extraEnvironment = { };
+  };
+
 }
