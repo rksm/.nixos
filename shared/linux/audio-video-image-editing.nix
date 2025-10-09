@@ -9,6 +9,7 @@
     {
       environment.systemPackages = with pkgs; [
         stable.krita
+        stable.darktable
         inkscape
         # for video editing
         latest.kdePackages.kdenlive
