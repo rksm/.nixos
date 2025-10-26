@@ -24,8 +24,6 @@
       url = "github:rksm/gnome-voice-input/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    podwriter.url = "path:/home/robert/projects/biz/podwriter-nix";
   };
 
   outputs =
@@ -39,7 +37,6 @@
     , attic
     , tuxedo-nixos
     , gnome-voice-input
-    , podwriter
     , ...
     }:
     let
@@ -82,13 +79,9 @@
 
                   tuxedo-nixos.nixosModules.default
 
-                  # Add podwriter-controller module
-                  podwriter.nixosModules.podwriter-controller
-
                   ({ ... }: {
                     nixpkgs.overlays = [
                       overlays-nixpkgs
-                      podwriter.overlays.default
                       gnome-voice-input.overlays.default
                     ];
                   })

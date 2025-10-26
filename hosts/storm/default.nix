@@ -3,7 +3,6 @@
   imports = [
     ./hardware-configuration.nix
     ../../shared/linux
-    ../../services/podwriter.nix
   ];
 
   system.stateVersion = "24.05";
