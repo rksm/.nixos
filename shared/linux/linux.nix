@@ -1,7 +1,8 @@
 { config, pkgs, machine, ... }:
 {
   boot.kernelPackages = pkgs.linuxPackages_latest;
-  time.timeZone = "Europe/Berlin";
+  # time.timeZone = "Europe/Berlin";
+  time.timeZone = "America/New_York";
 
   # workaround for clickhouse emacs client:
   # https://github.com/ClickHouse/ClickHouse/issues/55998
