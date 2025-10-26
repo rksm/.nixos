@@ -41,7 +41,6 @@
   audio-video-image-editing.enable = true;
   firewall.enable = false;
   gaming.enable = false;
-  networking.wireless.enable = true;
   local-nix-cache.enable = false;
   mullvad.enable = true;
   nvidia-laptop.enable = true;
