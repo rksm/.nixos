@@ -19,6 +19,7 @@
     normcap # ocr from screenshots
     pavucontrol
     flare-signal
+    whatsie # whatsapp desktop client
     parsec-bin # remote control
     rksm.uniclip # share clipboard over network
     rksm.unsure # calculator for uncertain numbers
