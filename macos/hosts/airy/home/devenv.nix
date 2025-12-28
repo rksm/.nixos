@@ -12,6 +12,7 @@
 
   programs.emacs = {
     enable = true;
+    defaultEditor = true;
     extraPackages = epkgs: with epkgs; [
       # for bootstrapping my .emacs.d
       nix-mode
@@ -222,7 +223,6 @@
     nil
     nixpkgs-fmt # nix language server
     nixfmt-rfc-style
-    attic-client
     cachix
     # devbox
 
