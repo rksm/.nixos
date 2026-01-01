@@ -12,7 +12,6 @@
 
   programs.emacs = {
     enable = true;
-    defaultEditor = true;
     extraPackages = epkgs: with epkgs; [
       # for bootstrapping my .emacs.d
       nix-mode
@@ -79,17 +78,13 @@
 
       # init-helm.el
       helm
-      helm-ag
       helm-company
       helm-core
       helm-dictionary
       helm-eww
       helm-lsp
       helm-nixos-options
-      helm-swoop
       helm-system-packages
-      helm-systemd
-      helm-themes
 
       # init-keybindings.el
       key-chord
@@ -105,11 +100,8 @@
 
       # init-web.el
       google-this
-      helm-google
-      helm-wikipedia
       hnreader
       hydra
-      helm-lobsters
       wttrin
       dictcc
       powerthesaurus
@@ -228,7 +220,6 @@
 
     # jetbrains.rust-rover
     # code-cursor
-    ai.aider-chat
 
     # emacs
     tree-sitter-grammars.tree-sitter-yaml
