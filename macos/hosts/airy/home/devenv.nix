@@ -1,5 +1,13 @@
 { config, pkgs, lib, user, ... }:
 
+let
+  emacs = pkgs.emacs-macport.overrideAttrs (o: {
+    configureFlags = o.configureFlags ++ [
+      "CFLAGS=-DFD_SETSIZE=10000"
+      "CFLAGS=-D_DARWIN_UNLIMITED_SELECT"
+    ];
+  });
+in
 {
 
   home.sessionVariables = {
@@ -12,6 +20,7 @@
 
   programs.emacs = {
     enable = true;
+    package = emacs;
     extraPackages = epkgs: with epkgs; [
       # for bootstrapping my .emacs.d
       nix-mode
@@ -188,6 +197,7 @@
     graphviz
     git-crypt
     gh
+    cmake
 
     # dev tools
     httpie
