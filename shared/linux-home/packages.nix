@@ -12,7 +12,12 @@
     libreoffice
     # see https://github.com/NixOS/nixpkgs/issues/348845
     stable.calibre
+
+    # markdown
     pandoc
+    mermaid-filter
+    mermaid-cli
+
     texlive.combined.scheme-small # for pandoc pdf support: https://discourse.nixos.org/t/what-are-the-best-practices-regarding-pandoc-when-one-simply-wants-a-conversion-to-pdf/11889/2
     stable.zettlr # markdown editor
     typora # markdown editor
