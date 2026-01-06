@@ -8,7 +8,6 @@
     ./rust.nix
     ./gnome.nix
     ./packages.nix
-    ./audio-input.nix
   ];
 
   home.username = "${user}";

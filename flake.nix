@@ -18,12 +18,6 @@
     nixpkgs-rksm.inputs.nixpkgs.follows = "nixpkgs";
 
     tuxedo-nixos.url = "github:blitz/tuxedo-nixos";
-
-
-    gnome-voice-input = {
-      url = "github:rksm/gnome-voice-input/main";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -36,7 +30,6 @@
     , nixpkgs-rksm
     , attic
     , tuxedo-nixos
-    , gnome-voice-input
     , ...
     }:
     let
@@ -82,7 +75,6 @@
                   ({ ... }: {
                     nixpkgs.overlays = [
                       overlays-nixpkgs
-                      gnome-voice-input.overlays.default
                     ];
                   })
                 ];
