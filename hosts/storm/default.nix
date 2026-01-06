@@ -1,4 +1,4 @@
-{ inputs, config, pkgs, options, user, machine, ... }:
+{ inputs, config, pkgs, options, user, machine, lib, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -19,7 +19,7 @@
 
   audio-video-image-editing.enable = true;
   gaming.enable = true;
-  networking.wireless.enable = false;
+  networking.wireless.enable = lib.mkForce false;
   mullvad.enable = true;
   nvidia.enable = true;
   postgres.enable = false;

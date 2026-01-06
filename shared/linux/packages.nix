@@ -1,4 +1,4 @@
-{ config, pkgs, user, ... }:
+{ config, pkgs, user, lib, ... }:
 {
 
   # List packages installed in system profile. To search, run:
@@ -21,7 +21,7 @@
     notify-desktop
 
     # low priority so that we can to use trace from elsewhere
-    (pkgs.lowPrio config.boot.kernelPackages.perf)
+    (lib.lowPrio perf)
     config.boot.kernelPackages.tmon # thermal monitoring
     config.boot.kernelPackages.cpupower
 
@@ -61,7 +61,7 @@
     hack-font
     fira-code
     fira-code-symbols
-    ubuntu_font_family
+    ubuntu-classic
     monaspace
     jetbrains-mono
     etBook

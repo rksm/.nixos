@@ -151,6 +151,6 @@
 
   programs.msmtp = {
     enable = true;
-    package = pkgs.stable.msmtp;
+    package = pkgs.msmtp;
   };
 }

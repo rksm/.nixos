@@ -35,7 +35,8 @@ export class WindowMover {
     rect ??= window.get_frame_rect()
     const lastValue = this._desktopSettings.get_boolean("enable-animations")
     if (lastValue) this._desktopSettings.set_boolean("enable-animations",false)
-    window.unmaximize(Meta.MaximizeFlags.BOTH)
+    // GNOME 49+: unmaximize() no longer takes Meta.MaximizeFlags parameter
+    window.unmaximize()
     window.move_resize_frame(false, rect.x, rect.y, rect.width, rect.height)
     if (lastValue) this._desktopSettings.set_boolean("enable-animations",true)
   }
@@ -74,7 +75,8 @@ export class WindowMover {
     const innerRectBefore = window.get_frame_rect()
     const outterRectBefore = window.get_buffer_rect()
     const actor = window.get_compositor_private()
-    const isMaximized = window.get_maximized()
+    // GNOME 49+: get_maximized() replaced with is_maximized()
+    const isMaximized = window.is_maximized()
     const lastAnimation = this._windowAnimations.find(item=>item.window === window)
     const thisAnimation = {}
     let clone

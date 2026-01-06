@@ -8,8 +8,8 @@
   config = lib.mkIf config.audio-video-image-editing.enable
     {
       environment.systemPackages = with pkgs; [
-        stable.krita
-        stable.darktable
+        krita
+        darktable
         inkscape
         # for video editing
         latest.kdePackages.kdenlive

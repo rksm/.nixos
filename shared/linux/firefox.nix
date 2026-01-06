@@ -14,6 +14,7 @@ in
   programs = {
     firefox = {
       enable = true;
+      package = pkgs.latest.firefox;
       languagePacks = [ "en-US" "de" ];
 
       /* ---- POLICIES ---- */

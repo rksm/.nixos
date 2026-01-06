@@ -16,11 +16,11 @@
       virtio-win
       virtiofsd
       win-spice
-      win-virtio
+      virtio-win
 
       # wineWowPackages.staging
       wineWow64Packages.unstableFull
-      stable.virtualbox
+      virtualbox
     ];
 
     services.spice-vdagentd.enable = true;
@@ -38,8 +38,6 @@
         qemu = {
           package = pkgs.qemu_kvm;
           swtpm.enable = true;
-          ovmf.enable = true;
-          ovmf.packages = [ pkgs.OVMFFull.fd ];
         };
       };
       spiceUSBRedirection.enable = true;

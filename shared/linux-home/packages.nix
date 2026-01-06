@@ -11,7 +11,7 @@
     drawio
     libreoffice
     # see https://github.com/NixOS/nixpkgs/issues/348845
-    stable.calibre
+    # calibre # temporarily disabled - onnxruntime CUDA build failure
 
     # markdown
     pandoc
@@ -19,7 +19,7 @@
     mermaid-cli
 
     texlive.combined.scheme-small # for pandoc pdf support: https://discourse.nixos.org/t/what-are-the-best-practices-regarding-pandoc-when-one-simply-wants-a-conversion-to-pdf/11889/2
-    stable.zettlr # markdown editor
+    zettlr # markdown editor
     typora # markdown editor
     normcap # ocr from screenshots
     pavucontrol
@@ -36,16 +36,32 @@
   xdg.mimeApps = {
     enable = true;
     associations.added = {
-      "application/pdf" = ["org.gnome.Evince.desktop"];
-      "text/html" = ["firefox.desktop"];
-      "application/xhtml+xml" = ["firefox.desktop"];
-      "image/png" = ["org.gnome.Loupe.desktop"];
+      "application/pdf" = [ "org.gnome.Evince.desktop" ];
+      "text/html" = [ "firefox.desktop" ];
+      "application/xhtml+xml" = [ "firefox.desktop" ];
+      "image/png" = [ "org.gnome.Loupe.desktop" ];
+      "video/webm" = [ "audacity.desktop" "vlc.desktop" ];
+      "video/mp4" = [ "vlc.desktop" ];
+      # "application/json" = ["emacsclient.desktop"];
+      "video/x-matroska" = [ "vlc.desktop" ];
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" = [ "writer.desktop" ];
+      "image/heif" = [ "org.darktable.darktable.desktop" ];
     };
     defaultApplications = {
-      "application/pdf" = ["org.gnome.Evince.desktop"];
-      "text/html" = ["firefox.desktop"];
-      "application/xhtml+xml" = ["firefox.desktop"];
-      "image/png" = ["org.gnome.Loupe.desktop"];
+      "application/pdf" = [ "org.gnome.Evince.desktop" ];
+      "text/html" = [ "firefox.desktop" ];
+      "application/xhtml+xml" = [ "firefox.desktop" ];
+      "x-scheme-handler/http" = [ "firefox.desktop" ];
+      "x-scheme-handler/https" = [ "firefox.desktop" ];
+      "x-scheme-handler/about" = [ "firefox.desktop" ];
+      "x-scheme-handler/unknown" = [ "firefox.desktop" ];
+      "image/png" = [ "org.gnome.Loupe.desktop" ];
+      "video/webm" = [ "vlc.desktop" ];
+      "video/mp4" = [ "vlc.desktop" ];
+      "application/json" = [ "emacsclient.desktop" ];
+      "video/x-matroska" = [ "vlc.desktop" ];
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" = [ "writer.desktop" ];
+      "image/heif" = [ "org.darktable.darktable.desktop" ];
     };
   };
 

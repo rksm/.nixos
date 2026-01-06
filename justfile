@@ -17,6 +17,9 @@ switch cmd="switch" *args="":
 switch-debug:
     just switch --print-build-logs --verbose
 
+build-abort-on-warn:
+    just switch build --option abort-on-warn --show-trace
+
 build:
      nix build '/etc/nixos/#nixosConfigurations.titan-linux.config.system.build.toplevel --impure'
 
