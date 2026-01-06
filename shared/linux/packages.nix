@@ -36,6 +36,7 @@
     pkgs.latest.google-chrome
 
     pulseaudio
+    easyeffects
   ];
 
   programs.dconf.enable = true;
