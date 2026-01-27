@@ -123,7 +123,8 @@
     # devbox
 
     # jetbrains.rust-rover
-    ai.aider-chat
+    # ai.aider-chat
+    code-cursor
   ];
 
   # npm global

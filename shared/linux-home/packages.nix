@@ -28,6 +28,8 @@
     rksm.uniclip # share clipboard over network
     rksm.unsure # calculator for uncertain numbers
     slack
+
+    telegram-desktop
   ] ++ (lib.optionals nixosConfig.mullvad.enable [
     qbittorrent
     mullvad-vpn

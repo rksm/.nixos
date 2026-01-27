@@ -223,7 +223,7 @@
 
     # jetbrains.rust-rover
     # code-cursor
-    ai.aider-chat
+    # ai.aider-chat
 
     # emacs
     tree-sitter-grammars.tree-sitter-yaml
