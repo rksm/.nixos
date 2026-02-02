@@ -51,6 +51,9 @@
     package = pkgs.latest._1password-gui;
   };
 
+  # for org-analyzer
+  programs.java = { enable = true; };
+
   # some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
