@@ -6,7 +6,9 @@ let
   nodePath = "${pkgs.nodejs_22}/bin/node";
 in
 {
+  # Disabled: OpenClaw gateway now runs on roberts-ai-bot (Hetzner server)
   systemd.services.openclaw-gateway = {
+    enable = false;
     description = "OpenClaw Gateway";
     wantedBy = [ "multi-user.target" ];
     after = [ "network-online.target" ];
