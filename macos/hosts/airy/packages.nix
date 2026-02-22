@@ -33,6 +33,9 @@
     ripgrep
     fd
 
+    pandoc
+    mermaid-cli
+
     # pkgs.shellcheck
     iterm2
 

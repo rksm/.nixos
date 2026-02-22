@@ -1,13 +1,26 @@
 { config, pkgs, lib, user, ... }:
 
+let
+  emacs = pkgs.emacs-macport.overrideAttrs (o: {
+    configureFlags = o.configureFlags ++ [
+      "CFLAGS=-DFD_SETSIZE=10000"
+      "CFLAGS=-D_DARWIN_UNLIMITED_SELECT"
+    ];
+  });
+in
 {
 
   home.sessionVariables = {
     EDITOR = "emacsclient -n";
   };
 
+  home.sessionPath = [
+    "$HOME/npm/bin"
+  ];
+
   programs.emacs = {
     enable = true;
+    package = emacs;
     extraPackages = epkgs: with epkgs; [
       # for bootstrapping my .emacs.d
       nix-mode
@@ -74,17 +87,13 @@
 
       # init-helm.el
       helm
-      helm-ag
       helm-company
       helm-core
       helm-dictionary
       helm-eww
       helm-lsp
       helm-nixos-options
-      helm-swoop
       helm-system-packages
-      helm-systemd
-      helm-themes
 
       # init-keybindings.el
       key-chord
@@ -100,11 +109,8 @@
 
       # init-web.el
       google-this
-      helm-google
-      helm-wikipedia
       hnreader
       hydra
-      helm-lobsters
       wttrin
       dictcc
       powerthesaurus
@@ -191,6 +197,7 @@
     graphviz
     git-crypt
     gh
+    cmake
 
     # dev tools
     httpie
@@ -218,7 +225,7 @@
     nil
     nixpkgs-fmt # nix language server
     nixfmt-rfc-style
-    attic-client
+    cachix
     # devbox
 
     # jetbrains.rust-rover
