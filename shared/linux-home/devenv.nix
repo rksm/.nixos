@@ -125,6 +125,7 @@
     # jetbrains.rust-rover
     # ai.aider-chat
     code-cursor
+    claude-code
   ];
 
   # npm global

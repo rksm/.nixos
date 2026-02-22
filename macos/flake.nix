@@ -25,6 +25,8 @@
 
     attic.url = "github:zhaofengli/attic";
     attic.inputs.nixpkgs.follows = "nixpkgs-darwin";
+
+    claude-code.url = "github:sadjow/claude-code-nix";
   };
 
   outputs =
@@ -35,6 +37,7 @@
     , darwin
     , home-manager
     , attic
+    , claude-code
     , ...
     }:
 
@@ -77,7 +80,12 @@
                     home-manager.users.${user} = import ./hosts/${machine.name}/home;
                   }
 
-                  ({ ... }: { nixpkgs.overlays = [ overlays-nixpkgs ]; })
+                  ({ ... }: {
+                    nixpkgs.overlays = [
+                      overlays-nixpkgs
+                      claude-code.overlays.default
+                    ];
+                  })
                 ];
               };
 

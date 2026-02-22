@@ -17,6 +17,8 @@
     nixpkgs-rksm.inputs.nixpkgs.follows = "nixpkgs";
 
     tuxedo-nixos.url = "github:blitz/tuxedo-nixos";
+
+    claude-code.url = "github:sadjow/claude-code-nix";
   };
 
   outputs =
@@ -28,6 +30,7 @@
     , nixpkgs-rksm
     , attic
     , tuxedo-nixos
+    , claude-code
     , ...
     }:
     let
@@ -72,6 +75,7 @@
                   ({ ... }: {
                     nixpkgs.overlays = [
                       overlays-nixpkgs
+                      claude-code.overlays.default
                     ];
                   })
                 ];

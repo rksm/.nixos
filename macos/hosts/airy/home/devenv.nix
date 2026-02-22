@@ -231,6 +231,7 @@ in
     # jetbrains.rust-rover
     # code-cursor
     # ai.aider-chat
+    claude-code
 
     # emacs
     tree-sitter-grammars.tree-sitter-yaml
