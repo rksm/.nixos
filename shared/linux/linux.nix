@@ -1,6 +1,8 @@
 { config, pkgs, machine, ... }:
 {
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # pinned to 6.18 because nvidia 580.119.02 doesn't compile against 6.19
+  # TODO: switch back to linuxPackages_latest once nvidia 580.126.18 lands in nixos-25.11
+  boot.kernelPackages = pkgs.linuxPackages_6_18;
   time.timeZone = "Europe/Berlin";
 
   # workaround for clickhouse emacs client:
