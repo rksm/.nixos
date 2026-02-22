@@ -11,8 +11,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    attic.url = "github:zhaofengli/attic";
-
     nixpkgs-rksm.url = "github:rksm/nixpkgs-rksm";
     nixpkgs-rksm.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -29,7 +27,6 @@
     , nixpkgs-latest
     , nixpkgs-ai
     , nixpkgs-rksm
-    , attic
     , tuxedo-nixos
     , claude-code
     , codex-cli-nix
@@ -46,7 +43,6 @@
             latest = import nixpkgs-latest { inherit system; config.allowUnfree = true; };
             ai = import nixpkgs-ai { inherit system; config.allowUnfree = true; };
             rksm = import nixpkgs-rksm { inherit system nixpkgs; };
-            inherit (inputs.attic.packages.${system}) attic attic-client attic-server;
             tuxedo-control-center = tuxedo-nixos.packages.${system}.default;
             codex-cli = codex-cli-nix.packages.${system}.default;
           };

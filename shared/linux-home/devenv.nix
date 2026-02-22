@@ -118,7 +118,7 @@
     nil
     nixpkgs-fmt # nix language server
     nixfmt-rfc-style
-    attic-client
+    # attic-client
     cachix
     # devbox
 
