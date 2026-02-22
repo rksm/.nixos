@@ -19,6 +19,7 @@
     tuxedo-nixos.url = "github:blitz/tuxedo-nixos";
 
     claude-code.url = "github:sadjow/claude-code-nix";
+    codex-cli-nix.url = "github:sadjow/codex-cli-nix";
   };
 
   outputs =
@@ -31,6 +32,7 @@
     , attic
     , tuxedo-nixos
     , claude-code
+    , codex-cli-nix
     , ...
     }:
     let
@@ -46,6 +48,7 @@
             rksm = import nixpkgs-rksm { inherit system nixpkgs; };
             inherit (inputs.attic.packages.${system}) attic attic-client attic-server;
             tuxedo-control-center = tuxedo-nixos.packages.${system}.default;
+            codex-cli = codex-cli-nix.packages.${system}.default;
           };
 
         in

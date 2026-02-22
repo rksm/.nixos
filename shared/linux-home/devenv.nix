@@ -126,6 +126,7 @@
     # ai.aider-chat
     code-cursor
     claude-code
+    codex-cli
   ];
 
   # npm global

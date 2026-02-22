@@ -232,6 +232,7 @@ in
     # code-cursor
     # ai.aider-chat
     claude-code
+    codex-cli
 
     # emacs
     tree-sitter-grammars.tree-sitter-yaml

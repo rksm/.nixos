@@ -27,6 +27,7 @@
     attic.inputs.nixpkgs.follows = "nixpkgs-darwin";
 
     claude-code.url = "github:sadjow/claude-code-nix";
+    codex-cli-nix.url = "github:sadjow/codex-cli-nix";
   };
 
   outputs =
@@ -38,6 +39,7 @@
     , home-manager
     , attic
     , claude-code
+    , codex-cli-nix
     , ...
     }:
 
@@ -62,6 +64,7 @@
                 inherit (inputs.attic.packages.${machine.system}) attic attic-client attic-server;
                 latest = import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
                 ai = import nixpkgs-ai { inherit (machine) system; config.allowUnfree = true; };
+                codex-cli = codex-cli-nix.packages.${machine.system}.default;
               };
             in
             {
