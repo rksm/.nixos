@@ -86,9 +86,36 @@
             })
             machines);
 
+      devShells =
+        let
+          system = "x86_64-linux";
+          pkgs = import nixpkgs-ai {
+            inherit system;
+            config = {
+              allowUnfree = true;
+              cudaSupport = true;
+              nvidia.acceptLicense = true;
+            };
+          };
+        in
+        {
+          ${system}.cuda = pkgs.mkShell {
+            packages = [
+              (pkgs.python3.withPackages (ps: [
+                ps.torch
+                ps.torchvision
+                ps.tensorflow
+              ]))
+            ];
+            shellHook = ''
+              echo "CUDA dev shell ready. Run: python scripts/check-cuda.py"
+            '';
+          };
+        };
+
     in
     {
-      inherit nixosConfigurations;
+      inherit nixosConfigurations devShells;
     };
 
 }
