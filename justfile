@@ -23,6 +23,16 @@ build-abort-on-warn:
 build:
      nix build '/etc/nixos/#nixosConfigurations.titan-linux.config.system.build.toplevel --impure'
 
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+[working-directory: './macos']
+macos-switch:
+    sudo just switch
+
+[working-directory: './macos']
+macos-update-ai: && macos-switch
+    nix flake update claude-code
+    nix flake update codex-cli-nix
 
 # stuff
 #
