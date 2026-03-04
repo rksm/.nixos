@@ -34,6 +34,10 @@ macos-update-ai: && macos-switch
     nix flake update claude-code
     nix flake update codex-cli-nix
 
+update-ai: && switch
+    nix flake update claude-code
+    nix flake update codex-cli-nix
+
 # stuff
 #
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
