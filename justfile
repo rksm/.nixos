@@ -33,10 +33,14 @@ macos-switch:
 macos-update-ai: && macos-switch
     nix flake update claude-code
     nix flake update codex-cli-nix
+    git add flake.lock
+    git commit -m "macos: update ai"
 
 update-ai: && switch
     nix flake update claude-code
     nix flake update codex-cli-nix
+    git add flake.lock
+    git commit -m "linux: update ai"
 
 # stuff
 #
