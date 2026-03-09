@@ -66,6 +66,12 @@ in
             install_url = "https://addons.mozilla.org/firefox/downloads/latest/darkreader/latest.xpi";
             installation_mode = "force_installed";
           };
+
+          # Multi-Account Containers
+          "@testpilot-containers" = {
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/multi-account-containers/latest.xpi";
+            installation_mode = "force_installed";
+          };
         };
 
         /* ---- PREFERENCES ---- */
@@ -89,6 +95,8 @@ in
           "browser.newtabpage.activity-stream.showSponsored" = lock-false;
           "browser.newtabpage.activity-stream.system.showSponsored" = lock-false;
           "browser.newtabpage.activity-stream.showSponsoredTopSites" = lock-false;
+          "sidebar.revamp" = { Value = true; Status = "default"; };
+          "sidebar.verticalTabs" = { Value = true; Status = "default"; };
         };
       };
     };
