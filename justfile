@@ -39,6 +39,7 @@ macos-update-ai: && macos-switch
 update-ai: && switch
     nix flake update claude-code
     nix flake update codex-cli-nix
+    nix flake update rtk-nix
     git add flake.lock
     git commit -m "linux: update ai"
 

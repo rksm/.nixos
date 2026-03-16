@@ -18,6 +18,7 @@
 
     claude-code.url = "github:sadjow/claude-code-nix";
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
+    rtk-nix.url = "github:hypervideo/rtk-nix";
   };
 
   outputs =
@@ -30,6 +31,7 @@
     , tuxedo-nixos
     , claude-code
     , codex-cli-nix
+    , rtk-nix
     , ...
     }:
     let
@@ -75,6 +77,7 @@
                     nixpkgs.overlays = [
                       overlays-nixpkgs
                       claude-code.overlays.default
+                      rtk-nix.overlays.default
                     ];
                   })
                 ];

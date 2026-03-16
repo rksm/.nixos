@@ -127,6 +127,7 @@
     code-cursor
     claude-code
     codex-cli
+    rtk # https://github.com/rtk-ai/rtk / https://github.com/hypervideo/rtk-nix
   ];
 
   # npm global
