@@ -19,6 +19,9 @@
     enable = false;
     tailor-gui.enable = false;
   };
+  # needed for the yt6801 network card
+  boot.extraModulePackages = with config.boot.kernelPackages; [ yt6801 ];
+  boot.kernelModules = [ "yt6801" ];
   hardware.tuxedo-drivers.enable = true;
   hardware.tuxedo-control-center = {
     enable = true;
