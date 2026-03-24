@@ -101,9 +101,9 @@
           ${system}.cuda = pkgs.mkShell {
             packages = [
               (pkgs.python3.withPackages (ps: [
-                ps.torch
-                ps.torchvision
-                ps.tensorflow
+                ps.torch-bin
+                ps.torchvision-bin
+                ps.tensorflow-bin
               ]))
             ];
             shellHook = ''
