@@ -86,7 +86,7 @@
     tokei
     mkcert
     llm
-    shell-gpt
+    latest.shell-gpt
     mermaid-cli
     graphviz
 
