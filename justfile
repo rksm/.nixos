@@ -29,19 +29,30 @@ build:
 macos-switch:
     sudo just switch
 
+[private]
 [working-directory: './macos']
-macos-update-ai: && macos-switch
+update-ai-macos: && macos-switch
     nix flake update claude-code
     nix flake update codex-cli-nix
     git add flake.lock
     git commit -m "macos: update ai"
 
-update-ai: && switch
+[private]
+update-ai-linux: && switch
     nix flake update claude-code
     nix flake update codex-cli-nix
     nix flake update rtk-nix
     git add flake.lock
     git commit -m "linux: update ai"
+
+update-ai:
+    #!/usr/bin/env sh
+    set -e
+    if [ "$(uname)" = "Darwin" ]; then
+        just update-ai-macos
+    else
+        just update-ai-linux
+    fi
 
 # stuff
 #
