@@ -29,10 +29,10 @@
     trusted-users = [
       "@admin"
     ];
+    auto-optimise-store = false;
   };
   nix.package = pkgs.nixVersions.latest;
   nix.extraOptions = ''
-    auto-optimise-store = true
     experimental-features = nix-command flakes
   '' + lib.optionalString (pkgs.system == "x86_64-darwin") ''
     extra-platforms = x86_64-darwin aarch64-darwin

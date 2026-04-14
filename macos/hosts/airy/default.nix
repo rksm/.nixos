@@ -58,12 +58,11 @@
       trusted-users = [
         "@admin" "${user}"
       ];
+      auto-optimise-store = false;
       experimental-features = "nix-command flakes";
     };
     package = pkgs.nixVersions.latest;
-    extraOptions = ''
-      auto-optimise-store = true
-    '' + lib.optionalString (pkgs.system == "x86_64-darwin") ''
+    extraOptions = lib.optionalString (pkgs.system == "x86_64-darwin") ''
       extra-platforms = x86_64-darwin aarch64-darwin
     '';
     # configureBuildUsers is deprecated and removed in newer nix-darwin
