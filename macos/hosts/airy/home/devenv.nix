@@ -2,10 +2,15 @@
 
 let
   emacs = pkgs.emacs-macport.overrideAttrs (o: {
-    configureFlags = o.configureFlags ++ [
-      "CFLAGS=-DFD_SETSIZE=10000"
-      "CFLAGS=-D_DARWIN_UNLIMITED_SELECT"
-    ];
+    env =
+      let
+        oldEnv = o.env or {};
+      in
+      oldEnv // {
+        NIX_CFLAGS_COMPILE =
+          (oldEnv.NIX_CFLAGS_COMPILE or "")
+          + " -DFD_SETSIZE=10000 -D_DARWIN_UNLIMITED_SELECT";
+      };
   });
 in
 {
@@ -17,6 +22,10 @@ in
   home.sessionPath = [
     "$HOME/npm/bin"
   ];
+
+  # Force a high per-process file descriptor limit for *the Emacs job*
+  launchd.agents.emacs.config.SoftResourceLimits.NumberOfFiles = 65536;
+  launchd.agents.emacs.config.HardResourceLimits.NumberOfFiles = 65536;
 
   programs.emacs = {
     enable = true;
