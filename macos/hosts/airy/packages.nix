@@ -66,6 +66,7 @@
     casks = [
       "rectangle"
       "wezterm"
+      "warp"
       "1password"
       "1password-cli"
       "karabiner-elements"
