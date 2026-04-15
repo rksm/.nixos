@@ -124,10 +124,6 @@ in
       dictcc
       powerthesaurus
       mediawiki
-
-      # shell
-      eat
-      vterm
     ];
   };
 
