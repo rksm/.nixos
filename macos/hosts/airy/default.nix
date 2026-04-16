@@ -6,6 +6,16 @@
     ./packages.nix
   ];
 
+  nixpkgs.overlays = [
+    (_: prev: {
+      # 2026-04-16 FIXME: Work around a bad substituted fish binary that macOS rejects for codesigning.
+      fish = prev.fish.overrideAttrs (_: {
+        allowSubstitutes = false;
+        preferLocalBuild = true;
+      });
+    })
+  ];
+
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
   system.stateVersion = 5;
