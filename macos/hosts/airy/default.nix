@@ -118,10 +118,9 @@
       NSGlobalDomain.NSNavPanelExpandedStateForSaveMode2 = true;
       NSGlobalDomain._HIHideMenuBar = false;
 
-      # to not have screen slide when going between fullscreen / normal apps
-      universalaccess.reduceMotion = true;
-      # to not have a white menu bar in dark mode
-      universalaccess.reduceTransparency = true;
+      # 2026-04-16: macOS 26 blocks defaults writes to com.apple.universalaccess
+      # from nix-darwin activation unless the calling app has Full Disk Access.
+      # Keep these out of system.defaults so darwin-rebuild remains reliable.
 
       dock.autohide = true;
       dock.mru-spaces = false;
