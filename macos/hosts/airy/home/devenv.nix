@@ -12,6 +12,23 @@ let
           + " -DFD_SETSIZE=10000 -D_DARWIN_UNLIMITED_SELECT";
       };
   });
+  emacsHiFDApp = pkgs.runCommand "emacs-hifd-app" { } ''
+    app_src="${config.programs.emacs.finalPackage}/Applications/Emacs.app"
+    app_dst="$out/Applications/Emacs HiFD.app"
+
+    mkdir -p "$out/Applications"
+    cp -R "$app_src" "$app_dst"
+    chmod -R u+w "$app_dst"
+
+    cat > "$app_dst/Contents/MacOS/Emacs" <<'EOF'
+#!/bin/sh
+ulimit -S -n ${toString maxOpenFiles}
+exec "$(dirname "$0")/.Emacs-wrapped" "$@"
+EOF
+
+    chmod +x "$app_dst/Contents/MacOS/Emacs"
+  '';
+  maxOpenFiles = 64000;
 in
 {
 
@@ -22,10 +39,6 @@ in
   home.sessionPath = [
     "$HOME/npm/bin"
   ];
-
-  # Force a high per-process file descriptor limit for *the Emacs job*
-  launchd.agents.emacs.config.SoftResourceLimits.NumberOfFiles = 65536;
-  launchd.agents.emacs.config.HardResourceLimits.NumberOfFiles = 65536;
 
   programs.emacs = {
     enable = true;
@@ -239,6 +252,7 @@ in
     codex-cli
 
     # emacs
+    emacsHiFDApp
     tree-sitter-grammars.tree-sitter-yaml
     silver-searcher
     nodejs_latest # for language server / copilot
