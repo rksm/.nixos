@@ -28,6 +28,7 @@
 
     claude-code.url = "github:sadjow/claude-code-nix";
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
+    jcode-nix.url = "github:hypervideo/jcode-nix";
   };
 
   outputs =
@@ -40,6 +41,7 @@
     , attic
     , claude-code
     , codex-cli-nix
+    , jcode-nix
     , ...
     }:
 
@@ -65,6 +67,7 @@
                 latest = import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
                 ai = import nixpkgs-ai { inherit (machine) system; config.allowUnfree = true; };
                 codex-cli = codex-cli-nix.packages.${machine.system}.default;
+                jcode = jcode-nix.packages.${machine.system}.default;
               };
             in
             {
