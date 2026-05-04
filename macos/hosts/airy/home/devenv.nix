@@ -250,7 +250,6 @@ in
     # ai.aider-chat
     claude-code
     codex-cli
-    jcode
 
     # emacs
     emacsHiFDApp
