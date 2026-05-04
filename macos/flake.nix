@@ -28,6 +28,7 @@
 
     claude-code.url = "github:sadjow/claude-code-nix";
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
+    skillshare-nix.url = "github:hypervideo/skillshare-nix";
   };
 
   outputs =
@@ -40,6 +41,7 @@
     , attic
     , claude-code
     , codex-cli-nix
+    , skillshare-nix
     , ...
     }:
 
@@ -87,6 +89,7 @@
                     nixpkgs.overlays = [
                       overlays-nixpkgs
                       claude-code.overlays.default
+                      skillshare-nix.overlays.default
                     ];
                   })
                 ];
