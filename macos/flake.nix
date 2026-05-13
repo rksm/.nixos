@@ -29,6 +29,7 @@
     claude-code.url = "github:sadjow/claude-code-nix";
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     skillshare-nix.url = "github:hypervideo/skillshare-nix";
+    ast-outline.url = "github:aeroxy/ast-outline";
   };
 
   outputs =
@@ -42,6 +43,7 @@
     , claude-code
     , codex-cli-nix
     , skillshare-nix
+    , ast-outline
     , ...
     }:
 
@@ -67,6 +69,7 @@
                 latest = import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
                 ai = import nixpkgs-ai { inherit (machine) system; config.allowUnfree = true; };
                 codex-cli = codex-cli-nix.packages.${machine.system}.default;
+                ast-outline = ast-outline.packages.${machine.system}.default;
               };
             in
             {

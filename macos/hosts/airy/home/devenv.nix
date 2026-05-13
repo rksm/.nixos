@@ -251,6 +251,7 @@ in
     claude-code
     codex-cli
     skillshare
+    ast-outline
 
     # emacs
     emacsHiFDApp

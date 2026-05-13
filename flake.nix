@@ -19,6 +19,8 @@
     claude-code.url = "github:sadjow/claude-code-nix";
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     rtk-nix.url = "github:hypervideo/rtk-nix";
+    skillshare-nix.url = "github:hypervideo/skillshare-nix";
+    ast-outline.url = "github:aeroxy/ast-outline";
   };
 
   outputs =
@@ -32,6 +34,8 @@
     , claude-code
     , codex-cli-nix
     , rtk-nix
+    , skillshare-nix
+    , ast-outline
     , ...
     }:
     let
@@ -47,6 +51,7 @@
             rksm = import nixpkgs-rksm { inherit system nixpkgs; };
             tuxedo-control-center = tuxedo-nixos.packages.${system}.default;
             codex-cli = codex-cli-nix.packages.${system}.default;
+            ast-outline = ast-outline.packages.${system}.default;
           };
 
         in
@@ -78,6 +83,7 @@
                       overlays-nixpkgs
                       claude-code.overlays.default
                       rtk-nix.overlays.default
+                      skillshare-nix.overlays.default
                     ];
                   })
                 ];
