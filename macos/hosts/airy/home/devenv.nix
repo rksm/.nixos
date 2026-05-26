@@ -252,6 +252,7 @@ in
     codex-cli
     skillshare
     ast-outline
+    magpie
 
     # emacs
     emacsHiFDApp
