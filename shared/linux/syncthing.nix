@@ -15,6 +15,8 @@
       syncthing.enable-projects-typescript = lib.mkEnableOption "syncthing ~/projects/typescript/";
       syncthing.enable-projects-website = lib.mkEnableOption "syncthing ~/projects/website/";
       syncthing.enable-projects-shuttle = lib.mkEnableOption "syncthing ~/projects/shuttle/";
+      syncthing.enable-projects-ai = lib.mkEnableOption "syncthing ~/projects/ai/";
+      syncthing.enable-projects-security = lib.mkEnableOption "syncthing ~/projects/security/";
       syncthing.enable-media = lib.mkEnableOption "syncthing /media/robert/LINUX_DATA/media/";
     };
 
@@ -90,11 +92,6 @@
           };
         })
 
-          # "projects/ai" = {
-          #   path = "/home/${user}/projects/biz";
-          #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
-          # };
-
           // (lib.optionalAttrs config.syncthing.enable-projects-biz {
           "projects/biz" = {
             id = "projects/biz";
@@ -102,6 +99,23 @@
             devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
+
+          // (lib.optionalAttrs config.syncthing.enable-projects-security {
+          "security" = {
+            id = "projects/security";
+            path = "/home/${user}/projects/security";
+            devices = [ "titan-linux" "nas" ];
+          };
+        })
+
+          // (lib.optionalAttrs config.syncthing.enable-projects-ai {
+          "ai" = {
+            id = "projects/ai";
+            path = "/home/${user}/projects/ai";
+            devices = [ "titan-linux" "nas" ];
+          };
+        })
+
           # "projects/clojure" = {
           #   path = "/home/${user}/projects/clojure";
           #   devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
