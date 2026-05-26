@@ -12,7 +12,7 @@
   inputs = {
     nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-25.11-darwin";
     nixpkgs-latest.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-ai.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-ai.url = "github:nixos/nixpkgs/nixos-unstable";
     darwin = {
       url = "github:lnl7/nix-darwin/nix-darwin-25.11";
       inputs.nixpkgs.follows = "nixpkgs-darwin";

@@ -253,6 +253,8 @@ in
     skillshare
     ast-outline
     magpie
+    ai.gemini-cli
+    ai.antigravity
 
     # emacs
     emacsHiFDApp
