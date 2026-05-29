@@ -12,7 +12,6 @@
   inputs = {
     nixpkgs-darwin.url = "github:nixos/nixpkgs/nixpkgs-25.11-darwin";
     nixpkgs-latest.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nixpkgs-ai.url = "github:nixos/nixpkgs/nixos-unstable";
     darwin = {
       url = "github:lnl7/nix-darwin/nix-darwin-25.11";
       inputs.nixpkgs.follows = "nixpkgs-darwin";
@@ -26,8 +25,6 @@
     attic.url = "github:zhaofengli/attic";
     attic.inputs.nixpkgs.follows = "nixpkgs-darwin";
 
-    claude-code.url = "github:sadjow/claude-code-nix";
-    codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     skillshare-nix.url = "github:hypervideo/skillshare-nix";
     ast-outline.url = "github:aeroxy/ast-outline";
     magpie-nix.url = "github:hypervideo/magpie-nix";
@@ -39,12 +36,9 @@
     inputs @ { self
     , nixpkgs-darwin
     , nixpkgs-latest
-    , nixpkgs-ai
     , darwin
     , home-manager
     , attic
-    , claude-code
-    , codex-cli-nix
     , skillshare-nix
     , ast-outline
     , magpie-nix
@@ -73,8 +67,6 @@
               overlays-nixpkgs = final: prev: {
                 inherit (inputs.attic.packages.${machine.system}) attic attic-client attic-server;
                 latest = import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
-                ai = import nixpkgs-ai { inherit (machine) system; config.allowUnfree = true; };
-                codex-cli = codex-cli-nix.packages.${machine.system}.default;
                 ast-outline = ast-outline.packages.${machine.system}.default;
                 magpie = magpie-nix.packages.${machine.system}.default;
                 google-antigravity = antigravity-nix.packages.${machine.system}.google-antigravity;
@@ -100,7 +92,6 @@
                   ({ ... }: {
                     nixpkgs.overlays = [
                       overlays-nixpkgs
-                      claude-code.overlays.default
                       skillshare-nix.overlays.default
                       llm-agents.overlays.default
                     ];

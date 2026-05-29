@@ -32,9 +32,7 @@ macos-switch:
 [private]
 [working-directory: './macos']
 update-ai-macos: && macos-switch
-    nix flake update nixpkgs-ai
-    nix flake update claude-code
-    nix flake update codex-cli-nix
+    nix flake update llm-agents
     nix flake update skillshare-nix
     nix flake update ast-outline
     nix flake update magpie-nix
