@@ -38,6 +38,7 @@ update-ai-macos: && macos-switch
     nix flake update ast-outline
     nix flake update magpie-nix
     nix flake update antigravity-nix
+    nix flake update omnara-nix
     git add flake.lock
     git commit -m "macos: update ai"
 

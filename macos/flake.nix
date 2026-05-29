@@ -33,6 +33,7 @@
     magpie-nix.url = "github:hypervideo/magpie-nix";
     antigravity-nix.url = "github:jacopone/antigravity-nix";
     llm-agents.url = "github:numtide/llm-agents.nix";
+    omnara-nix.url = "github:rksm/omnara-nix";
   };
 
   outputs =
@@ -48,6 +49,7 @@
     , magpie-nix
     , antigravity-nix
     , llm-agents
+    , omnara-nix
     , ...
     }:
 
@@ -99,6 +101,7 @@
                       overlays-nixpkgs
                       skillshare-nix.overlays.default
                       llm-agents.overlays.default
+                      omnara-nix.overlays.default
                     ];
                   })
                 ];
