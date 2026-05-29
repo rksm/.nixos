@@ -31,6 +31,8 @@
     skillshare-nix.url = "github:hypervideo/skillshare-nix";
     ast-outline.url = "github:aeroxy/ast-outline";
     magpie-nix.url = "github:hypervideo/magpie-nix";
+    antigravity-nix.url = "github:jacopone/antigravity-nix";
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs =
@@ -46,6 +48,8 @@
     , skillshare-nix
     , ast-outline
     , magpie-nix
+    , antigravity-nix
+    , llm-agents
     , ...
     }:
 
@@ -73,6 +77,8 @@
                 codex-cli = codex-cli-nix.packages.${machine.system}.default;
                 ast-outline = ast-outline.packages.${machine.system}.default;
                 magpie = magpie-nix.packages.${machine.system}.default;
+                google-antigravity = antigravity-nix.packages.${machine.system}.google-antigravity;
+                google-antigravity-cli = antigravity-nix.packages.${machine.system}.google-antigravity-cli;
               };
             in
             {
@@ -96,6 +102,7 @@
                       overlays-nixpkgs
                       claude-code.overlays.default
                       skillshare-nix.overlays.default
+                      llm-agents.overlays.default
                     ];
                   })
                 ];
