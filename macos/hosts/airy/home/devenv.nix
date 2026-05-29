@@ -248,13 +248,14 @@ in
     # jetbrains.rust-rover
     # code-cursor
     llm-agents.claude-code
-    llm-agents.codex
+    codex-cli
     skillshare
     ast-outline
     # magpie
     llm-agents.gemini-cli
     google-antigravity-cli
     google-antigravity
+    llm-agents.happy-coder
 
     # emacs
     emacsHiFDApp

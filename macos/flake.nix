@@ -7,8 +7,8 @@
       "https://nix-community.cachix.org"
       "https://cache.nixos.org/"
     ];
-    extra-substituters = [ "https://cache.numtide.com" ];
-    extra-trusted-public-keys = [ "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=" ];
+    # extra-substituters = [ "https://cache.numtide.com" ];
+    # extra-trusted-public-keys = [ "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=" ];
   };
 
   inputs = {
@@ -27,6 +27,7 @@
     attic.url = "github:zhaofengli/attic";
     attic.inputs.nixpkgs.follows = "nixpkgs-darwin";
 
+    codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     skillshare-nix.url = "github:hypervideo/skillshare-nix";
     ast-outline.url = "github:aeroxy/ast-outline";
     magpie-nix.url = "github:hypervideo/magpie-nix";
@@ -41,6 +42,7 @@
     , darwin
     , home-manager
     , attic
+    , codex-cli-nix
     , skillshare-nix
     , ast-outline
     , magpie-nix
@@ -69,6 +71,7 @@
               overlays-nixpkgs = final: prev: {
                 inherit (inputs.attic.packages.${machine.system}) attic attic-client attic-server;
                 latest = import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
+                codex-cli = codex-cli-nix.packages.${machine.system}.default;
                 ast-outline = ast-outline.packages.${machine.system}.default;
                 magpie = magpie-nix.packages.${machine.system}.default;
                 google-antigravity = antigravity-nix.packages.${machine.system}.google-antigravity;
