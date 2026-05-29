@@ -248,7 +248,7 @@ in
     # jetbrains.rust-rover
     # code-cursor
     llm-agents.claude-code
-    llm-agents.codex-cli
+    llm-agents.codex
     skillshare
     ast-outline
     # magpie
