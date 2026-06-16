@@ -37,7 +37,7 @@
     mermaid-cli
 
     # pkgs.shellcheck
-    iterm2
+    # iterm2
 
     tailscale
   ];
