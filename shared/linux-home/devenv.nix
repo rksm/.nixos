@@ -124,12 +124,18 @@
 
     # jetbrains.rust-rover
     # ai.aider-chat
-    code-cursor
-    claude-code
-    codex-cli
+    # code-cursor
+
     rtk # https://github.com/rtk-ai/rtk / https://github.com/hypervideo/rtk-nix
+    llm-agents.claude-code
+    codex-cli
     skillshare
     ast-outline
+    # magpie
+    llm-agents.gemini-cli
+    google-antigravity-cli
+    google-antigravity
+    llm-agents.happy-coder
   ];
 
   # npm global

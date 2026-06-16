@@ -2,12 +2,12 @@
   description = "NixOS configuration";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
     nixpkgs-latest.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nixpkgs-ai.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -16,11 +16,13 @@
 
     tuxedo-nixos.url = "github:blitz/tuxedo-nixos";
 
-    claude-code.url = "github:sadjow/claude-code-nix";
-    codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     rtk-nix.url = "github:hypervideo/rtk-nix";
+    codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     skillshare-nix.url = "github:hypervideo/skillshare-nix";
     ast-outline.url = "github:aeroxy/ast-outline";
+    magpie-nix.url = "github:hypervideo/magpie-nix";
+    antigravity-nix.url = "github:jacopone/antigravity-nix";
+    llm-agents.url = "github:numtide/llm-agents.nix";
   };
 
   outputs =
@@ -31,11 +33,13 @@
     , nixpkgs-ai
     , nixpkgs-rksm
     , tuxedo-nixos
-    , claude-code
     , codex-cli-nix
     , rtk-nix
     , skillshare-nix
     , ast-outline
+    , magpie-nix
+    , antigravity-nix
+    , llm-agents
     , ...
     }:
     let
@@ -50,8 +54,12 @@
             ai = import nixpkgs-ai { inherit system; config.allowUnfree = true; };
             rksm = import nixpkgs-rksm { inherit system nixpkgs; };
             tuxedo-control-center = tuxedo-nixos.packages.${system}.default;
+
             codex-cli = codex-cli-nix.packages.${system}.default;
             ast-outline = ast-outline.packages.${system}.default;
+            magpie = magpie-nix.packages.${system}.default;
+            google-antigravity = antigravity-nix.packages.${system}.google-antigravity;
+            google-antigravity-cli = antigravity-nix.packages.${system}.google-antigravity-cli;
           };
 
         in
@@ -81,9 +89,9 @@
                   ({ ... }: {
                     nixpkgs.overlays = [
                       overlays-nixpkgs
-                      claude-code.overlays.default
                       rtk-nix.overlays.default
                       skillshare-nix.overlays.default
+                      llm-agents.overlays.default
                     ];
                   })
                 ];
