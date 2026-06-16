@@ -248,6 +248,7 @@ in
     # jetbrains.rust-rover
     # code-cursor
     llm-agents.claude-code
+    llm-agents.herdr
     codex-cli
     skillshare
     ast-outline
