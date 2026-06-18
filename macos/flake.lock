@@ -604,11 +604,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1781683344,
-        "narHash": "sha256-ZkFAz1ifUjMsBgo9YXujE0quvPFbxNxzV5Aszd9CsHU=",
+        "lastModified": 1781769127,
+        "narHash": "sha256-gnbXrtPb8Gd7cirQvHhyFmVqGWUPkyqvc76df4uE84Y=",
         "owner": "hypervideo",
         "repo": "skillshare-nix",
-        "rev": "ab77f420dc5bedc1782570bc992f25f96b6eafd6",
+        "rev": "0171f628ba6de262f0e9b91c4cc38d402da8deed",
         "type": "github"
       },
       "original": {
