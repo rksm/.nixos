@@ -1,6 +1,7 @@
 { config, pkgs, user, ... }:
 
 {
+  home.file.".config/herdr".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/herdr;
   home.file.".wezterm.lua".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.wezterm.lua;
   home.file.".gnupg".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.gnupg;
   home.file.".authinfo.gpg".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.authinfo.gpg;

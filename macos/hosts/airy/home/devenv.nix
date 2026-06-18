@@ -257,7 +257,6 @@ in
     google-antigravity-cli
     google-antigravity
     llm-agents.happy-coder
-    omnara
 
     # emacs
     emacsHiFDApp
