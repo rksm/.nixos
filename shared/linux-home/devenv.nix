@@ -129,6 +129,7 @@
 
     rtk # https://github.com/rtk-ai/rtk / https://github.com/hypervideo/rtk-nix
     llm-agents.claude-code
+    herdr
     codex-cli
     skillshare
     ast-outline
