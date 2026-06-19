@@ -345,11 +345,11 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1781801931,
-        "narHash": "sha256-a2FM7YXOsuH080KRyzhB57Kr/6IQ0J3fhiZsJyfIAoc=",
+        "lastModified": 1781858608,
+        "narHash": "sha256-iFNd19snwYR0YNP/BkHWBR9IbCvI3uelZaw+eeFplWA=",
         "owner": "rksm",
         "repo": "herdr",
-        "rev": "cc82a04d5ee783bf2560ba89eb57f286cbe86315",
+        "rev": "5625647367d86cf59642c4dc21d5e25bc19b7d6a",
         "type": "github"
       },
       "original": {
@@ -639,11 +639,11 @@
         "nixpkgs": "nixpkgs_7"
       },
       "locked": {
-        "lastModified": 1781769127,
-        "narHash": "sha256-gnbXrtPb8Gd7cirQvHhyFmVqGWUPkyqvc76df4uE84Y=",
+        "lastModified": 1781856151,
+        "narHash": "sha256-ngt/1CJeGTRfD5XvqKKKXhWVRxcCgOQkURXBpJayTWg=",
         "owner": "hypervideo",
         "repo": "skillshare-nix",
-        "rev": "0171f628ba6de262f0e9b91c4cc38d402da8deed",
+        "rev": "1b91d875784a734a64615d3f4a346e70244cad60",
         "type": "github"
       },
       "original": {
