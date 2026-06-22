@@ -345,11 +345,11 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1781858608,
-        "narHash": "sha256-iFNd19snwYR0YNP/BkHWBR9IbCvI3uelZaw+eeFplWA=",
+        "lastModified": 1782126010,
+        "narHash": "sha256-1edFQ9K09WjH52808E2rKuHwAn75UoSqXqZbgqZTUgQ=",
         "owner": "rksm",
         "repo": "herdr",
-        "rev": "5625647367d86cf59642c4dc21d5e25bc19b7d6a",
+        "rev": "4ed17e85f524ad7d26496f4a766023547b495fff",
         "type": "github"
       },
       "original": {
