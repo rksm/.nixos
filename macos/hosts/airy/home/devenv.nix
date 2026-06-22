@@ -12,6 +12,15 @@ let
           + " -DFD_SETSIZE=10000 -D_DARWIN_UNLIMITED_SELECT";
       };
   });
+  mermaid-cli = pkgs.symlinkJoin {
+    name = "mermaid-cli-with-chrome";
+    paths = [ pkgs.mermaid-cli ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/mmdc \
+        --set PUPPETEER_EXECUTABLE_PATH "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    '';
+  };
   emacsHiFDApp = pkgs.runCommand "emacs-hifd-app" { } ''
     app_src="${config.programs.emacs.finalPackage}/Applications/Emacs.app"
     app_dst="$out/Applications/Emacs HiFD.app"
