@@ -134,7 +134,7 @@
     skillshare
     ast-outline
     # magpie
-    llm-agents.gemini-cli
+    # llm-agents.gemini-cli
     google-antigravity-cli
     google-antigravity
     llm-agents.happy-coder
