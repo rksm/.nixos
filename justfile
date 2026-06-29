@@ -51,8 +51,8 @@ update-ai-linux: && switch
     nix flake update skillshare-nix
     nix flake update ast-outline
     nix flake update magpie-nix
-    nix flake update antigravity-nix
-    # nix flake update herdr-nix
+    nix flake update herdr-nix
+    nix flake update openwhispr-nix
     git add flake.lock
     git commit -m "linux: update ai"
 

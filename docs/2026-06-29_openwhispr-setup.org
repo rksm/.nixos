@@ -1,0 +1,69 @@
+#+TITLE: OpenWhispr ydotool setup on NixOS
+#+DATE: [2026-06-29 Mon]
+#+FILETAGS: :openwhispr:nixos:wayland:ydotool:
+
+* Problem
+
+OpenWhispr warned that =ydotool= was not fully configured:
+
+#+BEGIN_QUOTE
+ydotool is not fully configured. Auto-paste on Wayland may not work.
+
+The detected problems were inaccessible =/dev/uinput=, missing =input= group membership, and a stopped =ydotoold= user service.
+#+END_QUOTE
+
+Those generic Linux instructions translate poorly to this NixOS config. Adding the user to =input= is broader than needed, and files under =/etc/udev/rules.d= would be unmanaged by the flake.
+
+* Applied NixOS fix
+
+This repository now imports OpenWhispr's upstream NixOS module:
+
+#+BEGIN_SRC nix
+openwhispr-nix.nixosModules.default
+#+END_SRC
+
+Location: =flake.nix=
+
+The module is enabled for the normal user:
+
+#+BEGIN_SRC nix
+programs.openwhispr = {
+  enable = true;
+  users = [ user ];
+};
+#+END_SRC
+
+Location: =shared/linux/linux.nix=
+
+This installs OpenWhispr system-wide and configures its Wayland paste dependencies declaratively. It enables =programs.ydotool=, enables =hardware.uinput=, creates the narrower =uinput= group, and adds the configured user to both the =ydotool= and =uinput= groups.
+
+OpenWhispr's generic warning mentions the broader =input= group, but on NixOS the relevant access is the managed =uinput= group and a writable =/dev/uinput= after a fresh login session.
+
+* Activate
+
+Rebuild the current host:
+
+#+BEGIN_SRC sh
+sudo nixos-rebuild switch --impure --flake /etc/nixos#tuxedo
+#+END_SRC
+
+Then reboot so the desktop session and lingering =systemd --user= manager both see the new =ydotool= and =uinput= group memberships and environment variable.
+
+* Verify
+
+#+BEGIN_SRC sh
+systemctl is-active ydotoold
+id -nG | tr ' ' '\n' | grep '^ydotool$'
+id -nG | tr ' ' '\n' | grep '^uinput$'
+printenv YDOTOOL_SOCKET
+ls -l /dev/uinput
+#+END_SRC
+
+Expected results:
+
+- =systemctl is-active ydotoold= prints =active=.
+- =id= includes =ydotool= and =uinput= after a new login.
+- =printenv YDOTOOL_SOCKET= prints =/run/ydotoold/socket=.
+- =ls -l /dev/uinput= shows group =uinput= and mode =crw-rw----=.
+
+Restart OpenWhispr after the rebuild and login.

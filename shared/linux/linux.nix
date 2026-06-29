@@ -1,4 +1,4 @@
-{ config, pkgs, machine, ... }:
+{ config, pkgs, machine, user, ... }:
 {
   # pinned to 6.18 because nvidia 580.119.02 doesn't compile against 6.19
   # TODO: switch back to linuxPackages_latest once nvidia 580.126.18 lands in nixos-25.11
@@ -8,6 +8,12 @@
   # workaround for clickhouse emacs client:
   # https://github.com/ClickHouse/ClickHouse/issues/55998
   boot.kernel.sysctl = { "kernel.task_delayacct" = 1; };
+
+  # OpenWhispr Wayland auto-paste needs ydotoold and direct /dev/uinput access.
+  programs.openwhispr = {
+    enable = true;
+    users = [ user ];
+  };
 
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
