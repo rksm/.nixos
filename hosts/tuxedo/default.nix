@@ -67,6 +67,9 @@
     enable-projects-typescript = false;
     enable-projects-website = true;
     enable-projects-shuttle = true;
+    enable-projects-ai = true;
+    enable-skillshare-skills = true;
+    enable-projects-security = false;
     enable-media = false;
   };
 }

@@ -16,6 +16,7 @@
       syncthing.enable-projects-website = lib.mkEnableOption "syncthing ~/projects/website/";
       syncthing.enable-projects-shuttle = lib.mkEnableOption "syncthing ~/projects/shuttle/";
       syncthing.enable-projects-ai = lib.mkEnableOption "syncthing ~/projects/ai/";
+      syncthing.enable-skillshare-skills = lib.mkEnableOption "syncthing ~/.config/skillshare/skills/";
       syncthing.enable-projects-security = lib.mkEnableOption "syncthing ~/projects/security/";
       syncthing.enable-media = lib.mkEnableOption "syncthing /media/robert/LINUX_DATA/media/";
     };
@@ -112,7 +113,15 @@
           "ai" = {
             id = "projects/ai";
             path = "/home/${user}/projects/ai";
-            devices = [ "titan-linux" "nas" ];
+            devices = [ "titan-linux" "nas" "airy" ];
+          };
+        })
+
+          // (lib.optionalAttrs config.syncthing.enable-skillshare-skills {
+          "skillshare-skills" = {
+            id = "skillshare-skills";
+            path = "/home/${user}/.config/skillshare/skills";
+            devices = [ "titan-linux" "nas" "airy" ];
           };
         })
 
