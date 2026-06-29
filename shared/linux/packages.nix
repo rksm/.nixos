@@ -37,6 +37,8 @@
 
     pulseaudio
     easyeffects
+
+    appimage-run
   ];
 
   programs.dconf.enable = true;
