@@ -299,11 +299,11 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1782543491,
-        "narHash": "sha256-GyGuZv+1MZWKezvO5nEzGcrVbD3HRpacA7OZ093jHfc=",
+        "lastModified": 1782733494,
+        "narHash": "sha256-eIBzF3/0fhj7wP7CEynQG4sHVeXgKmcq45ATBg5ZElY=",
         "owner": "rksm",
         "repo": "herdr",
-        "rev": "cbad4a9f56a2a9be78e30697b0a63b358948712a",
+        "rev": "92780783dca57bb159fd6c94000cfc6278d7b6bd",
         "type": "github"
       },
       "original": {
