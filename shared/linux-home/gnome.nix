@@ -67,9 +67,11 @@
       "org/gnome/desktop/wm/keybindings" = {
         switch-windows = [ "<Alt>Tab" ];
         switch-windows-backward = [ "<Shift><Alt>Tab" ];
-        switch-to-workspace-left = [ ];
-        switch-to-workspace-right = [ ];
-        switch-input-source = [ ]; # interferes with <Super>space
+        switch-to-workspace-left = [ ]; # free ctrl+alt+left
+        switch-to-workspace-right = [ ]; # free ctrl+alt+right
+        switch-to-workspace-up = [ ]; # free ctrl+alt+up
+        switch-to-workspace-down = [ ]; # free ctrl+alt+down
+        switch-input-source = [ ];
         switch-input-source-backward = [ ];
       };
 
