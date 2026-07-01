@@ -46,6 +46,7 @@
     enable-projects-typescript = true;
     enable-projects-website = true;
     enable-projects-shuttle = true;
+    enable-projects-hyper = true;
     enable-projects-ai = false;
     enable-skillshare-skills = false;
     enable-projects-security = false;

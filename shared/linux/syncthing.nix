@@ -15,6 +15,7 @@
       syncthing.enable-projects-typescript = lib.mkEnableOption "syncthing ~/projects/typescript/";
       syncthing.enable-projects-website = lib.mkEnableOption "syncthing ~/projects/website/";
       syncthing.enable-projects-shuttle = lib.mkEnableOption "syncthing ~/projects/shuttle/";
+      syncthing.enable-projects-hyper = lib.mkEnableOption "syncthing ~/projects/hyper/";
       syncthing.enable-projects-ai = lib.mkEnableOption "syncthing ~/projects/ai/";
       syncthing.enable-skillshare-skills = lib.mkEnableOption "syncthing ~/.config/skillshare/skills/";
       syncthing.enable-projects-security = lib.mkEnableOption "syncthing ~/projects/security/";
@@ -185,6 +186,13 @@
             id = "projects/shuttle";
             path = "/home/${user}/projects/shuttle";
             devices = [ "storm" "nas" "tuxedo" ];
+          };
+        })
+          // (lib.optionalAttrs config.syncthing.enable-projects-hyper {
+          "projects/hyper" = {
+            id = "projects/hyper";
+            path = "/home/${user}/projects/hyper";
+            devices = [ "storm" "nas" "tuxedo" "airy" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-media {
