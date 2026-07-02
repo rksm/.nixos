@@ -26,6 +26,7 @@
     ./audio-video-image-editing.nix
     ./nix-cache.nix
     ./openclaw.nix
+    ./vibetyper.nix
   ];
 
   options = {

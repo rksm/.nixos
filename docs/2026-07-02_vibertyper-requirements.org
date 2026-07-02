@@ -1,0 +1,186 @@
+#+TITLE: Vibe Typer Wayland requirements on NixOS
+#+DATE: [2026-07-02 Thu]
+#+FILETAGS: :vibetyper:nixos:wayland:uinput:
+
+* Problem
+
+Running Vibe Typer from the AppImage on Wayland showed this modal:
+
+#+BEGIN_QUOTE
+Vibe Typer needs to configure Wayland support to enable text insertion and hotkeys.
+
+This setup is required once. You will be prompted for your password to authorize the creation of a virtual input device.
+#+END_QUOTE
+
+The AppImage should not be allowed to mutate =/etc= directly on this NixOS host. The goal is to understand the required permissions and express them declaratively in the flake.
+
+* Reverse-engineered behavior
+
+The inspected AppImage was:
+
+#+BEGIN_SRC sh
+/home/robert/projects/ai/ViberTyper/VibeTyper.AppImage
+#+END_SRC
+
+Its SHA-256 was:
+
+#+BEGIN_SRC text
+b89f0e955e8bf2899600cd786181015bdf9b0b446a078c2acdd63ca3501ce9f2
+#+END_SRC
+
+The AppImage contains an Electron =app.asar=. The Wayland setup code is in the extracted bundle under:
+
+#+BEGIN_SRC text
+/tmp/vibetyper-asar-1.3.6/dist/main/platform/linux-wayland.js
+/tmp/vibetyper-asar-1.3.6/dist/main/platform/linux/waylandDependencies.js
+/tmp/vibetyper-asar-1.3.6/dist/main/platform/linux/waylandSetupController.js
+/tmp/vibetyper-asar-1.3.6/dist/main/platform/linux/waylandSetupPolicy.js
+#+END_SRC
+
+When the user accepts the modal, Vibe Typer calls =installDependencies()= on the Wayland text handler. On this NixOS system it detects no supported package manager, then runs this privileged command:
+
+#+BEGIN_SRC sh
+pkexec sh -c 'echo '\''KERNEL=="uinput", MODE="0666", OPTIONS+="static_node=uinput"'\'' > /etc/udev/rules.d/99-vibetyper-uinput.rules && echo '\''KERNEL=="event*", SUBSYSTEM=="input", MODE="0666"'\'' >> /etc/udev/rules.d/99-vibetyper-uinput.rules && udevadm control --reload-rules && udevadm trigger && udevadm settle && chmod 666 /dev/uinput && chmod 666 /dev/input/event*'
+#+END_SRC
+
+The persistent part is this unmanaged udev rule:
+
+#+BEGIN_SRC udev
+KERNEL=="uinput", MODE="0666", OPTIONS+="static_node=uinput"
+KERNEL=="event*", SUBSYSTEM=="input", MODE="0666"
+#+END_SRC
+
+The live =chmod= calls are immediate-session equivalents of the same broad permissions. They make =/dev/uinput= writable and all =/dev/input/event*= devices readable and writable by every local user.
+
+The bundled undo flow removes only the generated rule:
+
+#+BEGIN_SRC sh
+pkexec sh -c 'rm -f /etc/udev/rules.d/99-vibetyper-uinput.rules && udevadm control --reload-rules && udevadm trigger'
+#+END_SRC
+
+* What Vibe Typer actually needs
+
+At runtime, the app uses =/dev/uinput= to create a virtual keyboard for text insertion. It also reads =/dev/input/event*= devices directly for Wayland hotkeys.
+
+Its support check requires:
+
+- writable =/dev/uinput=
+- readable =/dev/input/event*= devices
+- =wl-copy= from =wl-clipboard= when the UI is running as native Wayland on wlroots-style compositors such as Sway or Hyprland
+- =wl-copy= only as a recommendation on GNOME/KDE/COSMIC when the Electron UI uses an XWayland backend
+- =xprop= as a recommendation when an X display is present
+- =kdotool= as an optional KDE Plasma 6 helper
+
+The package-manager install code knows only =apt-get=, =dnf=, =pacman=, and =zypper=. On NixOS this means Vibe Typer will not install packages automatically, but it will still try to write the udev rule and run the live =chmod= commands.
+
+* Current host state
+
+On host =tuxedo=, OpenWhispr has already configured the narrower uinput side declaratively:
+
+#+BEGIN_SRC text
+hardware.uinput.enable = true
+/dev/uinput = root:uinput crw-rw----
+robert is in group uinput
+#+END_SRC
+
+The current missing pieces for Vibe Typer are:
+
+#+BEGIN_SRC text
+/dev/input/event0 is not readable by robert
+wl-copy is missing from PATH
+xprop is already installed
+#+END_SRC
+
+This explains why Vibe Typer still shows the Wayland setup modal even though =/dev/uinput= is already writable by the user.
+
+* Declarative NixOS mapping
+
+Do not reproduce Vibe Typer's exact =0666= udev rule unless the goal is to match the upstream installer byte-for-byte. That rule exposes raw input events to every local user.
+
+The narrower practical equivalent for this host is:
+
+#+BEGIN_SRC nix
+{ pkgs, user, ... }:
+
+{
+  environment.systemPackages = with pkgs; [
+    wl-clipboard
+    # plus a vibetyper wrapper and desktop entry pointing at the mutable
+    # /home/robert/projects/ai/ViberTyper/VibeTyper.AppImage file
+    # xorg.xprop # already present on this host
+    # kdotool    # optional, mainly relevant for KDE Plasma 6
+  ];
+
+  users.users.${user}.extraGroups = [
+    "input"
+  ];
+
+  programs.appimage = {
+    enable = true;
+    binfmt = true;
+  };
+
+  # Already enabled by the OpenWhispr module on this host.
+  hardware.uinput.enable = true;
+}
+#+END_SRC
+
+Adding the user to =input= is still a significant permission grant because it allows reading raw input event devices. It is narrower than the AppImage setup because it does not make the devices world-readable and world-writable.
+
+The flake now captures this in =shared/linux/vibetyper.nix=. The AppImage itself intentionally stays outside the Nix store at:
+
+#+BEGIN_SRC text
+/home/robert/projects/ai/ViberTyper/VibeTyper.AppImage
+#+END_SRC
+
+That keeps upstream self-updates possible. NixOS manages only the surrounding integration:
+
+- =programs.appimage.enable= and =programs.appimage.binfmt= so executable AppImages run through =appimage-run=
+- a =vibetyper= command that launches the mutable AppImage path
+- a =VibeTyper= desktop entry
+- =wl-clipboard= on =PATH=
+- =robert= in the =input= group for direct =/dev/input/event*= reads
+
+If an exact reproduction of the AppImage setup is ever needed, the declarative equivalent would be:
+
+#+BEGIN_SRC nix
+{
+  services.udev.extraRules = ''
+    KERNEL=="uinput", MODE="0666", OPTIONS+="static_node=uinput"
+    KERNEL=="event*", SUBSYSTEM=="input", MODE="0666"
+  '';
+}
+#+END_SRC
+
+That exact rule is not recommended.
+
+* Activate
+
+Rebuild the current host:
+
+#+BEGIN_SRC sh
+sudo nixos-rebuild switch --impure --flake /etc/nixos#tuxedo
+#+END_SRC
+
+Then log out and back in, or reboot, so the desktop session receives the new group membership.
+
+* Verify
+
+#+BEGIN_SRC sh
+id -nG | tr ' ' '\n' | grep '^input$'
+id -nG | tr ' ' '\n' | grep '^uinput$'
+command -v wl-copy
+command -v xprop
+test -w /dev/uinput
+test -r /dev/input/event0
+#+END_SRC
+
+Expected results:
+
+- =id= includes =input= and =uinput= after a fresh login.
+- =command -v wl-copy= prints a path from the current system profile.
+- =command -v xprop= prints a path from the current system profile.
+- =test -w /dev/uinput= exits successfully.
+- =test -r /dev/input/event0= exits successfully.
+
+Restart Vibe Typer after the rebuild and new login session.
