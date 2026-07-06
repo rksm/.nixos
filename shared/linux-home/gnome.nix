@@ -34,8 +34,17 @@
       "org/gnome/settings-daemon/plugins/media-keys" = {
         # area-screenshot = [ "<Alt><Super>4" ];
         # screencast = [ "<Alt><Super>5" ];
+        custom-keybindings = [
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/normcap/"
+        ];
         screensaver = [ "<Primary><Super>q" ];
         logout = [ ];
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/normcap" = {
+        name = "NormCap";
+        command = lib.getExe pkgs.normcap;
+        binding = "<Shift><Super>2";
       };
 
       "org/gnome/desktop/peripherals/keyboard" = {
