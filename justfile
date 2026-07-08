@@ -11,7 +11,7 @@ switch cmd="switch" *args="":
         cd macos && sudo just switch {{ cmd }} {{ args }}
     else
         # nixos-rebuild switch --flake . --use-remote-sudo
-        bash -c 'sudo nixos-rebuild {{ cmd }} --impure {{ args }} |& nom'
+        bash -o pipefail -c 'sudo nixos-rebuild {{ cmd }} --impure {{ args }} |& nom'
     fi
 
 switch-debug:
