@@ -9,12 +9,6 @@
   # https://github.com/ClickHouse/ClickHouse/issues/55998
   boot.kernel.sysctl = { "kernel.task_delayacct" = 1; };
 
-  # OpenWhispr Wayland auto-paste needs ydotoold and direct /dev/uinput access.
-  programs.openwhispr = {
-    enable = true;
-    users = [ user ];
-  };
-
   # Select internationalisation properties.
   i18n.defaultLocale = "en_US.UTF-8";
 

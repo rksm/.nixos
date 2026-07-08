@@ -24,7 +24,6 @@
     antigravity-nix.url = "github:jacopone/antigravity-nix";
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
-    openwhispr-nix.url = "github:OpenWhispr/openwhispr";
     flux-reconciler.url = "github:rksm/flux-reconciler";
   };
 
@@ -44,7 +43,6 @@
     , antigravity-nix
     , llm-agents
     , herdr-nix
-    , openwhispr-nix
     , flux-reconciler
     , ...
     }:
@@ -92,7 +90,6 @@
                   }
 
                   tuxedo-nixos.nixosModules.default
-                  openwhispr-nix.nixosModules.default
 
                   ({ ... }: {
                     nixpkgs.overlays = [
@@ -101,7 +98,6 @@
                       skillshare-nix.overlays.default
                       llm-agents.overlays.default
                       herdr-nix.overlays.default
-                      openwhispr-nix.overlays.default
                     ];
                   })
                 ];

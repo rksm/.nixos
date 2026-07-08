@@ -250,7 +250,7 @@ in
     nix-tree
     nil
     nixpkgs-fmt # nix language server
-    nixfmt-rfc-style
+    nixfmt
     cachix
     # devbox
 

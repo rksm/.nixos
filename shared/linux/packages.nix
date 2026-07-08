@@ -69,7 +69,7 @@
     ubuntu-classic
     monaspace
     jetbrains-mono
-    etBook
+    et-book
     montserrat
     (iosevka-bin.override { variant = "Aile"; })
   ];
