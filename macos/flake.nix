@@ -34,6 +34,7 @@
     antigravity-nix.url = "github:jacopone/antigravity-nix";
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
+    flux-reconciler.url = "github:rksm/flux-reconciler";
   };
 
   outputs =
@@ -50,6 +51,7 @@
     , antigravity-nix
     , llm-agents
     , herdr-nix
+    , flux-reconciler
     , ...
     }:
 
@@ -78,6 +80,7 @@
                 magpie = magpie-nix.packages.${machine.system}.default;
                 google-antigravity = antigravity-nix.packages.${machine.system}.google-antigravity;
                 google-antigravity-cli = antigravity-nix.packages.${machine.system}.google-antigravity-cli;
+                flux-reconciler = flux-reconciler.packages.${machine.system}.default;
               };
             in
             {

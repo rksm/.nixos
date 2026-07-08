@@ -12,6 +12,7 @@
     # devops
     ansible
     kubectl
+    flux-reconciler
     kubernetes-helm
 
     # networking tools

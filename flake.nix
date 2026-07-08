@@ -25,6 +25,7 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
     openwhispr-nix.url = "github:OpenWhispr/openwhispr";
+    flux-reconciler.url = "github:rksm/flux-reconciler";
   };
 
   outputs =
@@ -44,6 +45,7 @@
     , llm-agents
     , herdr-nix
     , openwhispr-nix
+    , flux-reconciler
     , ...
     }:
     let
@@ -64,6 +66,7 @@
             magpie = magpie-nix.packages.${system}.default;
             google-antigravity = antigravity-nix.packages.${system}.google-antigravity;
             google-antigravity-cli = antigravity-nix.packages.${system}.google-antigravity-cli;
+            flux-reconciler = flux-reconciler.packages.${system}.default;
           };
 
         in
