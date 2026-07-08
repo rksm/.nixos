@@ -42,7 +42,7 @@
     '';
 
     plugins = [
-      { name = "myfish"; src = /home/${user}/configs/fish; }
+      { name = "myfish"; src = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/fish; }
     ];
   };
 

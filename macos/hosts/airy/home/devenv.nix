@@ -188,7 +188,7 @@ in
     '';
 
     plugins = [
-      { name = "myfish"; src = /Users/${user}/configs/fish; }
+      { name = "myfish"; src = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/fish; }
     ];
   };
 
