@@ -38,9 +38,12 @@ in
       binfmt = true;
     };
 
-    # VibeTyper's Wayland mode uses evdev for global hotkeys and wl-copy for
-    # clipboard insertion on native Wayland compositors. The AppImage stays
-    # mutable outside the Nix store so upstream self-updates can still work.
+    # VibeTyper's Wayland mode uses evdev for global hotkeys, uinput for
+    # synthetic keyboard input, and wl-copy for clipboard insertion on native
+    # Wayland compositors. The AppImage stays mutable outside the Nix store so
+    # upstream self-updates can still work.
+    hardware.uinput.enable = true;
+
     environment.systemPackages = with pkgs; [
       wl-clipboard
     ] ++ [
@@ -48,6 +51,6 @@ in
       vibetyperDesktopItem
     ];
 
-    users.users.${user}.extraGroups = [ "input" ];
+    users.users.${user}.extraGroups = [ "input" "uinput" ];
   };
 }

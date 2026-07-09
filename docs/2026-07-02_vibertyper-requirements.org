@@ -73,9 +73,9 @@ Its support check requires:
 
 The package-manager install code knows only =apt-get=, =dnf=, =pacman=, and =zypper=. On NixOS this means Vibe Typer will not install packages automatically, but it will still try to write the udev rule and run the live =chmod= commands.
 
-* Current host state
+* Host state before the declarative fix
 
-On host =tuxedo=, OpenWhispr has already configured the narrower uinput side declaratively:
+Before OpenWhispr was removed, its module configured the narrower uinput side declaratively:
 
 #+BEGIN_SRC text
 hardware.uinput.enable = true
@@ -91,7 +91,7 @@ wl-copy is missing from PATH
 xprop is already installed
 #+END_SRC
 
-This explains why Vibe Typer still shows the Wayland setup modal even though =/dev/uinput= is already writable by the user.
+After OpenWhispr was removed, Vibe Typer needs to own the uinput setup itself.
 
 * Declarative NixOS mapping
 
@@ -113,6 +113,7 @@ The narrower practical equivalent for this host is:
 
   users.users.${user}.extraGroups = [
     "input"
+    "uinput"
   ];
 
   programs.appimage = {
@@ -120,7 +121,6 @@ The narrower practical equivalent for this host is:
     binfmt = true;
   };
 
-  # Already enabled by the OpenWhispr module on this host.
   hardware.uinput.enable = true;
 }
 #+END_SRC
@@ -140,6 +140,7 @@ That keeps upstream self-updates possible. NixOS manages only the surrounding in
 - a =VibeTyper= desktop entry
 - =wl-clipboard= on =PATH=
 - =robert= in the =input= group for direct =/dev/input/event*= reads
+- =hardware.uinput.enable= and =robert= in the =uinput= group for writable =/dev/uinput=
 
 If an exact reproduction of the AppImage setup is ever needed, the declarative equivalent would be:
 
