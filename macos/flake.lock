@@ -128,11 +128,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1783474727,
-        "narHash": "sha256-B9YkDIny2OxBU4/MJ41wRpsSi/ujl/zfWatlJvNgP9c=",
+        "lastModified": 1783639878,
+        "narHash": "sha256-abnrDpUkNg+/xm859m+9BOfjGDPmnAztQvBaR3596Ps=",
         "owner": "sadjow",
         "repo": "codex-cli-nix",
-        "rev": "e02cb196c37be4e7e960b8fb3d3fe00131f1b49d",
+        "rev": "77438a11367ee33190afe5c6cdf22634eced8e77",
         "type": "github"
       },
       "original": {
@@ -379,14 +379,15 @@
     },
     "herdr-nix": {
       "inputs": {
-        "nixpkgs": "nixpkgs_5"
+        "nixpkgs": "nixpkgs_5",
+        "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1783242058,
-        "narHash": "sha256-nCwSF0dtbdvl8C+YL42+MtOBzYQS6sLX0KPJSGYdVVA=",
+        "lastModified": 1783667010,
+        "narHash": "sha256-1ehe0KQyu0t98NnYN5ou1P6kAT3aQJPTmk0/rEN4yHE=",
         "owner": "rksm",
         "repo": "herdr",
-        "rev": "dbb2841a08484b42f24353ec878dc6b74464b403",
+        "rev": "5becf1257f16935b8afb788215709e228a014ef9",
         "type": "github"
       },
       "original": {
@@ -426,11 +427,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1783492272,
-        "narHash": "sha256-4APwmEAAxW6MQAJgblXemdd0U5TkUa0w77/LpsPP8Po=",
+        "lastModified": 1783656972,
+        "narHash": "sha256-M30foxi+2JXQ8KEIeWIKpB2uVpDYOw0XGI/gOaTb38I=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "e0319c8c10dffb2dc564417ce49baba49b149b33",
+        "rev": "d17493b6a6d08cc1846a17175df67cd603c80c7d",
         "type": "github"
       },
       "original": {
@@ -685,6 +686,27 @@
         "nixpkgs-darwin": "nixpkgs-darwin",
         "nixpkgs-latest": "nixpkgs-latest",
         "skillshare-nix": "skillshare-nix"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "herdr-nix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1783577481,
+        "narHash": "sha256-EWMxOWrJ031f8f/lrcEmhTRs4npw1/5N3Hcjin846c8=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "4cdea398dc491b082dccdce0fad1ed0b75fa3394",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
       }
     },
     "skillshare-nix": {
