@@ -64,6 +64,7 @@
             magpie = magpie-nix.packages.${system}.default;
             google-antigravity = antigravity-nix.packages.${system}.google-antigravity;
             google-antigravity-cli = antigravity-nix.packages.${system}.google-antigravity-cli;
+            llm-agents = llm-agents.packages.${system};
             flux-reconciler = flux-reconciler.packages.${system}.default;
           };
 
@@ -96,7 +97,6 @@
                       overlays-nixpkgs
                       rtk-nix.overlays.default
                       skillshare-nix.overlays.default
-                      llm-agents.overlays.default
                       herdr-nix.overlays.default
                     ];
                   })
