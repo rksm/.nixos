@@ -43,6 +43,7 @@
       settings = {
         trusted-users = [ "root" user ];
 
+        auto-optimise-store = true;
         experimental-features = [ "flakes" "nix-command" ];
 
         netrc-file = "/etc/nixos/shared/secrets/hyper-video-cachix-netrc.key";
