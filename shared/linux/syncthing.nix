@@ -111,7 +111,7 @@
         })
 
           // (lib.optionalAttrs config.syncthing.enable-projects-ai {
-          "ai" = {
+          "projects/ai" = {
             id = "projects/ai";
             path = "/home/${user}/projects/ai";
             devices = [ "titan-linux" "storm" "nas" "airy" ];
