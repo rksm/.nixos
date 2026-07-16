@@ -6,6 +6,11 @@
   };
 
   config = lib.mkIf config.audio-video-image-editing.enable
+    (let
+      # NVENC support is built into OBS independently of this flag. Enabling
+      # cudaSupport here misses the binary cache and currently trips GCC 15 ICEs.
+      obsPackage = pkgs.obs-studio.override { cudaSupport = false; };
+    in
     {
       environment.systemPackages = with pkgs; [
         krita
@@ -22,12 +27,12 @@
       programs.obs-studio = {
         enable = true;
         enableVirtualCamera = true;
-        package = pkgs.obs-studio.override { cudaSupport = config.nvidia.enable; };
-        plugins = with pkgs.obs-studio-plugins; [
+        package = obsPackage;
+        plugins = [
           # obs-backgroundremoval
-          obs-source-record
-          obs-pipewire-audio-capture
+          (pkgs.obs-studio-plugins.obs-source-record.override { obs-studio = obsPackage; })
+          (pkgs.obs-studio-plugins.obs-pipewire-audio-capture.override { obs-studio = obsPackage; })
         ];
       };
-    };
+    });
 }
