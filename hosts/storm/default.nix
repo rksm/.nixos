@@ -48,8 +48,8 @@
     enable-projects-website = true;
     enable-projects-shuttle = true;
     enable-projects-hyper = true;
-    enable-projects-ai = false;
-    enable-skillshare-skills = false;
+    enable-projects-ai = true;
+    enable-skillshare-skills = true;
     enable-projects-security = false;
     enable-media = false;
   };

@@ -9,6 +9,12 @@
   home.file.".npmrc".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.npmrc;
   home.file.".style.yapf".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.style.yapf;
 
+  home.file.".config/skillshare/config.yaml".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/projects/ai/skillshare/config.yaml;
+  home.file.".codex/config.toml".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/codex/config.toml;
+  home.file.".codex/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/codex/AGENTS.md;
+  home.file.".claude/CLAUDE.md".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/claude/CLAUDE.md;
+  home.file.".claude/settings.json".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/claude/settings.json;
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
