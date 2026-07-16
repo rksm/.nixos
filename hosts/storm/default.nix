@@ -22,6 +22,7 @@
   networking.wireless.enable = lib.mkForce false;
   mullvad.enable = true;
   nvidia.enable = true;
+  hardware.nvidia.open = true;
   postgres.enable = false;
   printing.enable = true;
   setup_docker.enable = true;
