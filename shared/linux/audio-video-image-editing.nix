@@ -13,8 +13,11 @@
     in
     {
       environment.systemPackages = with pkgs; [
-        krita
-        darktable
+        # The base media packages inherit global cudaSupport through dependencies,
+        # forcing large local builds. The latest set has the same app versions
+        # here without CUDA-enabled deps and substitutes from cache.
+        pkgs.latest.krita
+        pkgs.latest.darktable
         inkscape
         # for video editing
         latest.kdePackages.kdenlive
