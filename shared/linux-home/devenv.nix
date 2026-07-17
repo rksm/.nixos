@@ -135,6 +135,7 @@
 
     rtk # https://github.com/rtk-ai/rtk / https://github.com/hypervideo/rtk-nix
     llm-agents.claude-code
+    llm-agents.cli-proxy-api
     herdr
     codex-cli
     skillshare
