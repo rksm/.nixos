@@ -30,6 +30,10 @@ in
       #   color-scheme = "prefer-dark";
       # };
 
+      "org/gnome/desktop/sound" = {
+        allow-volume-above-100-percent = true;
+      };
+
       "org/gnome/shell/keybindings" = {
         toggle-overview = [ "<Super>space" ];
         # unbind Super + N
