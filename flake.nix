@@ -81,6 +81,8 @@
 
                   home-manager.nixosModules.home-manager
                   {
+                    home-manager.backupFileExtension = "hm-backup";
+                    home-manager.overwriteBackup = true;
                     home-manager.useGlobalPkgs = true;
                     home-manager.useUserPackages = true;
                     home-manager.extraSpecialArgs = {

@@ -11,8 +11,11 @@
 
   home.file.".config/skillshare/config.yaml".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/projects/ai/skillshare/config.yaml;
   home.file.".codex/config.toml".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/codex/config.toml;
+  home.file.".codex/config.toml".force = true;
   home.file.".codex/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/codex/AGENTS.md;
+  home.file.".codex/AGENTS.md".force = true;
   home.file.".claude/CLAUDE.md".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/claude/CLAUDE.md;
+  home.file.".claude/CLAUDE.md".force = true;
   home.file.".claude/settings.json".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/claude/settings.json;
 
   programs.direnv = {
