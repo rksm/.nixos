@@ -3,6 +3,7 @@
 
   # List packages installed in system profile. To search, run:
   # nix search wget
+
   environment.systemPackages = with pkgs; [
     # utils
     emacs
@@ -19,6 +20,7 @@
     killall
     xclip # for xclip -selection clipboard
     notify-desktop
+    mutter # for gdctl
 
     # low priority so that we can to use trace from elsewhere
     (lib.lowPrio perf)

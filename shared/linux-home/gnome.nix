@@ -1,4 +1,14 @@
-{ config, pkgs, lib, ... }: {
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+
+let
+  gdctl = lib.getExe' pkgs.mutter "gdctl";
+in
+{
   home.packages = with pkgs; [
     dconf-editor
     gnomeExtensions.unite
@@ -26,6 +36,8 @@
         focus-active-notification = [ "" ];
         show-screenshot-ui = [ "<Shift><Super>4" ];
         show-screen-recording-ui = [ "<Shift><Super>5" ];
+        switch-to-application-1 = [ ]; # free Super + 1
+        switch-to-application-2 = [ ]; # free Super + 2
         toggle-application-view = [ "" ]; # unbind Super + A
         toggle-quick-settings = [ "" ]; # unbind Super + S
         toggle-message-tray = [ "" ]; # unbind Super + m, Super + v
@@ -36,6 +48,9 @@
         # screencast = [ "<Alt><Super>5" ];
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/normcap/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/display-dp-1/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/display-dp-2/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/display-both/"
         ];
         screensaver = [ "<Primary><Super>q" ];
         logout = [ ];
@@ -45,6 +60,24 @@
         name = "NormCap";
         command = lib.getExe pkgs.normcap;
         binding = "<Shift><Super>2";
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/display-dp-1" = {
+        name = "Use DP-1 only";
+        command = "${gdctl} set --persistent --logical-monitor --primary --monitor DP-1 --scale 1.25";
+        binding = "<Super>1";
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/display-dp-2" = {
+        name = "Use DP-2 only";
+        command = "${gdctl} set --persistent --logical-monitor --primary --monitor DP-2 --scale 1.25";
+        binding = "<Super>2";
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/display-both" = {
+        name = "Use both displays";
+        command = "${gdctl} set --persistent --logical-monitor --primary --monitor DP-1 --scale 1.25 --logical-monitor --monitor DP-2 --scale 1.25 --right-of DP-1";
+        binding = "<Super>0";
       };
 
       "org/gnome/desktop/peripherals/keyboard" = {
@@ -87,7 +120,6 @@
       "org/gnome/desktop/input-sources" = {
         xkb-options = [ "compose:caps" ];
       };
-
 
       # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
       # gnome extensions
