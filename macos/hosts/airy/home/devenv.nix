@@ -257,6 +257,8 @@ in
     # jetbrains.rust-rover
     # code-cursor
     llm-agents.claude-code
+    llm-agents.hermes-agent
+    llm-agents.ccusage
     llm-agents.cli-proxy-api
     # llm-agents.herdr
     herdr
