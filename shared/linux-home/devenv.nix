@@ -20,6 +20,17 @@
   home.file."bin/start.sh".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/start.sh;
   home.file."bin/start.sh".force = true;
 
+  # alternative linking
+  # {
+  #   home.activation.linkClaudeSettings =
+  #     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+  #       $DRY_RUN_CMD mkdir -p "$HOME/.claude"
+  #       $DRY_RUN_CMD ln -sfn \
+  #         "/home/${user}/configs/ai/claude/settings.json" \
+  #         "/home/${user}/.claude/settings.json"
+  #     '';
+  # }
+
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
