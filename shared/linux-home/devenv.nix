@@ -17,6 +17,8 @@
   home.file.".claude/CLAUDE.md".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/claude/CLAUDE.md;
   home.file.".claude/CLAUDE.md".force = true;
   home.file.".claude/settings.json".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/claude/settings.json;
+  home.file."bin/start.sh".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/start.sh;
+  home.file."bin/start.sh".force = true;
 
   programs.direnv = {
     enable = true;
