@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ../../../herdr-skill.nix
     ./devenv.nix
     ./devops.nix
     ./rust.nix

@@ -1,4 +1,4 @@
-{ config, pkgs, user, ... }:
+{ config, pkgs, user, lib, ... }:
 
 {
   home.file.".config/herdr".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/herdr;
@@ -14,22 +14,16 @@
   home.file.".codex/config.toml".force = true;
   home.file.".codex/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/codex/AGENTS.md;
   home.file.".codex/AGENTS.md".force = true;
-  home.file.".claude/CLAUDE.md".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/claude/CLAUDE.md;
-  home.file.".claude/CLAUDE.md".force = true;
-  home.file.".claude/settings.json".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/claude/settings.json;
   home.file."bin/start.sh".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/start.sh;
   home.file."bin/start.sh".force = true;
 
-  # alternative linking
-  # {
-  #   home.activation.linkClaudeSettings =
-  #     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-  #       $DRY_RUN_CMD mkdir -p "$HOME/.claude"
-  #       $DRY_RUN_CMD ln -sfn \
-  #         "/home/${user}/configs/ai/claude/settings.json" \
-  #         "/home/${user}/.claude/settings.json"
-  #     '';
-  # }
+  home.activation.linkClaudeSettings =
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      $DRY_RUN_CMD mkdir -p "$HOME/.claude"
+      $DRY_RUN_CMD ln -sfn "/home/${user}/configs/ai/claude/settings.json" "/home/${user}/.claude/settings.json"
+      $DRY_RUN_CMD ln -sfn "/home/${user}/configs/ai/claude/CLAUDE.md" "/home/${user}/.claude/CLAUDE.md"
+    '';
+
 
   programs.direnv = {
     enable = true;

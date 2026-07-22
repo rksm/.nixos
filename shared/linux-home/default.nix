@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ../../macos/herdr-skill.nix
     ./emacs.nix
     ./devenv.nix
     ./devops.nix
