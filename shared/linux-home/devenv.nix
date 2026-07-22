@@ -20,8 +20,8 @@
   home.activation.linkClaudeSettings =
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD mkdir -p "$HOME/.claude"
-      $DRY_RUN_CMD ln -sfn "/home/${user}/configs/ai/claude/settings.json" "/home/${user}/.claude/settings.json"
-      $DRY_RUN_CMD ln -sfn "/home/${user}/configs/ai/claude/CLAUDE.md" "/home/${user}/.claude/CLAUDE.md"
+      $DRY_RUN_CMD ln -sfn "../configs/ai/claude/settings.json" "/home/${user}/.claude/settings.json"
+      $DRY_RUN_CMD ln -sfn "../configs/ai/claude/CLAUDE.md" "/home/${user}/.claude/CLAUDE.md"
     '';
 
 
