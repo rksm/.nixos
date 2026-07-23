@@ -139,21 +139,16 @@
     cachix
     # devbox
 
-    # jetbrains.rust-rover
-    # ai.aider-chat
-    # code-cursor
-
-    rtk # https://github.com/rtk-ai/rtk / https://github.com/hypervideo/rtk-nix
     llm-agents.claude-code
+    llm-agents.google-antigravity-cli
     llm-agents.cli-proxy-api
+    llm-agents.hermes-agent
+    llm-agents.ccusage
+    llm-agents.rtk
     herdr
     codex-cli
     skillshare
     ast-outline
-    # magpie
-    # llm-agents.gemini-cli
-    google-antigravity-cli
-    google-antigravity
   ];
 
   # npm global

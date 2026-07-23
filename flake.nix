@@ -16,12 +16,10 @@
 
     tuxedo-nixos.url = "github:blitz/tuxedo-nixos";
 
-    rtk-nix.url = "github:hypervideo/rtk-nix";
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     skillshare-nix.url = "github:hypervideo/skillshare-nix";
     ast-outline.url = "github:aeroxy/ast-outline";
     magpie-nix.url = "github:hypervideo/magpie-nix";
-    antigravity-nix.url = "github:jacopone/antigravity-nix";
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
     flux-reconciler.url = "github:rksm/flux-reconciler";
@@ -36,11 +34,9 @@
     , nixpkgs-rksm
     , tuxedo-nixos
     , codex-cli-nix
-    , rtk-nix
     , skillshare-nix
     , ast-outline
     , magpie-nix
-    , antigravity-nix
     , llm-agents
     , herdr-nix
     , flux-reconciler
@@ -62,8 +58,6 @@
             codex-cli = codex-cli-nix.packages.${system}.default;
             ast-outline = ast-outline.packages.${system}.default;
             magpie = magpie-nix.packages.${system}.default;
-            google-antigravity = antigravity-nix.packages.${system}.google-antigravity;
-            google-antigravity-cli = antigravity-nix.packages.${system}.google-antigravity-cli;
             llm-agents = llm-agents.packages.${system};
             flux-reconciler = flux-reconciler.packages.${system}.default;
           };
@@ -97,7 +91,6 @@
                   ({ ... }: {
                     nixpkgs.overlays = [
                       overlays-nixpkgs
-                      rtk-nix.overlays.default
                       skillshare-nix.overlays.default
                       herdr-nix.overlays.default
                     ];

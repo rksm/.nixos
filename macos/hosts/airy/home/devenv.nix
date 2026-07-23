@@ -260,6 +260,7 @@ in
     llm-agents.hermes-agent
     llm-agents.ccusage
     llm-agents.cli-proxy-api
+    llm-agents.rtk
     # llm-agents.herdr
     herdr
     codex-cli
