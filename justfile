@@ -44,8 +44,6 @@ update-ai-macos: && macos-switch
 
 [private]
 update-ai-linux: && switch
-    nix flake update rtk-nix
-
     nix flake update llm-agents
     nix flake update codex-cli-nix
     nix flake update skillshare-nix
