@@ -140,7 +140,7 @@
     # devbox
 
     llm-agents.claude-code
-    llm-agents.google-antigravity-cli
+    llm-agents.antigravity-cli
     llm-agents.cli-proxy-api
     llm-agents.hermes-agent
     llm-agents.ccusage
