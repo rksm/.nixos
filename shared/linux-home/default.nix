@@ -3,6 +3,7 @@
 {
   imports = [
     ../../macos/herdr-skill.nix
+    ../home/pi-local.nix
     ./emacs.nix
     ./devenv.nix
     ./devops.nix

@@ -3,6 +3,7 @@
 {
   imports = [
     ../../../herdr-skill.nix
+    ../../../../shared/home/pi-local.nix
     ./devenv.nix
     ./devops.nix
     ./rust.nix
