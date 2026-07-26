@@ -55,5 +55,9 @@
 
       # Enable networking
       networking.networkmanager.enable = true;
+
+      programs.mosh = {
+        enable = true;
+      };
     };
 }
