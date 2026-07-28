@@ -19,6 +19,10 @@ in
     # gnomeExtensions.awesome-tiles
     (pkgs.callPackage ./packages/awesome-tiles.nix { })
 
+    # focused-window D-Bus bridge for Freestyle dictation
+    # (synced from ~/projects/ai/freestyle via `just sync-gnome-extension`)
+    (pkgs.callPackage ./packages/freestyle-focus-bridge.nix { })
+
     # music
     # rhythmbox
   ];
@@ -134,6 +138,7 @@ in
           "unite@hardpixel.eu"
           "hidetopbar@mathieu.bidon.ca"
           "appindicatorsupport@rgcjonas.gmail.com"
+          "freestyle-focus-bridge@freestyle-voice.dev"
         ];
       };
 
