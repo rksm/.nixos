@@ -9,6 +9,7 @@
     ./devops.nix
     ./rust.nix
     ./gnome.nix
+    ./freestyle.nix
     ./packages.nix
   ];
 
