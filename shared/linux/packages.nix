@@ -82,5 +82,40 @@
   programs.nix-ld.libraries = with pkgs; [
     # Add any missing dynamic libraries for unpackaged programs
     # here, NOT in environment.systemPackages
+
+    # Electron/Chromium runtime (npm-downloaded electron binaries, e.g.
+    # `just dev` in ~/projects/ai/freestyle)
+    alsa-lib
+    at-spi2-atk
+    at-spi2-core
+    atk
+    cairo
+    cups
+    dbus
+    expat
+    fontconfig
+    freetype
+    gdk-pixbuf
+    glib
+    gtk3
+    libdrm
+    libgbm
+    libGL
+    libxkbcommon
+    mesa
+    nspr
+    nss
+    pango
+    stdenv.cc.cc.lib
+    systemd
+    wayland
+    zlib
+    libx11
+    libxcb
+    libxcomposite
+    libxdamage
+    libxext
+    libxfixes
+    libxrandr
   ];
 }
