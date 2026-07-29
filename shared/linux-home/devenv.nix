@@ -149,6 +149,7 @@
     codex-cli
     skillshare
     ast-outline
+    ai-quotas
   ];
 
   # npm global

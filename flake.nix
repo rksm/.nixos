@@ -23,6 +23,8 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
     flux-reconciler.url = "github:rksm/flux-reconciler";
+    ai-quotas.url = "github:rksm/ai-quotas";
+    ai-quotas.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs =
@@ -40,6 +42,7 @@
     , llm-agents
     , herdr-nix
     , flux-reconciler
+    , ai-quotas
     , ...
     }:
     let
@@ -91,6 +94,7 @@
                   ({ ... }: {
                     nixpkgs.overlays = [
                       overlays-nixpkgs
+                      ai-quotas.overlays.default
                       skillshare-nix.overlays.default
                       herdr-nix.overlays.default
                     ];
