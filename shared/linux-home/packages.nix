@@ -1,4 +1,20 @@
-{ pkgs, lib, nixosConfig, ... }: {
+{ pkgs, lib, nixosConfig, ... }:
+let
+  accessibleSlack = pkgs.symlinkJoin {
+    name = "slack-accessible";
+    paths = [ pkgs.slack ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/slack \
+        --set GTK_MODULES "gail:atk-bridge" \
+        --add-flags "--force-renderer-accessibility"
+      cp --remove-destination ${pkgs.slack}/share/applications/slack.desktop \
+        $out/share/applications/slack.desktop
+      substituteInPlace $out/share/applications/slack.desktop \
+        --replace-fail "${pkgs.slack}/bin/slack" "$out/bin/slack"
+    '';
+  };
+in {
 
   home.packages = with pkgs; [
     zip
@@ -27,7 +43,7 @@
     parsec-bin # remote control
     rksm.uniclip # share clipboard over network
     rksm.unsure # calculator for uncertain numbers
-    slack
+    accessibleSlack
 
     telegram-desktop
   ] ++ (lib.optionals nixosConfig.mullvad.enable [

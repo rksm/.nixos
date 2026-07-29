@@ -30,9 +30,10 @@ in
   dconf = {
     enable = true;
     settings = {
-      # "org/gnome/desktop/interface" = {
-      #   color-scheme = "prefer-dark";
-      # };
+      "org/gnome/desktop/interface" = {
+        toolkit-accessibility = true;
+        # color-scheme = "prefer-dark";
+      };
 
       "org/gnome/desktop/sound" = {
         allow-volume-above-100-percent = true;
