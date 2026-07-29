@@ -1,0 +1,12 @@
+* nix / podwriter
+
+#+begin_src shell
+# For specific properties:
+nix eval --impure --expr '(builtins.getFlake "/etc/nixos").nixosConfigurations.storm.config.services.podwriter-controller.natsUrl'
+
+# For all properties as JSON (formatted):
+nix eval --impure --json --expr '(builtins.getFlake "/etc/nixos").nixosConfigurations.storm.config.services.podwriter-controller' | jq
+
+# To see the systemd service configuration:
+nix eval --impure --json --expr '(builtins.getFlake "/etc/nixos").nixosConfigurations.storm.config.systemd.services.podwriter-controller.serviceConfig' | jq
+#+end_src
