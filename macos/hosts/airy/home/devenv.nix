@@ -270,6 +270,7 @@ in
     # llm-agents.gemini-cli
     google-antigravity-cli
     google-antigravity
+    vale
 
     # emacs
     emacsHiFDApp
