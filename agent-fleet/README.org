@@ -22,6 +22,8 @@ You can also enter it directly:
 nix develop ./nix
 #+END_SRC
 
+The repository includes the fleet SSH key. Keep the repository private. The development shell sets the private key mode to =0600= after a checkout.
+
 * Create a server
 
 Run these commands from the repository root:

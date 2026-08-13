@@ -67,6 +67,12 @@
           rsync
           vale
         ];
+
+        shellHook = ''
+          if [ -f "$PWD/ssh/id_ed25519" ]; then
+            chmod 600 "$PWD/ssh/id_ed25519"
+          fi
+        '';
       };
 
       formatter.${system} = nixpkgs.legacyPackages.${system}.nixfmt-tree;
