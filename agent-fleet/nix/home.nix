@@ -22,6 +22,7 @@ in
       ".wezterm.lua".source = fromConfigs ".wezterm.lua";
       ".config/herdr".source = fromConfigs "herdr";
       ".config/vale".source = fromConfigs "vale";
+      ".emacs.d/init.el".source = ./emacs/init.el;
       ".local/share/fish/fish_history".source = fromConfigs "fish_history.linux";
       "bin/start.sh".source = fromConfigs "start.sh";
 
@@ -83,6 +84,7 @@ in
   };
 
   home.packages = with pkgs; [
+    emacs-nox
     fzf
     kubectl
     oh-my-fish
