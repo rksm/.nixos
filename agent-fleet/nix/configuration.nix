@@ -106,7 +106,10 @@ in
     agents.rtk
   ];
 
-  programs.fish.enable = true;
+  programs = {
+    fish.enable = true;
+    _1password.enable = true;
+  };
 
   nix = {
     gc = {

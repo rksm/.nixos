@@ -98,6 +98,26 @@ just sync-auth agent-1
 
 The recipe writes both files with mode =0600=.
 
+* 1Password CLI
+
+The fleet installs the headless 1Password CLI. Add your account once on each server:
+
+#+BEGIN_SRC sh
+just ssh agent-1
+op account add --address my.1password.com
+#+END_SRC
+
+Enter your email address, Secret Key, and account password at the prompts. The account metadata remains on that server.
+
+Run the Fish helper at the start of each session that needs 1Password:
+
+#+BEGIN_SRC fish
+1pass-login
+op whoami
+#+END_SRC
+
+The helper calls =op signin --account my.1password.com=. The session expires after 30 minutes without activity. Run =op signout= to end it sooner.
+
 * Common commands
 
 | Command                     | Purpose                                      |
