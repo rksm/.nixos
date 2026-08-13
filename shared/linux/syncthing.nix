@@ -137,7 +137,7 @@
           "projects/ai" = {
             id = "projects/ai";
             path = "/home/${user}/projects/ai";
-            devices = [ "titan-linux" "storm" "nas" "tuxedo" "airy" ];
+            devices = [ "titan-linux" "storm" "nas" "tuxedo" "airy" "agent-1" ];
           };
         })
 
