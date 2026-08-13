@@ -65,6 +65,7 @@ in
     fd
     fish
     git
+    git-lfs
     gh
     htop
     jq
