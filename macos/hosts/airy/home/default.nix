@@ -21,6 +21,7 @@
   home.file.".aws".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/.aws;
   home.file.".npmrc".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/.npmrc;
   home.file.".style.yapf".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/.style.yapf;
+  home.file.".config/vale".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/vale;
 
   home.file.".config/skillshare/config.yaml".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/projects/ai/skillshare/config.yaml;
   home.file.".config/skillshare/config.yaml".force = true;

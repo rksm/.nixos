@@ -8,6 +8,7 @@
   home.file.".aws".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.aws;
   home.file.".npmrc".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.npmrc;
   home.file.".style.yapf".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.style.yapf;
+  home.file.".config/vale".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/vale;
 
   home.file.".config/skillshare/config.yaml".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/projects/ai/skillshare/config.yaml;
   home.file.".codex/config.toml".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/codex/config.toml;
@@ -150,6 +151,9 @@
     skillshare
     ast-outline
     ai-quotas
+
+    vale    # prose linter
+    vale-ls
   ];
 
   # npm global
