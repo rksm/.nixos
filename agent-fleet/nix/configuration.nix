@@ -10,6 +10,7 @@ let
   agents = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
   codex = inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
   herdr = inputs.herdr-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  skillshare = inputs.skillshare-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
   sshKey = lib.removeSuffix "\n" (builtins.readFile ./ssh-key.pub);
 in
 {
@@ -104,6 +105,7 @@ in
     agents.hermes-agent
     agents.openclaw
     agents.rtk
+    skillshare
   ];
 
   programs = {

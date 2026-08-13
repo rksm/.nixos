@@ -21,6 +21,10 @@ in
       ".style.yapf".source = fromConfigs ".style.yapf";
       ".wezterm.lua".source = fromConfigs ".wezterm.lua";
       ".config/herdr".source = fromConfigs "herdr";
+      ".config/skillshare/config.yaml" = {
+        source = config.lib.file.mkOutOfStoreSymlink "/home/robert/projects/ai/skillshare/config.yaml";
+        force = true;
+      };
       ".config/vale".source = fromConfigs "vale";
       ".emacs.d/init.el".source = ./emacs/init.el;
       ".local/share/fish/fish_history".source = fromConfigs "fish_history.linux";

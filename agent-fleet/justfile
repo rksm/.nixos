@@ -191,6 +191,7 @@ deploy host:
     just sync {{ host }}
     just switch {{ host }}
     just ensure-agent-hooks {{ host }}
+    just sync-skills {{ host }}
 
 # Install or refresh the Claude hooks for Herdr and RTK.
 ensure-agent-hooks host:
@@ -212,6 +213,27 @@ ensure-agent-hooks host:
     fi
     herdr integration install claude
     rtk init --global --hook-only --auto-patch
+    REMOTE
+
+# Publish the synced Skillshare source to each configured AI tool.
+sync-skills host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    ip=$(just host-ip {{ host }})
+    ssh \
+        -i "{{ ssh_key }}" \
+        -o IdentitiesOnly=yes \
+        -o ControlMaster=no \
+        -o ControlPath=none \
+        -o UserKnownHostsFile="{{ known_hosts }}" \
+        -o StrictHostKeyChecking=accept-new \
+        "robert@$ip" 'bash -s' <<'REMOTE'
+    set -euo pipefail
+    if [[ ! -f "$HOME/projects/ai/skillshare/config.yaml" ]]; then
+        echo "The Skillshare source has not synced to this host." >&2
+        exit 1
+    fi
+    skillshare sync
     REMOTE
 
 # Join one new host to the tailnet through browser authorization.

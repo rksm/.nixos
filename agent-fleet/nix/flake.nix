@@ -17,6 +17,7 @@
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
+    skillshare-nix.url = "github:hypervideo/skillshare-nix";
   };
 
   outputs =
