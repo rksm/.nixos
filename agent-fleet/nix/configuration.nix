@@ -60,25 +60,40 @@ in
   security.sudo.wheelNeedsPassword = false;
 
   environment.systemPackages = with pkgs; [
+    btop
     curl
     direnv
     fd
+    fd
     fish
-    git
-    git-lfs
     gh
+    git
+    git-filter-repo
+    git-lfs
     htop
+    iftop
+    iotop
     jq
     just
+    killall
+    lsof # list open files
+    ltrace # library call monitoring
     nix-output-monitor
     nixfmt
+    nmap
     nodejs_24
     openssh
+    (lib.lowPrio perf) # low priority so that we can to use trace from elsewhere
     pandoc
     ripgrep
     rsync
+    strace # system call monitoring
     tree
     vale
+    wget
+
+    google-chrome
+    emacs-nox
 
     agents.antigravity-cli
     agents.ccusage
