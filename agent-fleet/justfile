@@ -113,10 +113,15 @@ deploy host:
 # Join one new host to the tailnet through browser authorization.
 tailscale-login host:
     just ssh {{ host }} sudo tailscale up
+    just ssh {{ host }} sudo systemctl restart tailscale-serve-syncthing.service
 
 # Show the Tailscale connection state for one host.
 tailscale-status host:
     just ssh {{ host }} sudo tailscale status
+
+# Print the tailnet-only Syncthing web UI address.
+syncthing-ui host:
+    just ssh {{ host }} sudo tailscale serve status
 
 # Copy local Codex and Claude OAuth credentials to one host.
 sync-auth host:

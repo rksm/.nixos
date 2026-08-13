@@ -88,6 +88,16 @@ just sync-status agent-1
 
 The local NixOS Syncthing module uses =overrideDevices= and =overrideFolders=. Add each fleet device to that module. Changes made only in the Syncthing web UI do not persist.
 
+** Web UI
+
+Syncthing listens on =127.0.0.1:8384=. Tailscale Serve provides its HTTPS address to the tailnet:
+
+#+BEGIN_SRC sh
+just syncthing-ui agent-1
+#+END_SRC
+
+The current address is [[https://agent-1.taileff843.ts.net/][agent-1.taileff843.ts.net]]. Port =8384= remains closed in the NixOS and Hetzner public firewalls.
+
 * OAuth credentials
 
 OAuth tokens do not belong in the Nix store or a broad Syncthing folder. Copy the current Codex and Claude credentials over SSH:
@@ -130,6 +140,7 @@ The helper calls =op signin --account my.1password.com=. The session expires aft
 | =just sync-auth HOST=       | Copy Codex and Claude OAuth files            |
 | =just syncthing-id HOST=    | Print the Syncthing device ID for a host     |
 | =just sync-status HOST=     | Show Syncthing folder progress               |
+| =just syncthing-ui HOST=    | Print the tailnet-only Syncthing UI address  |
 | =just tailscale-login HOST= | Authorize a new host in the browser          |
 | =just tailscale-status HOST= | Show the Tailscale connection state         |
 | =just build HOST=           | Build the host configuration locally         |

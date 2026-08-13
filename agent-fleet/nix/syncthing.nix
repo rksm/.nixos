@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   services.syncthing = {
     enable = true;
@@ -12,6 +12,8 @@
     overrideFolders = true;
 
     settings = {
+      gui.insecureSkipHostcheck = true;
+
       devices = {
         airy.id = "3RES5O5-HOBSBFM-WGADO2O-ODCAW7Y-PRP3FGS-POM2OTY-XUP5WZG-SVJUYAW";
         mbp.id = "ESRECEY-LRO4O4F-W6T4MCD-JJEUB23-UEMKLC6-3CAPFXO-B75BGCG-V2SIQA6";
@@ -49,5 +51,31 @@
 
       options.urAccepted = 1;
     };
+  };
+
+  systemd.services.tailscale-serve-syncthing = {
+    description = "Expose the Syncthing web UI to the tailnet";
+    after = [
+      "network-online.target"
+      "syncthing.service"
+      "tailscaled.service"
+    ];
+    requires = [
+      "syncthing.service"
+      "tailscaled.service"
+    ];
+    wants = [ "network-online.target" ];
+    wantedBy = [ "multi-user.target" ];
+
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
+
+    script = ''
+      ${pkgs.tailscale}/bin/tailscale serve --bg --yes 8384
+    '';
   };
 }
