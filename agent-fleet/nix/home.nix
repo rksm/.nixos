@@ -22,6 +22,7 @@ in
       ".wezterm.lua".source = fromConfigs ".wezterm.lua";
       ".config/herdr".source = fromConfigs "herdr";
       ".config/vale".source = fromConfigs "vale";
+      ".local/share/fish/fish_history".source = fromConfigs "fish_history.linux";
       "bin/start.sh".source = fromConfigs "start.sh";
 
       ".codex/AGENTS.md" = {
@@ -60,11 +61,19 @@ in
 
     fish = {
       enable = true;
-      interactiveShellInit = ''
-        if test -f "$HOME/configs/fish/config.fish"
-          source "$HOME/configs/fish/config.fish"
+      shellInitLast = ''
+        if status is-interactive
+          set -gx OMF_PATH "${pkgs.oh-my-fish}/share/oh-my-fish"
+          source $OMF_PATH/init.fish
+          source $HOME/configs/fish/config.fish
         end
       '';
+      plugins = [
+        {
+          name = "myfish";
+          src = fromConfigs "fish";
+        }
+      ];
     };
 
     git = {
@@ -72,4 +81,10 @@ in
       includes = [ { path = "~/configs/git/.gitconfig"; } ];
     };
   };
+
+  home.packages = with pkgs; [
+    fzf
+    kubectl
+    oh-my-fish
+  ];
 }

@@ -53,6 +53,7 @@ in
       description = "Robert";
       extraGroups = [ "wheel" ];
       openssh.authorizedKeys.keys = [ sshKey ];
+      shell = pkgs.fish;
     };
   };
 
