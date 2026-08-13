@@ -225,7 +225,7 @@ syncthing-id host:
         "robert@$ip" \
         'syncthing device-id --home="$HOME/.config/syncthing"'
 
-# Show Syncthing progress for the two fleet folders.
+# Show Syncthing progress for the three fleet folders.
 sync-status host:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -240,7 +240,7 @@ sync-status host:
         "robert@$ip" 'bash -s' <<'REMOTE'
     set -euo pipefail
     api_key=$(syncthing cli -H "$HOME/.config/syncthing" config gui apikey get)
-    for folder in configs projects/hyper; do
+    for folder in configs projects/ai projects/hyper; do
         curl -fsS \
             -H "X-API-Key: $api_key" \
             --get \

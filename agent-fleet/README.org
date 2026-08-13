@@ -94,6 +94,7 @@ resources.
 Each server joins these existing Syncthing folders:
 
 - =~/configs=
+- =~/projects/ai=
 - =~/projects/hyper=
 
 Home Manager links the files used by Codex, Claude, Git, Herdr, Vale, Bash, Fish, GnuPG, AWS tools, and npm from =~/configs= into the expected paths.

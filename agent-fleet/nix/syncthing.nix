@@ -37,6 +37,17 @@
           ];
         };
 
+        "projects/ai" = {
+          id = "projects/ai";
+          path = "/home/robert/projects/ai";
+          devices = [
+            "airy"
+            "nas"
+            "storm"
+            "tuxedo"
+          ];
+        };
+
         "projects/hyper" = {
           id = "projects/hyper";
           path = "/home/robert/projects/hyper";
