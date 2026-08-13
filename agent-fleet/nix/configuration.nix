@@ -9,6 +9,7 @@
 let
   agents = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
   codex = inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  herdr = inputs.herdr-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
   sshKey = lib.removeSuffix "\n" (builtins.readFile ./ssh-key.pub);
 in
 {
@@ -99,7 +100,7 @@ in
     agents.claude-code
     agents.cli-proxy-api
     codex
-    agents.herdr
+    herdr
     agents.hermes-agent
     agents.openclaw
     agents.rtk

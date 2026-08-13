@@ -16,15 +16,15 @@
 
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     llm-agents.url = "github:numtide/llm-agents.nix";
+    herdr-nix.url = "github:rksm/herdr";
   };
 
   outputs =
-    inputs@{
-      self,
-      nixpkgs,
-      disko,
-      home-manager,
-      ...
+    inputs@{ self
+    , nixpkgs
+    , disko
+    , home-manager
+    , ...
     }:
     let
       system = "x86_64-linux";
