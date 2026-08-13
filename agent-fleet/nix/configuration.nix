@@ -93,7 +93,6 @@ in
     wget
 
     google-chrome
-    emacs-nox
 
     agents.antigravity-cli
     agents.ccusage
