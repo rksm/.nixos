@@ -190,6 +190,29 @@ switch host:
 deploy host:
     just sync {{ host }}
     just switch {{ host }}
+    just ensure-agent-hooks {{ host }}
+
+# Install or refresh the Claude hooks for Herdr and RTK.
+ensure-agent-hooks host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    ip=$(just host-ip {{ host }})
+    ssh \
+        -i "{{ ssh_key }}" \
+        -o IdentitiesOnly=yes \
+        -o ControlMaster=no \
+        -o ControlPath=none \
+        -o UserKnownHostsFile="{{ known_hosts }}" \
+        -o StrictHostKeyChecking=accept-new \
+        "robert@$ip" 'bash -s' <<'REMOTE'
+    set -euo pipefail
+    if [[ ! -f "$HOME/.claude/settings.json" ]]; then
+        echo "Claude settings have not synced to this host." >&2
+        exit 1
+    fi
+    herdr integration install claude
+    rtk init --global --hook-only --auto-patch
+    REMOTE
 
 # Join one new host to the tailnet through browser authorization.
 tailscale-login host:
