@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1785336479,
-        "narHash": "sha256-QbNwlWrOTlWKJi/glzP3XmTXtUI0tWAI4XXdg6YbDro=",
+        "lastModified": 1786618127,
+        "narHash": "sha256-hA6FegaqlCkZJ/JK37s4XLYEBNyLRT3eqp2a32m7qY8=",
         "owner": "rksm",
         "repo": "ai-quotas",
-        "rev": "f515ef034e702d4560b1d7eea1d38a1cc0418976",
+        "rev": "332ade13f2039d659ab18068d7a7c5b9a5f10efd",
         "type": "github"
       },
       "original": {
