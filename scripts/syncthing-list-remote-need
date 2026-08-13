@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly api_url=http://127.0.0.1:8384
+readonly per_page=65536
+
+usage() {
+  echo "Usage: $0 HOST" >&2
+  echo "List files that the Syncthing device named HOST needs." >&2
+  echo "Output columns: folder, action, size in bytes, relative path." >&2
+}
+
+if [[ $# -ne 1 ]]; then
+  usage
+  exit 2
+fi
+
+readonly host=${1,,}
+api_key=$(syncthing cli config gui apikey get)
+readonly api_key
+
+api_get() {
+  curl -fsS -H "X-API-Key: $api_key" --get "$@"
+}
+
+devices=$(api_get "$api_url/rest/config/devices")
+device_id=$(
+  jq -r --arg host "$host" \
+    '.[] | select((.name | ascii_downcase) == $host) | .deviceID' \
+    <<<"$devices"
+)
+
+if [[ -z $device_id ]]; then
+  echo "Unknown Syncthing host: $1" >&2
+  echo "Known hosts:" >&2
+  jq -r '.[].name | "  " + .' <<<"$devices" >&2
+  exit 1
+fi
+
+if [[ $device_id == *$'\n'* ]]; then
+  echo "More than one Syncthing device is named: $1" >&2
+  exit 1
+fi
+
+response_file=$(mktemp)
+trap 'rm -f "$response_file"' EXIT
+
+folders=$(
+  api_get "$api_url/rest/config/folders" |
+    jq -r --arg device "$device_id" \
+      '.[] | select(any(.devices[]; .deviceID == $device)) | .id'
+)
+
+[[ -z $folders ]] && exit 0
+
+while IFS= read -r folder; do
+  need_items=$(
+    api_get "$api_url/rest/db/completion" \
+      --data-urlencode "folder=$folder" \
+      --data-urlencode "device=$device_id" |
+      jq '.needItems'
+  )
+  ((need_items == 0)) && continue
+
+  page=1
+
+  while true; do
+    api_get "$api_url/rest/db/remoteneed" \
+      --data-urlencode "folder=$folder" \
+      --data-urlencode "device=$device_id" \
+      --data-urlencode "page=$page" \
+      --data-urlencode "perpage=$per_page" \
+      >"$response_file"
+
+    jq -r --arg folder "$folder" '
+      .files[] |
+      [$folder,
+       (if .deleted then "delete"
+        else (.type | sub("^FILE_INFO_TYPE_"; "") | ascii_downcase)
+        end),
+       (.size // 0),
+       .name] |
+      @tsv
+    ' "$response_file"
+
+    count=$(jq '.files | length' "$response_file")
+    ((count < per_page)) && break
+    ((++page))
+  done
+done <<<"$folders"
