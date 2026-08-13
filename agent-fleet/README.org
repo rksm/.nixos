@@ -1,0 +1,124 @@
+#+TITLE: Agent Fleet
+
+* Overview
+
+This repository creates Hetzner Cloud servers and runs NixOS on them. OpenTofu manages the cloud resources. The flake in =nix/= installs and updates NixOS.
+
+The file =nix/fleet.json= is the fleet inventory. OpenTofu creates every server in that file. The Nix flake creates a matching NixOS configuration for every server.
+
+The initial fleet contains one =cx43= server, =agent-1=, in =nbg1=.
+
+* Enter the development shell
+
+Direnv loads =.env= and enters the Nix development shell:
+
+#+BEGIN_SRC sh
+direnv allow
+#+END_SRC
+
+You can also enter it directly:
+
+#+BEGIN_SRC sh
+nix develop ./nix
+#+END_SRC
+
+* Create a server
+
+Run these commands from the repository root:
+
+#+BEGIN_SRC sh
+just init
+just plan
+just create agent-1
+#+END_SRC
+
+=just create= applies the OpenTofu plan and installs NixOS with =nixos-anywhere=.
+
+* Update a server
+
+Edit the files in =nix/=, then run:
+
+#+BEGIN_SRC sh
+just check
+just deploy agent-1
+#+END_SRC
+
+=just deploy= copies the flake to =/etc/nixos= on the server. It then runs =nixos-rebuild switch= on that server.
+
+Update flake inputs before a deploy when you want new package versions:
+
+#+BEGIN_SRC sh
+just update-inputs
+just deploy agent-1
+#+END_SRC
+
+* Add a server
+
+1. Add one entry to =nix/fleet.json=.
+2. Run =just plan= and check the plan.
+3. Run =just apply=.
+4. Run =just install SERVER_NAME=.
+5. Run =just syncthing-id SERVER_NAME=.
+6. Add the device ID to =/etc/nixos/shared/linux/syncthing.nix= and share the required folders with it.
+7. Apply the local NixOS configuration with =just switch= in =/etc/nixos=.
+8. Run =just sync-auth SERVER_NAME= if the server needs your Codex and Claude sessions.
+
+All servers use the shared NixOS configuration. Add a host-specific module only after a server needs different behavior.
+
+* Syncthing and dotfiles
+
+Each server joins these existing Syncthing folders:
+
+- =~/configs=
+- =~/projects/hyper=
+
+Home Manager links the files used by Codex, Claude, Git, Herdr, Vale, Bash, Fish, GnuPG, AWS tools, and npm from =~/configs= into the expected paths.
+
+Check the remote copy status with:
+
+#+BEGIN_SRC sh
+just sync-status agent-1
+#+END_SRC
+
+The local NixOS Syncthing module uses =overrideDevices= and =overrideFolders=. Add each fleet device to that module. Changes made only in the Syncthing web UI do not persist.
+
+* OAuth credentials
+
+OAuth tokens do not belong in the Nix store or a broad Syncthing folder. Copy the current Codex and Claude credentials over SSH:
+
+#+BEGIN_SRC sh
+just sync-auth agent-1
+#+END_SRC
+
+The recipe writes both files with mode =0600=.
+
+* Common commands
+
+| Command                     | Purpose                                      |
+|-----------------------------+----------------------------------------------|
+| =just plan=                 | Show cloud changes                           |
+| =just apply=                | Apply cloud changes                          |
+| =just install HOST=         | Replace the base image with NixOS            |
+| =just deploy HOST=          | Copy and activate the Nix flake              |
+| =just ssh HOST=             | Open a user shell                            |
+| =just sync-auth HOST=       | Copy Codex and Claude OAuth files            |
+| =just syncthing-id HOST=    | Print the Syncthing device ID for a host     |
+| =just sync-status HOST=     | Show Syncthing folder progress               |
+| =just build HOST=           | Build the host configuration locally         |
+| =just update-inputs=        | Update the flake lock file                    |
+| =just destroy=              | Destroy the Hetzner resources after approval |
+
+* Installed agent tools
+
+The system installs these tools from =llm-agents.nix=:
+
+- OpenClaw: =openclaw=
+- Hermes Agent: =hermes=
+- Antigravity CLI: =agy=
+- Claude Code: =claude=
+- Herdr: =herdr=
+- CLI Proxy API: =cli-proxy-api=
+- Claude usage: =ccusage=
+- RTK: =rtk=
+
+Codex comes from =codex-cli-nix= and is available as =codex=.

@@ -1,0 +1,7 @@
+{
+  "agent-1": {
+    "image": "debian-12",
+    "location": "nbg1",
+    "serverType": "cx43"
+  }
+}

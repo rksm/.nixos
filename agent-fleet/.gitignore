@@ -1,0 +1,8 @@
+.direnv/
+.env
+.terraform/
+terraform.tfstate
+terraform.tfstate.*
+known_hosts
+result
+result-*

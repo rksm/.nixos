@@ -1,0 +1,198 @@
+#!/usr/bin/env just --justfile
+
+set dotenv-load
+
+ssh_key := justfile_directory() + "/ssh/id_ed25519"
+known_hosts := justfile_directory() + "/known_hosts"
+
+default:
+    @just --list
+
+# Initialize OpenTofu and install providers.
+init:
+    tofu init
+
+# Format Terraform and Nix files.
+fmt:
+    tofu fmt -recursive
+    nixfmt nix/*.nix
+
+# Check Terraform and evaluate every NixOS host.
+check:
+    tofu fmt -check -recursive
+    tofu validate
+    nix flake check ./nix --no-build
+
+# Show the infrastructure changes.
+plan *args:
+    tofu plan {{ args }}
+
+# Apply the infrastructure changes.
+apply *args:
+    tofu apply {{ args }}
+
+# Create cloud resources, then install NixOS on one host.
+create host:
+    tofu apply
+    just install {{ host }}
+
+# Destroy cloud resources after confirmation.
+destroy *args:
+    tofu destroy {{ args }}
+
+# Print one host's public IPv4 address.
+host-ip host:
+    @tofu output -json server_ips | jq -er --arg host "{{ host }}" '.[$host]'
+
+# Install NixOS on a new cloud server.
+install host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    ip=$(just host-ip {{ host }})
+    unset SSH_PRIVATE_KEY
+    nixos-anywhere \
+        --flake "./nix#{{ host }}" \
+        -i "{{ ssh_key }}" \
+        --ssh-option "IdentitiesOnly=yes" \
+        --ssh-option "ControlMaster=no" \
+        --ssh-option "ControlPath=none" \
+        --ssh-option "StrictHostKeyChecking=no" \
+        --ssh-option "UserKnownHostsFile=/dev/null" \
+        "root@$ip"
+    just refresh-host-key {{ host }}
+
+# Replace the stored SSH host key after an install or rebuild.
+refresh-host-key host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    ip=$(just host-ip {{ host }})
+    mkdir -p "$(dirname "{{ known_hosts }}")"
+    touch "{{ known_hosts }}"
+    ssh-keygen -f "{{ known_hosts }}" -R "$ip" >/dev/null 2>&1 || true
+    for _ in $(seq 1 60); do
+        if ssh-keyscan -H "$ip" >> "{{ known_hosts }}" 2>/dev/null; then
+            exit 0
+        fi
+        sleep 2
+    done
+    echo "Could not read the SSH host key for {{ host }} ($ip)" >&2
+    exit 1
+
+# Copy the Nix flake to /etc/nixos on one host.
+sync host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    ip=$(just host-ip {{ host }})
+    rsync -az --delete \
+        --exclude result \
+        --rsync-path="sudo rsync" \
+        -e 'ssh -i "{{ ssh_key }}" -o IdentitiesOnly=yes -o ControlMaster=no -o ControlPath=none -o UserKnownHostsFile="{{ known_hosts }}" -o StrictHostKeyChecking=accept-new' \
+        ./nix/ "robert@$ip:/etc/nixos/"
+
+# Activate the flake already stored in /etc/nixos.
+switch host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    ip=$(just host-ip {{ host }})
+    ssh \
+        -i "{{ ssh_key }}" \
+        -o IdentitiesOnly=yes \
+        -o ControlMaster=no \
+        -o ControlPath=none \
+        -o UserKnownHostsFile="{{ known_hosts }}" \
+        -o StrictHostKeyChecking=accept-new \
+        "robert@$ip" \
+        "sudo nixos-rebuild switch --flake /etc/nixos#{{ host }}"
+
+# Copy and activate the current Nix flake.
+deploy host:
+    just sync {{ host }}
+    just switch {{ host }}
+
+# Copy local Codex and Claude OAuth credentials to one host.
+sync-auth host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    test -f "$HOME/.codex/auth.json"
+    test -f "$HOME/.claude/.credentials.json"
+    ip=$(just host-ip {{ host }})
+    ssh=(
+        ssh
+        -i "{{ ssh_key }}"
+        -o IdentitiesOnly=yes
+        -o ControlMaster=no
+        -o ControlPath=none
+        -o UserKnownHostsFile="{{ known_hosts }}"
+        -o StrictHostKeyChecking=accept-new
+    )
+    "${ssh[@]}" "robert@$ip" 'mkdir -p ~/.codex ~/.claude && chmod 700 ~/.codex ~/.claude'
+    rsync -a --chmod=F600 \
+        -e "${ssh[*]}" \
+        "$HOME/.codex/auth.json" \
+        "robert@$ip:.codex/auth.json"
+    rsync -a --chmod=F600 \
+        -e "${ssh[*]}" \
+        "$HOME/.claude/.credentials.json" \
+        "robert@$ip:.claude/.credentials.json"
+
+# Print the Syncthing device ID for one host.
+syncthing-id host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    ip=$(just host-ip {{ host }})
+    ssh \
+        -i "{{ ssh_key }}" \
+        -o IdentitiesOnly=yes \
+        -o ControlMaster=no \
+        -o ControlPath=none \
+        -o UserKnownHostsFile="{{ known_hosts }}" \
+        -o StrictHostKeyChecking=accept-new \
+        "robert@$ip" \
+        'syncthing device-id --home="$HOME/.config/syncthing"'
+
+# Show Syncthing progress for the two fleet folders.
+sync-status host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    ip=$(just host-ip {{ host }})
+    ssh \
+        -i "{{ ssh_key }}" \
+        -o IdentitiesOnly=yes \
+        -o ControlMaster=no \
+        -o ControlPath=none \
+        -o UserKnownHostsFile="{{ known_hosts }}" \
+        -o StrictHostKeyChecking=accept-new \
+        "robert@$ip" 'bash -s' <<'REMOTE'
+    set -euo pipefail
+    api_key=$(syncthing cli -H "$HOME/.config/syncthing" config gui apikey get)
+    for folder in configs projects/hyper; do
+        curl -fsS \
+            -H "X-API-Key: $api_key" \
+            --get \
+            --data-urlencode "folder=$folder" \
+            http://127.0.0.1:8384/rest/db/status \
+            | jq -c --arg folder "$folder" '{folder: $folder, state: .state, globalBytes: .globalBytes, localBytes: .localBytes, needBytes: .needBytes, errors: .errors}'
+    done
+    REMOTE
+
+# Open an SSH session as robert, or run the given command.
+ssh host *command:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    ip=$(just host-ip {{ host }})
+    ssh \
+        -i "{{ ssh_key }}" \
+        -o IdentitiesOnly=yes \
+        -o ControlMaster=no \
+        -o ControlPath=none \
+        -o UserKnownHostsFile="{{ known_hosts }}" \
+        -o StrictHostKeyChecking=accept-new \
+        "robert@$ip" {{ command }}
+
+# Build one NixOS host locally without activating it.
+build host:
+    nix build "./nix#nixosConfigurations.{{ host }}.config.system.build.toplevel"
+
+# Update every Nix flake input.
+update-inputs:
+    nix flake update --flake ./nix
