@@ -32,7 +32,11 @@ in
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [ 22 ];
+    allowedUDPPorts = [ config.services.tailscale.port ];
+    trustedInterfaces = [ "tailscale0" ];
   };
+
+  services.tailscale.enable = true;
 
   services.openssh = {
     enable = true;

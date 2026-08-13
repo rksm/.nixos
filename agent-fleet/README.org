@@ -47,6 +47,8 @@ just deploy agent-1
 
 =just deploy= copies the flake to =/etc/nixos= on the server. It then runs =nixos-rebuild switch= on that server.
 
+NixOS keeps Tailscale running. Browser authorization during =just install= joins a new server to the tailnet once. Later deployments preserve that identity.
+
 Update flake inputs before a deploy when you want new package versions:
 
 #+BEGIN_SRC sh
@@ -106,6 +108,8 @@ The recipe writes both files with mode =0600=.
 | =just sync-auth HOST=       | Copy Codex and Claude OAuth files            |
 | =just syncthing-id HOST=    | Print the Syncthing device ID for a host     |
 | =just sync-status HOST=     | Show Syncthing folder progress               |
+| =just tailscale-login HOST= | Authorize a new host in the browser          |
+| =just tailscale-status HOST= | Show the Tailscale connection state         |
 | =just build HOST=           | Build the host configuration locally         |
 | =just update-inputs=        | Update the flake lock file                    |
 | =just destroy=              | Destroy the Hetzner resources after approval |

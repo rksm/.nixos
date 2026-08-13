@@ -60,6 +60,7 @@ install host:
         --ssh-option "UserKnownHostsFile=/dev/null" \
         "root@$ip"
     just refresh-host-key {{ host }}
+    just tailscale-login {{ host }}
 
 # Replace the stored SSH host key after an install or rebuild.
 refresh-host-key host:
@@ -108,6 +109,14 @@ switch host:
 deploy host:
     just sync {{ host }}
     just switch {{ host }}
+
+# Join one new host to the tailnet through browser authorization.
+tailscale-login host:
+    just ssh {{ host }} sudo tailscale up
+
+# Show the Tailscale connection state for one host.
+tailscale-status host:
+    just ssh {{ host }} sudo tailscale status
 
 # Copy local Codex and Claude OAuth credentials to one host.
 sync-auth host:
