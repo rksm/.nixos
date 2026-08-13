@@ -95,6 +95,10 @@
             id = "3RES5O5-HOBSBFM-WGADO2O-ODCAW7Y-PRP3FGS-POM2OTY-XUP5WZG-SVJUYAW";
             autoAcceptFolders = false;
           };
+          "agent-1" = {
+            id = "OQTRMZU-SR5253H-TOX724P-7M3Y3HB-VN7SBMC-WUCZD7P-3DPYBMF-NNVGEAB";
+            autoAcceptFolders = false;
+          };
         };
 
         folders = { }
@@ -116,7 +120,7 @@
           "configs" = {
             id = "configs";
             path = "/home/${user}/configs";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
+            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" "agent-1" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-emacs {
@@ -157,7 +161,7 @@
           "projects/hyper" = {
             id = "projects/hyper";
             path = "/home/${user}/projects/hyper";
-            devices = [ "storm" "nas" "tuxedo" "airy" ];
+            devices = [ "storm" "nas" "tuxedo" "airy" "agent-1" ];
           };
         })
 
