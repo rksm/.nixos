@@ -140,16 +140,36 @@ refresh-host-key host:
     echo "Could not read the SSH host key for {{ host }} ($ip)" >&2
     exit 1
 
-# Copy the Nix flake to /etc/nixos on one host.
+# Copy the Nix flake and Cachix credentials to one host.
 sync host:
     #!/usr/bin/env bash
     set -euo pipefail
+    netrc_file="/etc/nixos/shared/secrets/hyper-video-cachix-netrc.key"
+    test -f "$netrc_file"
     ip=$(just host-ip {{ host }})
+    ssh=(
+        ssh
+        -i "{{ ssh_key }}"
+        -o IdentitiesOnly=yes
+        -o ControlMaster=no
+        -o ControlPath=none
+        -o UserKnownHostsFile="{{ known_hosts }}"
+        -o StrictHostKeyChecking=accept-new
+    )
     rsync -az --delete \
         --exclude result \
+        --exclude /shared/ \
         --rsync-path="sudo rsync" \
-        -e 'ssh -i "{{ ssh_key }}" -o IdentitiesOnly=yes -o ControlMaster=no -o ControlPath=none -o UserKnownHostsFile="{{ known_hosts }}" -o StrictHostKeyChecking=accept-new' \
+        -e "${ssh[*]}" \
         ./nix/ "robert@$ip:/etc/nixos/"
+    "${ssh[@]}" "robert@$ip" \
+        "sudo install -d -m 700 -o root -g root /etc/nixos/shared/secrets"
+    rsync -a \
+        --chmod=F600 \
+        --chown=root:root \
+        --rsync-path="sudo rsync" \
+        -e "${ssh[*]}" \
+        "$netrc_file" "robert@$ip:$netrc_file"
 
 # Activate the flake already stored in /etc/nixos.
 switch host:

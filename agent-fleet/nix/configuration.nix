@@ -123,6 +123,12 @@ in
         "nix-command"
         "flakes"
       ];
+      netrc-file = "/etc/nixos/shared/secrets/hyper-video-cachix-netrc.key";
+      substituters = [ "https://hyper-video.cachix.org" ];
+      trusted-public-keys = [
+        "hyper-video.cachix.org-1:47YSCAg+fJBEH3oAhSzlcZAbjTMgnHTmQ6gI1la0Su4="
+      ];
+      trusted-substituters = [ "https://hyper-video.cachix.org" ];
       trusted-users = [
         "root"
         "robert"
