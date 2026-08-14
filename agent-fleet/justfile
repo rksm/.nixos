@@ -8,10 +8,6 @@ known_hosts := justfile_directory() + "/known_hosts"
 default:
     @just --list
 
-# Initialize OpenTofu and install providers.
-init:
-    tofu init
-
 # Format Terraform and Nix files.
 fmt:
     tofu fmt -recursive
@@ -23,28 +19,24 @@ check:
     tofu validate
     nix flake check ./nix --no-build
 
+# Initialize OpenTofu and install providers.
+tf-init:
+    tofu init
+
 # Show the infrastructure changes.
-plan *args:
+tf-plan *args:
     tofu plan {{ args }}
 
 # Apply the infrastructure changes.
-apply *args:
-    #!/usr/bin/env bash
-    set -euo pipefail
+tf-apply *args: && ssh-config
     tofu apply {{ args }}
-    just ssh-config
 
 # Create cloud resources, then install NixOS on one host.
-create host:
-    just apply
-    just install {{ host }}
+create host: tf-apply && (install host)
 
 # Destroy cloud resources after confirmation.
-destroy *args:
-    #!/usr/bin/env bash
-    set -euo pipefail
+tf-destroy *args: && ssh-config
     tofu destroy {{ args }}
-    just ssh-config
 
 # Print one host's public IPv4 address.
 host-ip host:
@@ -336,3 +328,7 @@ build host:
 # Update every Nix flake input.
 update-inputs:
     nix flake update --flake ./nix
+
+# Update every Nix flake input.
+update-ai host: && (deploy host)
+    nix flake update --flake ./nix codex-cli-nix llm-agents herdr-nix skillshare-nix
