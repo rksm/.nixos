@@ -12,6 +12,7 @@ in
     username = "robert";
     homeDirectory = "/home/robert";
     stateVersion = "26.05";
+    sessionVariables.EDITOR = "emacs";
 
     file = {
       ".authinfo.gpg".source = fromConfigs ".authinfo.gpg";
