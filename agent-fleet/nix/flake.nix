@@ -18,14 +18,21 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
     skillshare-nix.url = "github:hypervideo/skillshare-nix";
+    ast-outline.url = "github:aeroxy/ast-outline";
+    ai-quotas = {
+      url = "github:rksm/ai-quotas";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    flux-reconciler.url = "github:rksm/flux-reconciler";
   };
 
   outputs =
-    inputs@{ self
-    , nixpkgs
-    , disko
-    , home-manager
-    , ...
+    inputs@{
+      self,
+      nixpkgs,
+      disko,
+      home-manager,
+      ...
     }:
     let
       system = "x86_64-linux";

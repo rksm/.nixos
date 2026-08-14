@@ -1,0 +1,390 @@
+#+TITLE: Nix Setup Comparison: Headless Agent Fleet and Linux Desktops
+#+DATE: [2026-08-14 Fri]
+#+OPTIONS: toc:2
+
+* Decision summary
+
+The headless fleet now has the portable command-line, operations, and AI-agent
+tools from the desktop machines. Keep graphical and hardware support on the
+desktops. Add containers, Kubernetes worker services, GPU support, and language
+toolchains only when a real agent workload needs them.
+
+| Decision                         | Setup                                                                                                                                                                                                                  |
+|----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Current headless base            | Remote access, version control, search, system and network diagnosis, Nix inspection, Kubernetes administration, diagram tools, Vale, Chrome, and the AI CLIs                                                          |
+| Added from the desktop setup     | =ast-outline=, =ai-quotas=, =nix-index=, =nix-tree=, archive and diff tools, network diagnostics, =k9s=, Helm, Flux Reconciler, Graphviz, and Mermaid CLI                                                              |
+| Add only for a proven role       | Docker or Podman, K3s worker services, NVIDIA and CUDA, language-wide toolchains, Cachix publishing, Attic, and foreign-binary compatibility layers                                                                    |
+| Keep on desktops                 | GNOME, X11, display and sound setup, GUI applications, terminal emulators, fonts, desktop browser policy, printing, gaming, media editing, dictation integration, desktop virtualization, and physical-machine drivers |
+| Review before adding more access | Root SSH, passwordless unrestricted sudo, broad dotfile synchronization, and the unauthenticated Syncthing GUI                                                                                                         |
+
+The current fleet base favors immediate tool availability over the smallest
+possible closure. The larger desktop development environment remains useful for
+interactive work. Its graphical parts are not good defaults for an autonomous
+headless host.
+
+* Scope
+
+This comparison covers the current source and evaluated configurations in:
+
+- [[file:nix/flake.nix][=./nix=]], including its NixOS, Home Manager, disk, Syncthing, Emacs, and fleet files
+- [[file:/etc/nixos/flake.nix][=/etc/nixos=]], including the three Linux hosts and their shared Linux and Home Manager modules
+
+The macOS configuration under =/etc/nixos/macos= is outside the comparison. This
+report uses the root =justfile= and =README.org= only to explain how deployment
+installs and updates =./nix=. Package lists below name intentional tools. They do
+not include every transitive package in the final system closure.
+
+The current fleet has one Hetzner =cx43= host, =agent-1=. The desktop flake has
+three physical hosts: =storm=, =titan-linux=, and =tuxedo=.
+
+* Configuration shape
+
+** Headless fleet
+
+=nix/fleet.json= is the single host inventory. =nix/flake.nix= maps every entry to
+the same NixOS configuration. Each host gets:
+
+- the QEMU guest profile
+- a Disko layout for one cloud disk
+- the shared NixOS module in =nix/configuration.nix=
+- the shared Syncthing module
+- the shared Home Manager module for =robert=
+- only a generated hostname as host-specific configuration
+
+The surrounding project uses OpenTofu and =nixos-anywhere= to create and install
+the machines. Deployment copies =./nix= to =/etc/nixos= on each agent host, then
+activates it. Separate post-deploy steps install agent hooks, publish Skillshare
+skills, and optionally copy Codex and Claude OAuth credentials.
+
+** Linux desktops
+
+=/etc/nixos/flake.nix= has a fixed list of three machines. Each machine imports a
+generated hardware configuration, a host module, and the same large shared Linux
+module. Each user configuration imports the same shared Home Manager module.
+
+The shared modules expose options for services such as Docker, K3s, NVIDIA,
+Mullvad, printing, Syncthing, and virtualization. Host modules select a mix of
+those options. The shared base always enables the graphical desktop and installs
+the common interactive development environment.
+
+** Structural comparison
+
+| Area             | Headless fleet                                        | Linux desktops                                                             |
+|------------------+-------------------------------------------------------+----------------------------------------------------------------------------|
+| Host inventory   | Data-driven from =fleet.json=                         | Fixed list in =flake.nix=                                                  |
+| Host variation   | Hostname only                                         | Hardware and feature choices per host                                      |
+| Storage          | Disko partitions =/dev/sda= as ESP plus one ext4 root | Existing hardware layouts, LUKS volumes, extra disks, and NFS mounts       |
+| Boot             | GRUB installed as removable EFI for a cloud VM        | systemd-boot or GRUB according to the physical host                        |
+| Hardware profile | Generic QEMU guest                                    | Generated hardware modules, NVIDIA, Tuxedo laptop support, and Wake-on-LAN |
+| Kernel           | NixOS default for the pinned release                  | Linux 6.18, pinned for the current NVIDIA driver constraint                |
+| State version    | =26.05= for new machines                              | Preserved at =24.05= or =24.11=                                            |
+| Installation     | Reprovisionable through Disko and =nixos-anywhere=    | In-place =nixos-rebuild=                                                   |
+| Main design      | Disposable, uniform servers                           | Long-lived, distinct physical workstations                                 |
+
+Do not copy the desktop kernel pin, hardware modules, state versions, or storage
+layout to the fleet. They solve constraints that the cloud machines do not have.
+
+* Common foundation
+
+** Nix and package sources
+
+Both flakes currently use:
+
+- =x86_64-linux=
+- NixOS 26.05 as the stable package base
+- Home Manager 26.05 with global packages and user packages enabled
+- unfree packages
+- flakes and the =nix-command= interface
+- automatic Nix store optimization
+- =root= and =robert= as trusted Nix users
+- the Hyper Video Cachix cache and its runtime netrc file
+- independent lock files
+
+The independent lock files can resolve the same input to different revisions and
+package versions. This explains short-lived version differences during
+comparison.
+
+** Users and remote access
+
+Both setups create the normal user =robert= and configure Bash and Fish. They
+enable OpenSSH, disable SSH password authentication, and give the wheel group
+passwordless sudo. Both also enable Tailscale and Syncthing. Fish is the login
+shell on the headless hosts. The desktop setup installs it through Home Manager.
+
+The headless configuration permits key-based root SSH by setting
+=PermitRootLogin= to =prohibit-password=. The desktop configuration sets it to
+=no=. The headless exception helps with installation and recovery, but normal
+agent work uses =robert=.
+
+** Shared command-line tools
+
+The package may live in the NixOS profile on one setup and the Home Manager
+profile on the other. It is still available to =robert= in both cases.
+
+| Purpose                  | Tools present in both setups                                                                       |
+|--------------------------+----------------------------------------------------------------------------------------------------|
+| Version control          | =git=, =git-lfs=, =git-filter-repo=, =gh=                                                          |
+| Shell and navigation     | Bash, Fish, Oh My Fish, =direnv= with =nix-direnv=, =fzf=, =tree=                                  |
+| Search and data          | =ripgrep=, =fd=, =jq=                                                                              |
+| Transfer and remote work | =curl=, =wget=, =rsync=, OpenSSH                                                                   |
+| System diagnosis         | =btop=, =htop=, =iftop=, =iotop=, =nmap=, =killall=, =lsof=, =ltrace=, =strace=, =perf=, =sysstat= |
+| Network diagnosis        | =dnsutils=, =mtr=, =traceroute=, =socat=, =iperf3=, =oha=                                          |
+| Archives and code review | =zip=, =unzip=, =difftastic=, =tokei=                                                              |
+| Nix and prose            | =nix-output-monitor=, =nixfmt=, =nix-index=, =nix-tree=, =vale=                                    |
+| Documents and automation | =pandoc=, Graphviz, Mermaid CLI, Google Chrome                                                     |
+| Cluster administration   | =kubectl=, =k9s=, Helm, Flux Reconciler                                                            |
+| Editor                   | Emacs, with a headless or graphical build according to the host                                    |
+| Account access           | headless 1Password CLI                                                                             |
+
+Both setups link the same main configuration families from =~/configs=: Git,
+Bash, Fish, GnuPG, AWS, npm, Herdr, Vale, Codex, and Claude. Both also use the
+Skillshare configuration from =~/projects/ai/skillshare=.
+
+** Shared AI tools
+
+Both setups install:
+
+- Antigravity CLI
+- Claude Code
+- CLI Proxy API
+- Codex
+- =ccusage=
+- Herdr
+- Hermes Agent
+- RTK
+- Skillshare
+
+Both setups now install =ast-outline= and =ai-quotas=. The headless fleet also
+installs OpenClaw. The desktop setup adds general interactive AI clients such as
+=llm= and =shell-gpt=.
+
+* Main differences
+
+** Flake inputs and Nix behavior
+
+| Area               | Headless fleet                                                                                             | Linux desktops                                                                                                                       | Headless decision                                                               |
+|--------------------+------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+---------------------------------------------------------------------------------|
+| Package sets       | Stable host base. =ast-outline= and Flux Reconciler pin their own package sets.                            | Stable plus two unstable package sets and a custom =rksm= set                                                                        | Do not add another shared package set.                                          |
+| External inputs    | Disko, Home Manager, Codex, LLM agents, Herdr, Skillshare, =ast-outline=, =ai-quotas=, and Flux Reconciler | Home Manager, Tuxedo, Codex, LLM agents, Herdr, Skillshare, =ast-outline=, =ai-quotas=, Magpie, Flux Reconciler, and custom packages | The portable agent and operations inputs now match.                             |
+| Package wiring     | Reads packages directly from inputs                                                                        | Uses several overlays                                                                                                                | Keep direct package bindings while the fleet has one shared module.             |
+| Binary caches      | Standard cache plus Nix Community and Hyper Video                                                          | Standard cache plus Nix Community, CUDA Maintainers, and Hyper Video                                                                 | Keep the CUDA cache off CPU-only agents.                                        |
+| Garbage collection | Runs weekly and deletes generations older than 30 days                                                     | No automatic policy in the shared configuration                                                                                      | Keep the fleet policy.                                                          |
+| Development shell  | Control-plane tools: Hetzner CLI, OpenTofu, =nixos-anywhere=, SSH, rsync, formatting, and Vale             | A CUDA Python shell for local GPU checks                                                                                             | Neither development shell describes the packages installed on its target hosts. |
+
+The broad desktop overlays provide a convenient catalog that the fleet does not
+need. A direct package binding keeps each added input visible and local to the
+shared agent module.
+
+** Operating system and services
+
+| Area                | Headless fleet                                                              | Linux desktops                                                                                      |
+|---------------------+-----------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------|
+| User interface      | No display manager or desktop                                               | X11, LightDM, GNOME, Dconf, extensions, and automatic graphical login                               |
+| Sound               | None                                                                        | PipeWire, PulseAudio compatibility, EasyEffects, and real-time audio policy                         |
+| Printing            | None                                                                        | CUPS on every host. =storm= adds Brother and Gutenprint support.                                    |
+| Network manager     | No explicit NetworkManager setup                                            | NetworkManager and =systemd-resolved=                                                               |
+| Host network policy | Public cloud plus Tailscale                                                 | Home-network host aliases, a private CA, Mosh, and local LAN assumptions                            |
+| Firewall            | Enabled. Its allowlist covers SSH, Tailscale, and standard Syncthing ports. | All three current hosts disable it.                                                                 |
+| Root SSH            | Key login allowed                                                           | Disabled                                                                                            |
+| Time and locale     | No explicit override. A cloud host can remain on UTC.                       | Europe/Berlin with US language and German regional formats                                          |
+| Browser             | Chrome, useful for headless browser tasks                                   | Chrome plus managed Firefox and browser extensions                                                  |
+| Containers          | None                                                                        | Docker and Podman on =storm= and =tuxedo=. K3s and containerd on =titan-linux=.                     |
+| GPU                 | None                                                                        | NVIDIA on all hosts, including PRIME offload on =tuxedo= and CUDA support on the desktop towers     |
+| Virtual machines    | None                                                                        | libvirt, QEMU, virt-manager, VirtualBox, SPICE, Wine, and related GUI tools on =storm= and =tuxedo= |
+| VPN                 | Tailscale only                                                              | Tailscale everywhere and Mullvad on =storm= and =tuxedo=                                            |
+
+The current desktop modules assume a trusted local network and disable the
+firewall. Do not copy that policy to public cloud hosts. The smaller fleet
+allowlist is the right default.
+
+** Home Manager environment
+
+The headless Home Manager module remains a small remote shell environment. It
+installs =emacs-nox=, =fzf=, =kubectl=, and Oh My Fish. It also integrates
+=nix-index= with Bash and Fish. The NixOS package list owns the shared agent and
+operations tools. Home Manager uses a small checked-in Emacs initialization file
+and sets =EDITOR= to =emacs=.
+
+The desktop Home Manager module is an interactive workstation environment. It
+adds:
+
+- graphical terminals such as WezTerm and Warp
+- a full PGTK Emacs with packages for Org, email, Git, shells, completion, and UI navigation
+- Python and Rust toolchains and helper tools
+- Kubernetes and infrastructure administration tools
+- GUI communication, office, media, and remote-control applications
+- GNOME extensions, key bindings, monitor layouts, and MIME defaults
+- fonts, spelling dictionaries, mail clients, and desktop clipboard tools
+- local wrappers for Freestyle, VibeTyper, and Pi
+
+** Syncthing
+
+Both setups use declarative devices and folders with =overrideDevices= and
+=overrideFolders=. Both connect the agent fleet to the existing personal device
+mesh. They differ in scope and UI access.
+
+| Area               | Headless fleet                                              | Linux desktops                                                                         |
+|--------------------+-------------------------------------------------------------+----------------------------------------------------------------------------------------|
+| Synced folders     | =configs=, =projects/ai=, and =projects/hyper=              | Per-host selections from Org, documents, configs, Emacs, many project trees, and media |
+| Agent peer         | The host joins folders shared by the desktop module         | =agent-1= is a declared peer for configs, AI, and Hyper projects                       |
+| Data directory     | =~/.local/share/syncthing=                                  | =~/syncthing-data=                                                                     |
+| GUI listener       | Loopback only                                               | Loopback only                                                                          |
+| GUI authentication | No Syncthing password. The configuration skips host checks. | Declarative username and password                                                      |
+| Remote GUI         | Tailscale Serve exposes HTTPS to the tailnet                | No equivalent service in the shared module                                             |
+| Firewall behavior  | Opens the standard Syncthing transfer and discovery ports   | All current hosts disable the firewall.                                                |
+
+Tailscale limits the fleet GUI to tailnet members, but Syncthing authentication
+would still provide useful defense in depth. Keep the UI on loopback and add the
+same password setup used on the desktops.
+
+The synchronized =configs= tree feeds Home Manager links for potentially
+sensitive tools, including GnuPG, AWS, npm, and encrypted auth data. Codex and
+Claude OAuth files already use a separate SSH copy step. Apply the same
+least-data rule to other credentials: sync only what an agent workload needs.
+
+** Current desktop host roles
+
+| Feature                       | =storm=              | =titan-linux=          | =tuxedo=              | Use on headless agents                      |
+|-------------------------------+----------------------+------------------------+-----------------------+---------------------------------------------|
+| GNOME desktop and PipeWire    | yes                  | yes                    | yes                   | no                                          |
+| Tailscale and Syncthing       | yes                  | yes                    | yes                   | yes                                         |
+| NVIDIA                        | desktop GPU          | desktop GPU            | laptop PRIME GPU      | only on a GPU agent                         |
+| Docker and Podman             | yes                  | no                     | yes                   | only for container workloads                |
+| K3s worker                    | no                   | yes                    | no                    | only for a cluster-worker role              |
+| virt-manager stack            | yes                  | no                     | yes                   | no. Use a non-GUI runtime only when needed. |
+| Media editing                 | yes                  | no                     | yes                   | no                                          |
+| Gaming                        | yes                  | no                     | no                    | no                                          |
+| Mullvad                       | yes                  | no                     | yes                   | only for a defined egress policy            |
+| Printer discovery and drivers | yes                  | no extra drivers       | no extra drivers      | no                                          |
+| Extra local or network mounts | disabled NFS options | local data and K3s NFS | encrypted second disk | only for a defined storage role             |
+
+The K3s and storage setup on =titan-linux= is server-like even though it shares
+the desktop base. Treat it as evidence for an optional cluster role, not as
+evidence that every agent needs K3s.
+
+* Current headless tool baseline
+
+** Installed on every agent host
+
+| Addition                                                      | Reason                                                                               | Desktop source                   |
+|---------------------------------------------------------------+--------------------------------------------------------------------------------------+----------------------------------|
+| =ast-outline=                                                 | Gives coding agents a compact map of unfamiliar source without reading whole files.  | =shared/linux-home/devenv.nix=   |
+| =ai-quotas=                                                   | Makes quota state visible on machines that run several provider CLIs.                | =shared/linux-home/devenv.nix=   |
+| Home Manager =programs.nix-index=                             | Finds the package that provides a missing command and integrates with Bash and Fish. | =shared/linux-home/devenv.nix=   |
+| =nix-tree=                                                    | Explains why a package or dependency is in a Nix closure.                            | =shared/linux-home/devenv.nix=   |
+| =zip= and =unzip=                                             | Handles common project and release archives without an ad hoc shell.                 | =shared/linux-home/packages.nix= |
+| =difftastic=                                                  | Makes structural code changes easier to review when a workflow invokes it.           | =shared/linux-home/devenv.nix=   |
+| =tokei=                                                       | Gives a quick, stable codebase size and language inventory.                          | =shared/linux-home/devenv.nix=   |
+| =dnsutils=, =mtr=, =traceroute=, =socat=, =iperf3=, and =oha= | Covers DNS, route, packet-loss, socket, throughput, and HTTP diagnosis.              | =shared/linux-home/devops.nix=   |
+| =sysstat=                                                     | Adds =sar= and related CPU, process, and disk diagnosis tools.                       | =shared/linux-home/devops.nix=   |
+| =k9s=, Helm, and Flux Reconciler                              | Supports Kubernetes administration from an agent host.                               | =shared/linux-home/devops.nix=   |
+| Graphviz and Mermaid CLI                                      | Lets agents render dependency graphs and Mermaid diagrams.                           | =shared/linux-home/devenv.nix=   |
+| Nix Community binary cache                                    | Avoids local builds when the cache has the requested package.                        | =shared/linux/default.nix=       |
+
+The shared NixOS package list owns these tools. =nix-index= uses the existing Home
+Manager module because it integrates with Bash and Fish. =ast-outline=,
+=ai-quotas=, and Flux Reconciler use direct flake package bindings.
+
+** Completed cleanup
+
+The fleet package list now contains one =fd= entry. Home Manager no longer links
+=~/.wezterm.lua= on headless hosts.
+
+** Add only when a workload requires it
+
+| Workload                    | Candidate setup                                                                                | Reason not to add globally                                                                                        |
+|-----------------------------+------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------|
+| Kubernetes worker           | K3s, containerd, NVIDIA container toolkit, Open-iSCSI, RPC/NFS support                         | It changes host networking, storage, and lifecycle.                                                               |
+| Container build and test    | Choose Docker or Podman, plus Compose when needed                                              | The daemon and its privileges expand the attack surface. Do not install both by habit.                            |
+| GPU inference or training   | NVIDIA driver, persistence daemon, container toolkit, CUDA cache, and a CUDA development shell | The current Hetzner =cx43= has no GPU.                                                                            |
+| Rust development            | =rustup= and the Cargo helper set                                                              | Project flakes should own compiler versions and native libraries.                                                 |
+| Python data work            | A project-specific Python environment                                                          | The large desktop Python environment is mutable knowledge that belongs to each project.                           |
+| Nix editing                 | =nil=                                                                                          | Useful for an interactive LSP client, but less useful to an unattended agent than =nixfmt= and evaluation checks. |
+| Alternative version control | Jujutsu, LazyJJ, Git Crypt, and Git Extras                                                     | Add only when the repositories or workflow use them.                                                              |
+| Binary cache publishing     | Cachix client or an Attic server                                                               | Downloading from a substituter does not require either tool.                                                      |
+| Foreign Linux binaries      | =nix-ld=, an FHS environment, or AppImage support                                              | These weaken the benefit of project-owned Nix environments and add compatibility state.                           |
+| Browser automation          | Keep Chrome                                                                                    | Chrome is already installed. Remove it if no agent task launches a browser.                                       |
+| Private network access      | Custom CA, static host aliases, Mullvad, and extra mounts                                      | These encode one network or data-access role and should not become fleet defaults.                                |
+
+** Keep on interactive desktops
+
+Do not add these groups to the headless base:
+
+- X11, LightDM, GNOME, Dconf, GNOME extensions, auto-login, monitor bindings, and accessibility settings
+- WezTerm, Warp, desktop notifications, clipboard integration, and MIME associations
+- Firefox policies and extensions, 1Password GUI, Slack, Telegram, office suites, and media players
+- PipeWire, PulseAudio tools, screen recording, audio editing, image editing, and video editing
+- Freestyle and VibeTyper desktop launchers, =uinput= access, and GNOME focus integration
+- CUPS, printer drivers, Avahi printer discovery, Steam, Lutris, and the Mullvad desktop client
+- virt-manager, VirtualBox, SPICE viewers, Wine, and Windows guest assets
+- workstation fonts, Tuxedo laptop tools, NVIDIA settings UI, touchpad or display setup, and physical disk declarations
+- graphical Emacs, mail synchronization, browser helpers, and the large interactive Emacs package set
+
+These packages support a human session or attached hardware. They do not help an
+agent build, test, inspect, or repair a project over SSH.
+
+* Headless-specific setup to retain
+
+Several fleet choices are better for agent servers than their desktop
+counterparts:
+
+- Keep Disko and =nixos-anywhere= to replace disposable hosts repeatably.
+- Keep the QEMU guest profile and the simple one-disk layout.
+- Keep the firewall enabled with a small public allowlist.
+- Keep Tailscale for administration and tailnet-only service access.
+- Keep automatic garbage collection and store optimization.
+- Keep =emacs-nox= rather than the graphical Emacs build when remote editing needs it.
+- Keep the headless 1Password CLI without the GUI.
+- Keep UTC unless agent logs have a clear need to use Europe/Berlin.
+- Keep browser-based Tailscale enrollment or another runtime secret mechanism. Do not copy a tailnet key into a Nix-generated script.
+
+* Security and maintenance findings
+
+These findings do not block tool additions, but they matter more on autonomous
+cloud machines than on a personal desktop.
+
+1. Decide whether root SSH is still needed after installation. If recovery through
+   =robert= and sudo is enough, match the desktop setting and disable root SSH.
+2. Treat passwordless sudo as an explicit trust choice. An agent running as
+   =robert= can currently become root without a second boundary.
+3. Add Syncthing GUI authentication on the fleet even though Tailscale Serve limits
+   access to the tailnet.
+4. Review each Home Manager link from =~/configs=. Remove links for credentials and
+   tools that no fleet workload uses. The existing separate OAuth-copy workflow is
+   the safer model.
+5. Do not port the desktop Tailscale autoconnect script or K3s flag construction as
+   written. Both interpolate a key read at Nix evaluation time into generated
+   configuration. Prefer a runtime credential file.
+6. Keep the two flake lock files independent, but expect temporary version drift.
+   Compare revisions before debugging a difference that appears on only one setup.
+7. Fix the current =titan-linux= evaluation conflict. The host sets
+   =networking.wireless.enable= to =false=, while NetworkManager sets it to =true=
+   at the same priority. =storm= uses =lib.mkForce false= for the same intent.
+8. Track the Tuxedo module rename warning. =tuxedo= evaluates, but the current
+   =tuxedo-nixos= input still refers to the renamed =hardware.tuxedo-keyboard=
+   option.
+
+* Validation status
+
+The comparison used both source inspection and Nix evaluation.
+
+- =just check= passes in the agent fleet development shell. This covers OpenTofu
+  formatting and validation plus =nix flake check ./nix --no-build=.
+- =just build= realizes the complete =agent-1= system closure with the added tools.
+- =just sync= followed by =just switch= activates the configuration on =agent-1=.
+- A remote smoke test finds every added command, confirms the Nix Community cache,
+  and confirms that Home Manager removed the WezTerm link.
+- =storm= and =tuxedo= both evaluate their system closures.
+- =tuxedo= emits the Tuxedo option rename warning described above.
+- =nix flake check /etc/nixos --impure --no-build= stops at the existing
+  =titan-linux= wireless conflict described above.
+- Vale reports no findings for this document, and Emacs =org-lint= reports no Org
+  syntax problems.
+
+* Suggested implementation order
+
+1. Add Syncthing GUI authentication and decide on root SSH and sudo policy.
+2. Review which files from =~/configs= each agent workload needs.
+3. Watch cache hits and closure growth during later switches.
+4. Add larger role-specific setup only in response to a concrete failed task or a
+   new host role.

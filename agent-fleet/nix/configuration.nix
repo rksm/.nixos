@@ -8,7 +8,10 @@
 }:
 let
   agents = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
+  aiQuotas = inputs.ai-quotas.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  astOutline = inputs.ast-outline.packages.${pkgs.stdenv.hostPlatform.system}.default;
   codex = inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  fluxReconciler = inputs.flux-reconciler.packages.${pkgs.stdenv.hostPlatform.system}.default;
   herdr = inputs.herdr-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
   skillshare = inputs.skillshare-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
   sshKey = lib.removeSuffix "\n" (builtins.readFile ./ssh-key.pub);
@@ -64,43 +67,61 @@ in
   environment.systemPackages = with pkgs; [
     btop
     curl
+    difftastic
     direnv
-    fd
+    dnsutils
     fd
     fish
     gh
     git
     git-filter-repo
     git-lfs
+    graphviz
     htop
     iftop
+    iperf3
     iotop
     jq
     just
+    k9s
     killall
+    kubernetes-helm
     lsof # list open files
     ltrace # library call monitoring
+    mermaid-cli
+    mtr
     nix-output-monitor
+    nix-tree
     nixfmt
     nmap
     nodejs_24
+    oha
     openssh
     (lib.lowPrio perf) # low priority so that we can to use trace from elsewhere
     pandoc
     ripgrep
     rsync
+    socat
     strace # system call monitoring
+    sysstat
+    tokei
+    traceroute
     tree
+    unzip
     vale
     wget
+    zip
 
     google-chrome
 
+    aiQuotas
     agents.antigravity-cli
     agents.ccusage
     agents.claude-code
     agents.cli-proxy-api
+    astOutline
     codex
+    fluxReconciler
     herdr
     agents.hermes-agent
     agents.openclaw
@@ -126,11 +147,18 @@ in
         "flakes"
       ];
       netrc-file = "/etc/nixos/shared/secrets/hyper-video-cachix-netrc.key";
-      substituters = [ "https://hyper-video.cachix.org" ];
+      substituters = [
+        "https://nix-community.cachix.org"
+        "https://hyper-video.cachix.org"
+      ];
       trusted-public-keys = [
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "hyper-video.cachix.org-1:47YSCAg+fJBEH3oAhSzlcZAbjTMgnHTmQ6gI1la0Su4="
       ];
-      trusted-substituters = [ "https://hyper-video.cachix.org" ];
+      trusted-substituters = [
+        "https://nix-community.cachix.org"
+        "https://hyper-video.cachix.org"
+      ];
       trusted-users = [
         "root"
         "robert"

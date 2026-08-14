@@ -20,7 +20,6 @@ in
       ".gnupg".source = fromConfigs ".gnupg";
       ".npmrc".source = fromConfigs ".npmrc";
       ".style.yapf".source = fromConfigs ".style.yapf";
-      ".wezterm.lua".source = fromConfigs ".wezterm.lua";
       ".config/herdr".source = fromConfigs "herdr";
       ".config/skillshare/config.yaml" = {
         source = config.lib.file.mkOutOfStoreSymlink "/home/robert/projects/ai/skillshare/config.yaml";
@@ -85,6 +84,12 @@ in
     git = {
       enable = true;
       includes = [ { path = "~/configs/git/.gitconfig"; } ];
+    };
+
+    nix-index = {
+      enable = true;
+      enableBashIntegration = true;
+      enableFishIntegration = true;
     };
   };
 
