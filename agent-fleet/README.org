@@ -154,6 +154,9 @@ The helper calls =op signin --account my.1password.com=. The session expires aft
 
 * Common commands
 
+Commands that take =HOST= accept one hostname or a comma-separated list. Omit
+=HOST= to run the command on every host in =nix/fleet.json=.
+
 | Command                        | Purpose                                      |
 |--------------------------------+----------------------------------------------|
 | =just plan=                    | Show cloud changes                           |

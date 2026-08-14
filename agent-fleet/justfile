@@ -1,9 +1,44 @@
 #!/usr/bin/env just --justfile
 
 set dotenv-load
+set positional-arguments
 
 ssh_key := justfile_directory() + "/ssh/id_ed25519"
 known_hosts := justfile_directory() + "/known_hosts"
+
+[private]
+_for-hosts recipe host="" *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    recipe=$1
+    requested_hosts=$2
+    shift 2
+
+    fleet=$(jq -ce \
+        'if type == "object" and length > 0 then . else error("fleet must be a non-empty object") end' \
+        nix/fleet.json)
+
+    if [[ -z "$requested_hosts" ]]; then
+        mapfile -t hosts < <(jq -r 'keys[]' <<<"$fleet")
+    else
+        if [[ "$requested_hosts" == ,* || "$requested_hosts" == *, || "$requested_hosts" == *,,* ]]; then
+            echo "Host lists cannot contain empty hostnames." >&2
+            exit 1
+        fi
+        IFS=',' read -r -a hosts <<<"$requested_hosts"
+    fi
+
+    for host in "${hosts[@]}"; do
+        if ! jq -e --arg host "$host" 'has($host)' <<<"$fleet" >/dev/null; then
+            echo "Unknown host: $host" >&2
+            exit 1
+        fi
+    done
+
+    for host in "${hosts[@]}"; do
+        just "$recipe" "$host" "$@"
+    done
 
 default:
     @just --list
@@ -31,15 +66,20 @@ tf-plan *args:
 tf-apply *args: && ssh-config
     tofu apply {{ args }}
 
-# Create cloud resources, then install NixOS on one host.
-create host: tf-apply && (install host)
+# Create cloud resources, then install NixOS on the selected hosts.
+create host="": tf-apply
+    just _for-hosts _install "$@"
 
 # Destroy cloud resources after confirmation.
 tf-destroy *args: && ssh-config
     tofu destroy {{ args }}
 
-# Print one host's public IPv4 address.
-host-ip host:
+# Print the selected hosts' public IPv4 addresses.
+host-ip host="":
+    just _for-hosts _host-ip "$@"
+
+[private]
+_host-ip host:
     @tofu output -json server_ips | jq -er --arg host "{{ host }}" '.[$host]'
 
 # Update the generated fleet entries in the user's SSH configuration.
@@ -97,11 +137,15 @@ ssh-config:
         trap - EXIT
     fi
 
-# Install NixOS on a new cloud server.
-install host:
+# Install NixOS on the selected new cloud servers.
+install host="":
+    just _for-hosts _install "$@"
+
+[private]
+_install host:
     #!/usr/bin/env bash
     set -euo pipefail
-    ip=$(just host-ip {{ host }})
+    ip=$(just _host-ip {{ host }})
     unset SSH_PRIVATE_KEY
     nixos-anywhere \
         --flake "./nix#{{ host }}" \
@@ -112,14 +156,18 @@ install host:
         --ssh-option "StrictHostKeyChecking=no" \
         --ssh-option "UserKnownHostsFile=/dev/null" \
         "root@$ip"
-    just refresh-host-key {{ host }}
-    just tailscale-login {{ host }}
+    just _refresh-host-key {{ host }}
+    just _tailscale-login {{ host }}
 
-# Replace the stored SSH host key after an install or rebuild.
-refresh-host-key host:
+# Replace the stored SSH host keys after an install or rebuild.
+refresh-host-key host="":
+    just _for-hosts _refresh-host-key "$@"
+
+[private]
+_refresh-host-key host:
     #!/usr/bin/env bash
     set -euo pipefail
-    ip=$(just host-ip {{ host }})
+    ip=$(just _host-ip {{ host }})
     mkdir -p "$(dirname "{{ known_hosts }}")"
     touch "{{ known_hosts }}"
     ssh-keygen -f "{{ known_hosts }}" -R "$ip" >/dev/null 2>&1 || true
@@ -132,13 +180,17 @@ refresh-host-key host:
     echo "Could not read the SSH host key for {{ host }} ($ip)" >&2
     exit 1
 
-# Copy the Nix flake and Cachix credentials to one host.
-sync host:
+# Copy the Nix flake and Cachix credentials to the selected hosts.
+sync host="":
+    just _for-hosts _sync "$@"
+
+[private]
+_sync host:
     #!/usr/bin/env bash
     set -euo pipefail
     netrc_file="/etc/nixos/shared/secrets/hyper-video-cachix-netrc.key"
     test -f "$netrc_file"
-    ip=$(just host-ip {{ host }})
+    ip=$(just _host-ip {{ host }})
     ssh=(
         ssh
         -i "{{ ssh_key }}"
@@ -163,11 +215,15 @@ sync host:
         -e "${ssh[*]}" \
         "$netrc_file" "robert@$ip:$netrc_file"
 
-# Activate the flake already stored in /etc/nixos.
-switch host:
+# Activate the flake already stored on the selected hosts.
+switch host="":
+    just _for-hosts _switch "$@"
+
+[private]
+_switch host:
     #!/usr/bin/env bash
     set -euo pipefail
-    ip=$(just host-ip {{ host }})
+    ip=$(just _host-ip {{ host }})
     ssh \
         -i "{{ ssh_key }}" \
         -o IdentitiesOnly=yes \
@@ -179,17 +235,25 @@ switch host:
         "sudo nixos-rebuild switch --flake /etc/nixos#{{ host }}"
 
 # Copy and activate the current Nix flake.
-deploy host:
-    just sync {{ host }}
-    just switch {{ host }}
-    just ensure-agent-hooks {{ host }}
-    just sync-skills {{ host }}
+deploy host="":
+    just _for-hosts _deploy "$@"
+
+[private]
+_deploy host:
+    just _sync {{ host }}
+    just _switch {{ host }}
+    just _ensure-agent-hooks {{ host }}
+    just _sync-skills {{ host }}
 
 # Install or refresh the Claude hooks for Herdr and RTK.
-ensure-agent-hooks host:
+ensure-agent-hooks host="":
+    just _for-hosts _ensure-agent-hooks "$@"
+
+[private]
+_ensure-agent-hooks host:
     #!/usr/bin/env bash
     set -euo pipefail
-    ip=$(just host-ip {{ host }})
+    ip=$(just _host-ip {{ host }})
     ssh \
         -i "{{ ssh_key }}" \
         -o IdentitiesOnly=yes \
@@ -208,10 +272,14 @@ ensure-agent-hooks host:
     REMOTE
 
 # Publish the synced Skillshare source to each configured AI tool.
-sync-skills host:
+sync-skills host="":
+    just _for-hosts _sync-skills "$@"
+
+[private]
+_sync-skills host:
     #!/usr/bin/env bash
     set -euo pipefail
-    ip=$(just host-ip {{ host }})
+    ip=$(just _host-ip {{ host }})
     ssh \
         -i "{{ ssh_key }}" \
         -o IdentitiesOnly=yes \
@@ -228,26 +296,42 @@ sync-skills host:
     skillshare sync
     REMOTE
 
-# Join one new host to the tailnet through browser authorization.
-tailscale-login host:
-    just ssh {{ host }} sudo tailscale up
-    just ssh {{ host }} sudo systemctl restart tailscale-serve-syncthing.service
+# Join the selected new hosts to the tailnet through browser authorization.
+tailscale-login host="":
+    just _for-hosts _tailscale-login "$@"
 
-# Show the Tailscale connection state for one host.
-tailscale-status host:
-    just ssh {{ host }} sudo tailscale status
+[private]
+_tailscale-login host:
+    just _ssh {{ host }} sudo tailscale up
+    just _ssh {{ host }} sudo systemctl restart tailscale-serve-syncthing.service
 
-# Print the tailnet-only Syncthing web UI address.
-syncthing-ui host:
-    just ssh {{ host }} sudo tailscale serve status
+# Show the Tailscale connection state for the selected hosts.
+tailscale-status host="":
+    just _for-hosts _tailscale-status "$@"
 
-# Copy local Codex and Claude OAuth credentials to one host.
-sync-auth host:
+[private]
+_tailscale-status host:
+    just _ssh {{ host }} sudo tailscale status
+
+# Print the tailnet-only Syncthing web UI addresses for the selected hosts.
+syncthing-ui host="":
+    just _for-hosts _syncthing-ui "$@"
+
+[private]
+_syncthing-ui host:
+    just _ssh {{ host }} sudo tailscale serve status
+
+# Copy local Codex and Claude OAuth credentials to the selected hosts.
+sync-auth host="":
+    just _for-hosts _sync-auth "$@"
+
+[private]
+_sync-auth host:
     #!/usr/bin/env bash
     set -euo pipefail
     test -f "$HOME/.codex/auth.json"
     test -f "$HOME/.claude/.credentials.json"
-    ip=$(just host-ip {{ host }})
+    ip=$(just _host-ip {{ host }})
     ssh=(
         ssh
         -i "{{ ssh_key }}"
@@ -267,11 +351,15 @@ sync-auth host:
         "$HOME/.claude/.credentials.json" \
         "robert@$ip:.claude/.credentials.json"
 
-# Print the Syncthing device ID for one host.
-syncthing-id host:
+# Print the Syncthing device ID for the selected hosts.
+syncthing-id host="":
+    just _for-hosts _syncthing-id "$@"
+
+[private]
+_syncthing-id host:
     #!/usr/bin/env bash
     set -euo pipefail
-    ip=$(just host-ip {{ host }})
+    ip=$(just _host-ip {{ host }})
     ssh \
         -i "{{ ssh_key }}" \
         -o IdentitiesOnly=yes \
@@ -283,10 +371,14 @@ syncthing-id host:
         'syncthing device-id --home="$HOME/.config/syncthing"'
 
 # Show Syncthing progress for the three fleet folders.
-sync-status host:
+sync-status host="":
+    just _for-hosts _sync-status "$@"
+
+[private]
+_sync-status host:
     #!/usr/bin/env bash
     set -euo pipefail
-    ip=$(just host-ip {{ host }})
+    ip=$(just _host-ip {{ host }})
     ssh \
         -i "{{ ssh_key }}" \
         -o IdentitiesOnly=yes \
@@ -308,10 +400,16 @@ sync-status host:
     REMOTE
 
 # Open an SSH session as robert, or run the given command.
-ssh host *command:
+ssh host="" *command:
+    just _for-hosts _ssh "$@"
+
+[private]
+_ssh host *command:
     #!/usr/bin/env bash
     set -euo pipefail
-    ip=$(just host-ip {{ host }})
+    host=$1
+    shift
+    ip=$(just _host-ip "$host")
     ssh \
         -i "{{ ssh_key }}" \
         -o IdentitiesOnly=yes \
@@ -319,10 +417,14 @@ ssh host *command:
         -o ControlPath=none \
         -o UserKnownHostsFile="{{ known_hosts }}" \
         -o StrictHostKeyChecking=accept-new \
-        "robert@$ip" {{ command }}
+        "robert@$ip" "$@"
 
-# Build one NixOS host locally without activating it.
-build host:
+# Build the selected NixOS hosts locally without activating them.
+build host="":
+    just _for-hosts _build "$@"
+
+[private]
+_build host:
     nix build "./nix#nixosConfigurations.{{ host }}.config.system.build.toplevel"
 
 # Update every Nix flake input.
@@ -330,5 +432,6 @@ update-inputs:
     nix flake update --flake ./nix
 
 # Update every Nix flake input.
-update-ai host: && (deploy host)
+update-ai host="":
     nix flake update --flake ./nix codex-cli-nix llm-agents herdr-nix skillshare-nix
+    just _for-hosts _deploy "$@"
