@@ -67,6 +67,8 @@ update-ai:
     else
         just update-ai-linux
     fi
+    herdr integration install claude
+    herdr integration install codex
 
 # stuff
 #
