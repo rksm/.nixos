@@ -293,7 +293,7 @@ _sync-skills host:
         echo "The Skillshare source has not synced to this host." >&2
         exit 1
     fi
-    skillshare sync
+    skillshare sync --all
     REMOTE
 
 # Join the selected new hosts to the tailnet through browser authorization.
