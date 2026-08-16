@@ -1,0 +1,320 @@
+#+TITLE: Intel Core i9-14900KF instability on storm
+#+DATE: [2026-08-15 Sat]
+#+FILETAGS: :hardware:intel:incident:
+#+OPTIONS: toc:2
+
+* Summary
+
+The =herdr= build failure exposed CPU instability.  The Herdr source and
+packaging were sound.  During the failed =just switch=, several unrelated Rust
+and C compilers crashed with =SIGSEGV= or =SIGILL=.  The kernel logged corrected
+machine-check exceptions during those failures.
+
+The strongest finding is that BIOS FK configured both CPU package power limits
+to 4,095 W.  This is effectively unlimited.  Intel specifies 253 W as the
+maximum turbo power for this processor.  The package reached about 338 W during
+the failing workload.
+
+The machine-check records identify internal parity, instruction TLB, and L1
+instruction-fetch errors.  Most records came from logical CPU 8, one thread of
+a favored P-core.  The retained journal shows that these errors started on
+2026-07-05 and became frequent in July and August.  This pattern is consistent
+with the Vmin Shift degradation that Intel documented in some 13th- and
+14th-generation desktop processors.  A CPU replacement is the only conclusive
+way to confirm that diagnosis.
+
+A NixOS service now sets both package limits to 253 W at boot.  It does not
+disable cores or reduce build parallelism.  Under this limit, the exact Herdr
+build, a five-package concurrent rebuild, a focused CPU stress test, and a
+verified memory stress test all passed.  No new machine-check record appeared.
+Treat the processor as suspect because firmware and power limits cannot repair
+silicon that has already degraded.
+
+* Impact
+
+- =just switch= failed while building Herdr and several unrelated packages.
+- Rust, LLVM, and GCC processes failed with different illegal-instruction,
+  segmentation, and general-protection errors.
+- The failures can produce incorrect computation, not only failed builds.
+- The final configuration removes the temporary low-parallelism workaround.
+  Nix again uses all available cores: =cores = 0= and =max-jobs = 32=.
+
+* System
+
+| Component        | Observed value                                      |
+|------------------+-----------------------------------------------------|
+| Host             | =storm=                                             |
+| Processor        | Intel Core i9-14900KF, 24 cores and 32 threads      |
+| CPU identification | Family 6, model 183, stepping 1                  |
+| Motherboard      | Gigabyte Z790 AORUS ELITE AX                        |
+| Board revision   | DMI reports =x.x=. Inspect the printed PCB revision |
+| BIOS             | FK, dated 2024-09-27                                |
+| BIOS microcode   | =0x12b=                                             |
+| Linux microcode  | =0x133= loaded early during boot                    |
+| Memory           | 96 GiB, 2 x 48 GiB Corsair CMK96GX5M2B6400C32      |
+| Memory profile   | DDR5-6400 XMP at 1.4 V                              |
+| CPU purchase     | April 2024 in Germany                               |
+
+Intel rates this CPU for memory speeds up to DDR5-5600.  DDR5-6400 XMP is an
+overclock even though it is a normal motherboard option.  The verified memory
+stress test passed, and the machine-check records point to CPU instruction
+execution rather than memory.  Disable XMP while collecting warranty evidence
+so that it cannot obscure the CPU result.
+
+* Evidence
+
+** Machine-check records
+
+The kernel reported corrected hardware errors during the compiler crashes.
+=mcelog= decoded the relevant Bank 0 status values as follows:
+
+| Status             | Decode                                              |
+|--------------------+-----------------------------------------------------|
+| =8000004000050005= | Internal parity error                               |
+| =8400010000060010= | Instruction TLB level-0 error                       |
+| =8000004000020150= | L1 instruction-cache instruction-fetch error        |
+
+Most records identified logical CPU 8.  Logical CPUs 8 and 9 are the two threads
+of the same P-core.  One record identified CPU 6.  The CPU corrected the errors
+and reported them through its machine-check hardware.  Compiler diagnostics and
+Herdr errors cannot generate these records.
+
+The retained journal contains the first event on 2026-07-05.  It contains more
+events on 2026-07-16, 2026-07-27, 2026-07-31, and 2026-08-15.  The recent onset
+matches the reported history of a previously stable machine.  It supports
+degradation or a recent firmware operating condition instead of a long-standing
+source-code problem.
+
+** Compiler failure pattern
+
+The original Nix build ran several derivations concurrently.  Each Rust build
+could still use =-j32=.  Independent toolchains then failed in the same period:
+
+- =ccusage=: Rust/LLVM general-protection fault or =SIGSEGV= near
+  =adapter-pi=.
+- =rtk=: GCC internal compiler error with =SIGSEGV= while compiling SQLite.
+- =python3.14-nemo-relay=: =rustc= received =SIGILL= while building
+  =tungstenite=.
+- =herdr=: failed during the same hardware-error wave.
+
+The Herdr flake input and the local checkout at
+=/home/robert/projects/ai/herdr= both resolve to commit
+=c75c534043a28ee8e0a8a4d9f35e79831dbada8a=.  The exact locked Herdr derivation
+builds successfully under the corrected power limit.
+
+** Firmware power configuration
+
+The RAPL power unit was 1/8 W.  BIOS FK programmed
+=MSR_PKG_POWER_LIMIT=43FFF8001BFFF8=, which decodes to enabled and clamped PL1
+and PL2 values of 4,095 W.  The Linux powercap interface independently reported
+4,095,000,000 microwatts for both constraints.
+
+With those limits, the package reached about 337.94 W during the all-core Herdr
+build.  It did not report thermal throttling, so temperature control did not
+prevent operation well above the Intel 253 W maximum turbo power.
+
+** Tests after applying the 253 W limit
+
+- The exact Herdr rebuild passed with Cargo =-j32= in 58.81 seconds.  The
+  unlimited run took 58.00 seconds, so the measured difference was negligible.
+- Herdr, =rtk=, =ccusage=, =cli-proxy-api=, and
+  =python3.14-nemo-relay= rebuilt concurrently.  All five passed while CPU use
+  reached 99.99 percent and individual builds retained =-j32=.
+- Package power peaked near 259 W in one sample, a short sampling or control
+  overshoot.  No core thermal-throttling event appeared.
+- A 30-second test pinned to logical CPUs 8 and 9 passed at about 5.7 to
+  5.9 GHz, with a peak temperature near 81 C.
+- A verified 45-second, 16 GiB memory stress test passed.
+- =just switch= completed and activated the new system configuration.
+- No compiler crash or machine-check event appeared during the constrained
+  tests.
+
+These tests show that full parallelism is viable at the Intel power ceiling.  They
+do not prove that the processor has no permanent damage.
+
+* Current safeguard
+
+[[file:hosts/storm/default.nix][hosts/storm/default.nix]] defines the
+=intel-cpu-power-limits= oneshot service:
+
+#+begin_src nix
+systemd.services.intel-cpu-power-limits = {
+  description = "Set Intel CPU package power limits";
+  wantedBy = [ "multi-user.target" ];
+  after = [ "systemd-modules-load.service" ];
+  unitConfig.ConditionPathExists = "/sys/class/powercap/intel-rapl:0";
+  serviceConfig.Type = "oneshot";
+  script = ''
+    echo 253000000 > /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw
+    echo 253000000 > /sys/class/powercap/intel-rapl:0/constraint_1_power_limit_uw
+  '';
+};
+#+end_src
+
+The service completed successfully on the active system.  Live powercap values
+are 253,000,000 microwatts.  A oneshot service without =RemainAfterExit= becomes
+inactive after it succeeds.  This is the normal systemd state for this unit.
+
+Keep this safeguard until the system runs current BIOS defaults and the existing
+or replacement CPU passes sustained validation.  It caps package power while
+all cores remain available.
+
+* Diagnosis
+
+The immediate cause of the build failures was unstable CPU instruction
+execution.  The following evidence supports that finding:
+
+1. CPU Bank 0 machine-check records at the time of the failures.
+2. Instruction-path error decodes from one P-core.
+3. Different compilers crashing in unrelated packages.
+4. Firmware power limits far above the published Intel maximum.
+5. Stable, fully parallel rebuilds after enforcing that maximum.
+
+Intel describes a Vmin Shift issue in which an IA-core clock-tree circuit can
+become vulnerable to reliability aging under elevated voltage and temperature.
+Intel also lists motherboard power settings above its guidance as one exposure
+scenario.  The recent failure timeline and instruction-path errors on this
+machine fit that description.  This diagnosis is strong, but only a CPU
+replacement can confirm the internal physical condition.
+
+* Warranty status
+
+Intel lists the Core i9-14900KF among the processors that receive a two-year
+warranty extension, for up to five years of coverage.  For a boxed retail CPU
+bought in April 2024, coverage should run until about April 2029.  Intel must
+verify the processor and purchase.  Buying it in Germany does not exclude it
+from the published extension.
+
+Coverage depends on how the CPU was sold:
+
+- For a boxed retail processor, use the Intel warranty checker and open the claim
+  with Intel or the retailer.
+- For a tray or OEM processor, Intel directs the buyer to the system maker or
+  place of purchase.  Use the FPO and ATPO numbers to confirm the product type.
+- The statutory seller guarantee in Germany is separate from the voluntary Intel
+  manufacturer warranty.  The ordinary two-year seller period for an April
+  2024 purchase ended around April 2026.  Contract details or special facts may
+  change that legal position.
+
+This report is technical evidence, not legal advice.
+
+* Follow-up steps
+
+** Preserve evidence now
+
+- [ ] Find the April 2024 invoice and record the seller and order number.
+- [ ] Photograph the CPU box and the CPU markings if they are accessible.
+  Record both the FPO batch number and the full or partial ATPO serial number.
+- [ ] Save the relevant kernel journal before retention removes July and August
+  entries.
+- [ ] Attach this report, the journal extract, motherboard and BIOS details,
+  memory details, and compiler failures to the warranty case.
+- [X] Remove the low-parallelism workaround.
+- [X] Restore all 32 logical CPUs and normal Nix parallelism.
+- [X] Enforce a 253 W package-power ceiling at boot.
+
+Suggested journal export:
+
+#+begin_src sh
+sudo journalctl -k --since 2026-07-01 \
+  | rg -i 'mce|machine check|hardware error|segfault|general protection|invalid opcode' \
+  > intel-14900kf-hardware-errors.log
+#+end_src
+
+** Update the motherboard firmware
+
+1. [ ] Read the physical PCB revision printed on the motherboard.  DMI only
+   reports =x.x=, and Gigabyte publishes different firmware for some revisions.
+2. [ ] Download the newest stable BIOS for that exact Z790 AORUS ELITE AX
+   revision from Gigabyte.  Do not flash a file for another revision.
+3. [ ] Save or photograph the current BIOS settings and recovery keys that a
+   reset may require.
+4. [ ] Flash with Gigabyte Q-Flash while the machine has reliable power.  Do not
+   interrupt the update.
+5. [ ] Load the built-in Intel Default Settings after the update.  Leave Gigabyte
+   performance enhancements and unrestricted power modes disabled.
+6. [ ] Disable XMP and use a JEDEC memory profile during CPU validation and the
+   warranty reproduction.
+7. [ ] Keep the NixOS 253 W safeguard enabled during initial testing.
+
+BIOS FK is older than Gigabyte releases that added newer Intel microcode and
+made Intel Default Settings the default.  Intel currently recommends BIOS
+microcode =0x12F= or later.  The newer Linux runtime microcode helps, but it does
+not replace the early-boot power and voltage configuration from the motherboard.
+
+** Validate after the BIOS update
+
+First record the firmware and live power limits:
+
+#+begin_src sh
+sudo dmidecode -t bios -t baseboard
+cat /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw
+cat /sys/class/powercap/intel-rapl:0/constraint_1_power_limit_uw
+sudo journalctl -k -b | rg -i 'microcode|mce|machine check|hardware error'
+#+end_src
+
+Then run a full-parallel build and a CPU stress test:
+
+#+begin_src sh
+cd /etc/nixos
+just switch build
+nix shell nixpkgs#stress-ng --command \
+  stress-ng --cpu 32 --verify --timeout 10m
+sudo journalctl -k -b | rg -i \
+  'mce|machine check|hardware error|segfault|general protection|invalid opcode'
+#+end_src
+
+- [ ] Confirm that all 32 logical CPUs remain online during the tests.
+- [ ] Confirm that no new machine-check, illegal-instruction, general-protection,
+  or unexplained compiler error appears.
+- [ ] Repeat the exact Herdr derivation and the previously failing packages.
+- [ ] Keep XMP disabled for at least the initial validation period.
+- [ ] Monitor the kernel journal for at least seven days of normal development
+  work.
+
+A new Bank 0 instruction-path machine-check record is enough reason to stop
+testing and replace the CPU.  This applies under current firmware, Intel
+defaults, JEDEC memory, and the 253 W ceiling.
+
+** Open the warranty case
+
+1. [ ] Enter the FPO and ATPO values in the Intel warranty checker.
+2. [ ] If it reports a boxed processor, open an Intel support case for the
+   extended 13th/14th-generation desktop warranty.
+3. [ ] If it reports a tray or OEM processor, open the case with the April 2024
+   seller or system vendor and cite the published extension from Intel.
+4. [ ] State that the system produced repeated corrected Bank 0 internal parity,
+   instruction-TLB, and L1 instruction-fetch machine checks, plus compiler
+   =SIGILL= and =SIGSEGV= failures.
+5. [ ] Include the proof of purchase, FPO/ATPO, CPU model, motherboard, BIOS,
+   memory, operating system, and this report.
+6. [ ] Explain that the errors persisted in the retained history and that a
+   power cap stabilizes the machine but cannot establish that aging damage is
+   absent.
+
+Pursue the RMA even if the updated BIOS prevents further failures.  Intel
+designed the microcode and default settings to prevent further exposure.  They
+cannot reverse existing reliability aging.
+
+** Reassess the NixOS safeguard later
+
+Do not remove the service merely because the BIOS update succeeds.  Reassess it
+only after the exact board firmware is current and Intel defaults are active.
+The existing or replacement CPU must also pass the validation period, and a
+separate check must confirm the firmware power limits.  Keeping a 253 W hard
+ceiling has shown no material build-performance cost on this machine.
+
+* References
+
+- [[https://www.intel.com/content/www/us/en/products/sku/236787/intel-core-i9-processor-14900kf-36m-cache-up-to-6-00-ghz/specifications.html][Intel Core i9-14900KF specifications]]
+- [[https://www.intel.com/content/www/us/en/support/articles/000102331/processors.html][Intel guidance for 13th- and 14th-generation desktop instability]]
+- [[https://community.intel.com/t5/Blogs/Tech-Innovation/Client/Intel-Core-13th-and-14th-Gen-Desktop-Instability-Root-Cause/post/1633239][Intel Vmin Shift root-cause statement]]
+- [[https://cdrdv2-public.intel.com/830408/13_14%20Gen%20DT%20Passthrough%20Statements_20240815_1.pdf][Intel instability and warranty statement]]
+- [[https://www.gigabyte.com/Motherboard/Z790-AORUS-ELITE-AX-rev-1x/Support][Gigabyte Z790 AORUS ELITE AX revision 1.x support]]
+- [[https://www.kernel.org/doc/html/latest/arch/x86/x86_64/machinecheck.html][Linux x86 machine-check documentation]]
+- [[https://www.intel.com/content/www/us/en/support/articles/000024255/processors.html][Intel boxed and tray processor warranty policy]]
+- [[https://www.intel.com/content/www/us/en/support/articles/000005494/processors.html][Intel processor warranty request guide]]
+- [[https://www.intel.com/content/www/us/en/support/articles/000057098/processors.html][Intel boxed processor warranty checker guide]]
+- [[https://www.intel.com/content/dam/support/us/en/multimedia/fpo-atpo-tool/index.html][Intel FPO and ATPO identification tool]]
+- [[https://www.intel.com/content/www/us/en/support/articles/000029613/processors.html][Intel boxed versus tray processor support]]
+- [[https://europa.eu/youreurope/citizens/consumers/shopping/guarantees/index_de.htm][EU consumer guarantee information for Germany]]

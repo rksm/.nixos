@@ -15,6 +15,19 @@
   # ];
   local-nix-cache.enable = false;
 
+  # The FK BIOS sets both CPU package power limits to an unsafe 4095 W.
+  systemd.services.intel-cpu-power-limits = {
+    description = "Set Intel CPU package power limits";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "systemd-modules-load.service" ];
+    unitConfig.ConditionPathExists = "/sys/class/powercap/intel-rapl:0";
+    serviceConfig.Type = "oneshot";
+    script = ''
+      echo 253000000 > /sys/class/powercap/intel-rapl:0/constraint_0_power_limit_uw
+      echo 253000000 > /sys/class/powercap/intel-rapl:0/constraint_1_power_limit_uw
+    '';
+  };
+
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   audio-video-image-editing.enable = true;
