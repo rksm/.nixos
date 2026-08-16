@@ -268,6 +268,7 @@ _ensure-agent-hooks host:
         exit 1
     fi
     herdr integration install claude
+    herdr integration install codex
     rtk init --global --hook-only --auto-patch
     REMOTE
 
@@ -430,6 +431,14 @@ _build host:
 # Update every Nix flake input.
 update-inputs:
     nix flake update --flake ./nix
+
+# Update the pinned Moshi hook release.
+update-moshi:
+    nix shell --inputs-from ./nix nixpkgs#curl -c ./nix/custom/moshi-hook/update.sh
+
+# Pair one fleet host with the Moshi phone app.
+pair-moshi host:
+    @./nix/custom/moshi-hook/pair.sh "{{ host }}"
 
 # Update every Nix flake input.
 update-ai host="":

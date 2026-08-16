@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+fail() {
+  printf 'Error: %s\n' "$*" >&2
+  exit 1
+}
+
+[[ $# -eq 1 ]] || fail "Usage: $0 HOST"
+readonly host=$1
+
+repository_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../.." && pwd)
+readonly repository_dir
+readonly justfile="$repository_dir/justfile"
+
+just --justfile "$justfile" _host-ip "$host" >/dev/null 2>&1 \
+  || fail "Unknown or unprovisioned fleet host: $host"
+
+printf '%s\n' \
+  '1. Open Moshi on your phone.' \
+  '2. Open Settings, then Hooks.' \
+  '3. Copy the pairing token.'
+read -r -s -p "4. Paste the token for $host: " token \
+  || fail 'No token received.'
+printf '\n'
+[[ -n "$token" ]] || fail 'The token cannot be empty.'
+
+# Expand these variables on the remote host.
+# shellcheck disable=SC2016
+readonly remote_pair_script='
+set -euo pipefail
+
+fail() {
+  printf "Error: %s\n" "$*" >&2
+  exit 1
+}
+
+command -v moshi-hook >/dev/null \
+  || fail "moshi-hook is not installed. Deploy the host first."
+systemctl --user cat moshi-hook.service >/dev/null 2>&1 \
+  || fail "The Moshi service is not installed. Deploy the host first."
+
+[[ -n "${token:-}" ]] || fail "The token cannot be empty."
+moshi-hook pair --token "$token"
+unset token
+systemctl --user restart moshi-hook.service
+
+printf "\nPairing complete. Current status:\n"
+moshi-hook status
+'
+
+{
+  printf 'token=%q\n' "$token"
+  printf '%s\n' "$remote_pair_script"
+} | just --justfile "$justfile" _ssh "$host" bash
+unset token

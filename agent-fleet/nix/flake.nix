@@ -41,12 +41,16 @@
         hostName:
         nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = { inherit inputs; };
+          specialArgs = {
+            inherit inputs;
+            user = "robert";
+          };
           modules = [
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
             ./disk-config.nix
             ./configuration.nix
+            ./moshi.nix
             {
               networking.hostName = hostName;
 

@@ -131,6 +131,7 @@ in
 
   programs = {
     fish.enable = true;
+    mosh.enable = true;
     _1password.enable = true;
   };
 
