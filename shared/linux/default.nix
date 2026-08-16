@@ -14,6 +14,7 @@
     ./users.nix
     ./packages.nix
     ./ssh.nix
+    ./moshi.nix
     ./docker.nix
     ./network.nix
     ./tailscale.nix

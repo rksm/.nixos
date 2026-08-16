@@ -23,6 +23,12 @@ build-abort-on-warn:
 build:
      nix build '/etc/nixos/#nixosConfigurations.titan-linux.config.system.build.toplevel --impure'
 
+update-moshi:
+    nix shell --inputs-from . nixpkgs#curl -c ./custom/moshi-hook/update.sh
+
+pair-moshi:
+    @./custom/moshi-hook/pair.sh
+
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 [working-directory: './macos']
