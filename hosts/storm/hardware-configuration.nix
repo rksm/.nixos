@@ -33,6 +33,11 @@
         fsType = "vfat";
       };
 
+    fileSystems."/mnt/LINUX_DATA" = {
+      device = "/dev/disk/by-uuid/c36fd799-8081-484c-aa02-b9de7aa5805c";
+      fsType = "ext4";
+    };
+
     # littlelinux
     fileSystems."/mnt/k8s" = lib.mkIf config.mount_k8s.enable
       {
