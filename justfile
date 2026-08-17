@@ -45,6 +45,7 @@ update-ai-macos: && macos-switch
     nix flake update magpie-nix
     nix flake update antigravity-nix
     nix flake update herdr-nix
+    nix flake update ai-quotas
     git add flake.lock
     git commit -m "macos: update ai"
 
@@ -56,6 +57,7 @@ update-ai-linux: && switch
     nix flake update ast-outline
     nix flake update magpie-nix
     nix flake update herdr-nix
+    # nix flake update ai-quotas
     git add flake.lock
     git commit -m "linux: update ai"
 

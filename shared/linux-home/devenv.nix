@@ -12,6 +12,7 @@
   home.file.".config/vale".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/vale;
 
   home.file.".config/skillshare/config.yaml".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/projects/ai/skillshare/config.yaml;
+  home.file.".config/ai-quotas/config.yaml".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/ai-quotas/config.yaml;
   home.file.".codex/config.toml".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/codex/config.toml;
   home.file.".codex/config.toml".force = true;
   home.file.".codex/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/codex/AGENTS.md;
