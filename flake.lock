@@ -311,11 +311,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1787037365,
-        "narHash": "sha256-P/Ae8e4EQS1YuzC2ayW1N3L+TwkwcDIZL1m85fZnm8I=",
+        "lastModified": 1787067287,
+        "narHash": "sha256-gki+CmG6qsVdSXl3wUaolDbJp0zT79xOsZya1BVXpu8=",
         "owner": "rksm",
         "repo": "herdr",
-        "rev": "538600bc73ffb2b162400114d78aef47ee641aa9",
+        "rev": "a1efe99383f5031b99254d26af8b65dcf91f3708",
         "type": "github"
       },
       "original": {
