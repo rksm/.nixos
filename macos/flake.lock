@@ -6,11 +6,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1787037599,
-        "narHash": "sha256-5m2A4kkfXQ5brXiQ5eyr7pqtzNbOHGRmIf7C5GvZD6A=",
+        "lastModified": 1787068517,
+        "narHash": "sha256-GbshhVC51dXnCavrXl85f1GfnXkzqRcbtkKHi4qjLo0=",
         "owner": "jacopone",
         "repo": "antigravity-nix",
-        "rev": "b7c04472954c1be5c0b48c3e1c31317d67004d5e",
+        "rev": "26c43c2a31bd3b8f1d69e8344f979e58a68f614c",
         "type": "github"
       },
       "original": {
@@ -373,11 +373,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1787037365,
-        "narHash": "sha256-P/Ae8e4EQS1YuzC2ayW1N3L+TwkwcDIZL1m85fZnm8I=",
+        "lastModified": 1787068089,
+        "narHash": "sha256-N8w5t92Iq8WTIrNu745qjtLo4wUkLP8LPqbrI/mF5WM=",
         "owner": "rksm",
         "repo": "herdr",
-        "rev": "538600bc73ffb2b162400114d78aef47ee641aa9",
+        "rev": "4b678b2530991cde024ad5360730003c40ba27ef",
         "type": "github"
       },
       "original": {
