@@ -22,8 +22,7 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
     flux-reconciler.url = "github:rksm/flux-reconciler";
-    ai-quotas.url = "github:rksm/ai-quotas";
-    ai-quotas.inputs.nixpkgs.follows = "nixpkgs";
+    ai-quotas = { url = "github:rksm/ai-quotas"; inputs.nixpkgs.follows = "nixpkgs"; };
   };
 
   outputs =

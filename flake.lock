@@ -8,11 +8,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1786618127,
-        "narHash": "sha256-hA6FegaqlCkZJ/JK37s4XLYEBNyLRT3eqp2a32m7qY8=",
+        "lastModified": 1786961176,
+        "narHash": "sha256-/2Qm7E7RQ7XsOM5jKsMu/txpIdnnuAzsm8wPZ+hImsE=",
         "owner": "rksm",
         "repo": "ai-quotas",
-        "rev": "332ade13f2039d659ab18068d7a7c5b9a5f10efd",
+        "rev": "1b2d2eb675130e383f7ae17cf12d9deabe5c8f0e",
         "type": "github"
       },
       "original": {
@@ -278,11 +278,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1786864381,
-        "narHash": "sha256-85R1+KbWV93zjlNlsxyb+ptRjFiWPztr/kwNbQmL0Us=",
+        "lastModified": 1787037365,
+        "narHash": "sha256-P/Ae8e4EQS1YuzC2ayW1N3L+TwkwcDIZL1m85fZnm8I=",
         "owner": "rksm",
         "repo": "herdr",
-        "rev": "5473423f7c2d02684a204bbccc37899c7ca3ebda",
+        "rev": "538600bc73ffb2b162400114d78aef47ee641aa9",
         "type": "github"
       },
       "original": {
