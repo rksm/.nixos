@@ -22,6 +22,7 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
     flux-reconciler.url = "github:rksm/flux-reconciler";
+    worktrunk-nix.url = "github:max-sixty/worktrunk";
     ai-quotas = { url = "github:rksm/ai-quotas"; inputs.nixpkgs.follows = "nixpkgs"; };
   };
 
@@ -39,6 +40,7 @@
     , llm-agents
     , herdr-nix
     , flux-reconciler
+    , worktrunk-nix
     , ai-quotas
     , ...
     }:
@@ -59,6 +61,7 @@
             ast-outline = ast-outline.packages.${system}.default;
             llm-agents = llm-agents.packages.${system};
             flux-reconciler = flux-reconciler.packages.${system}.default;
+            worktrunk = worktrunk-nix.packages.${system}.default;
           };
 
         in

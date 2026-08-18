@@ -34,6 +34,7 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
     flux-reconciler.url = "github:rksm/flux-reconciler";
+    worktrunk-nix.url = "github:max-sixty/worktrunk";
   };
 
   outputs =
@@ -50,6 +51,7 @@
     , llm-agents
     , herdr-nix
     , flux-reconciler
+    , worktrunk-nix
     , ...
     }:
 
@@ -79,6 +81,7 @@
                 google-antigravity-cli = antigravity-nix.packages.${machine.system}.google-antigravity-cli;
                 llm-agents = llm-agents.packages.${machine.system};
                 flux-reconciler = flux-reconciler.packages.${machine.system}.default;
+                worktrunk = worktrunk-nix.packages.${machine.system}.default;
               };
             in
             {

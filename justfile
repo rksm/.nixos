@@ -45,7 +45,8 @@ update-ai-macos: && macos-switch
       codex-cli-nix \
       herdr-nix \
       llm-agents \
-      skillshare-nix
+      skillshare-nix \
+      worktrunk-nix
     git add flake.lock
     git commit -m "macos: update ai"
 
@@ -57,7 +58,8 @@ update-ai-linux: && switch
       codex-cli-nix \
       herdr-nix \
       llm-agents \
-      skillshare-nix
+      skillshare-nix \
+      worktrunk-nix
     git add flake.lock
     git commit -m "linux: update ai"
 

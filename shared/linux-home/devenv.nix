@@ -153,6 +153,7 @@
     skillshare
     ast-outline
     ai-quotas
+    worktrunk
 
     vale    # prose linter
     vale-ls
