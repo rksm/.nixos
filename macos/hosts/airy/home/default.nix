@@ -30,6 +30,8 @@
   home.file.".codex/config.toml".force = true;
   home.file.".codex/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/ai/codex/AGENTS.md;
   home.file.".codex/AGENTS.md".force = true;
+  home.file."Library/Application Support/vale".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/vale;
+  home.file."Library/Application Support/vale".force = true;
 
   home.activation.linkClaudeSettings =
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
