@@ -24,6 +24,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flux-reconciler.url = "github:rksm/flux-reconciler";
+    worktrunk-nix.url = "github:max-sixty/worktrunk";
   };
 
   outputs =
