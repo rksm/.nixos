@@ -19,7 +19,6 @@
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     skillshare-nix.url = "github:hypervideo/skillshare-nix";
     ast-outline.url = "github:aeroxy/ast-outline";
-    magpie-nix.url = "github:hypervideo/magpie-nix";
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
     flux-reconciler.url = "github:rksm/flux-reconciler";
@@ -38,7 +37,6 @@
     , codex-cli-nix
     , skillshare-nix
     , ast-outline
-    , magpie-nix
     , llm-agents
     , herdr-nix
     , flux-reconciler
@@ -60,7 +58,6 @@
 
             codex-cli = codex-cli-nix.packages.${system}.default;
             ast-outline = ast-outline.packages.${system}.default;
-            magpie = magpie-nix.packages.${system}.default;
             llm-agents = llm-agents.packages.${system};
             flux-reconciler = flux-reconciler.packages.${system}.default;
           };

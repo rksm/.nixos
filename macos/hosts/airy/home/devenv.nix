@@ -266,7 +266,6 @@ in
     codex-cli
     skillshare
     ast-outline
-    # magpie
     # llm-agents.gemini-cli
     google-antigravity-cli
     google-antigravity
