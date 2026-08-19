@@ -60,6 +60,8 @@ in
       extraGroups = [ "wheel" ];
       openssh.authorizedKeys.keys = [ sshKey ];
       shell = pkgs.fish;
+      # Start user services (agent-files sync) at boot, without a login session.
+      linger = true;
     };
   };
 

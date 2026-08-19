@@ -8,6 +8,17 @@ let
   fromConfigs = path: config.lib.file.mkOutOfStoreSymlink "/home/robert/configs/${path}";
 in
 {
+  imports = [ ./agent-files.nix ];
+
+  services.agent-files = {
+    enable = true;
+    bucket = "agent-files";
+    # `just sync` copies ./nix/ to /etc/nixos/ on the hosts, so the env file
+    # next to this module lands there.
+    environmentFile = "/etc/nixos/agent-files-r2.env";
+    directory = "/home/robert/projects/ai/.agent-files";
+  };
+
   home = {
     username = "robert";
     homeDirectory = "/home/robert";
