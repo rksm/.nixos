@@ -4,6 +4,7 @@
   nixpkgs.overlays = [ inputs.nixpkgs-firefox-darwin.overlay ];
 
   imports = [
+    ../../../../shared/home/agent-files.nix
     ./devenv.nix
     ./devops.nix
     ./rust.nix
