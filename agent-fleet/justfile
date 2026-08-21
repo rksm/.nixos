@@ -442,5 +442,12 @@ pair-moshi host:
 
 # Update every Nix flake input.
 update-ai host="":
-    nix flake update --flake ./nix codex-cli-nix llm-agents herdr-nix skillshare-nix worktrunk-nix
+    nix flake update --flake ./nix \
+      ai-quotas \
+      ast-outline \
+      codex-cli-nix \
+      llm-agents \
+      herdr-nix \
+      skillshare-nix \
+      worktrunk-nix
     just _for-hosts _deploy "$@"
