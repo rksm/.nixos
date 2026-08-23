@@ -224,15 +224,11 @@ _switch host:
     #!/usr/bin/env bash
     set -euo pipefail
     ip=$(just _host-ip {{ host }})
-    ssh \
-        -i "{{ ssh_key }}" \
-        -o IdentitiesOnly=yes \
-        -o ControlMaster=no \
-        -o ControlPath=none \
-        -o UserKnownHostsFile="{{ known_hosts }}" \
-        -o StrictHostKeyChecking=accept-new \
-        "robert@$ip" \
-        "sudo nixos-rebuild switch --flake /etc/nixos#{{ host }}"
+    export NIX_SSHOPTS='-i {{ ssh_key }} -o IdentitiesOnly=yes -o ControlMaster=no -o ControlPath=none -o UserKnownHostsFile={{ known_hosts }} -o StrictHostKeyChecking=accept-new'
+    nixos-rebuild switch \
+        --flake "./nix#{{ host }}" \
+        --target-host "robert@$ip" \
+        --sudo
 
 # Copy and activate the current Nix flake.
 deploy host="":
