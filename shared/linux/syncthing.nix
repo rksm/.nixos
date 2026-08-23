@@ -11,6 +11,7 @@
       syncthing.enable-projects-ai = lib.mkEnableOption "syncthing ~/projects/ai/";
       syncthing.enable-projects-biz = lib.mkEnableOption "syncthing ~/projects/biz/";
       syncthing.enable-projects-finances = lib.mkEnableOption "syncthing ~/projects/finances/";
+      syncthing.enable-projects-home = lib.mkEnableOption "syncthing ~/projects/home/";
       syncthing.enable-projects-hyper = lib.mkEnableOption "syncthing ~/projects/hyper/";
       syncthing.enable-projects-infra = lib.mkEnableOption "syncthing ~/projects/infra/";
       syncthing.enable-projects-python = lib.mkEnableOption "syncthing ~/projects/python/";
@@ -154,6 +155,14 @@
             id = "projects/finances";
             path = "/home/${user}/projects/finances";
             devices = [ "storm" "tuxedo" "airy" ];
+          };
+        })
+
+          // (lib.optionalAttrs config.syncthing.enable-projects-home {
+          "projects/home" = {
+            id = "projects/home";
+            path = "/home/${user}/projects/home";
+            devices = [ "storm" "nas" "tuxedo" "airy" "agent-1" ];
           };
         })
 

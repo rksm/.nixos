@@ -56,6 +56,7 @@
     enable-projects-ai = true;
     enable-projects-biz = true;
     enable-projects-finances = true;
+    enable-projects-home = true;
     enable-projects-hyper = true;
     enable-projects-infra = true;
     enable-projects-python = true;

@@ -60,16 +60,17 @@
     enable-documents = true;
     enable-configs = true;
     enable-emacs = true;
+    enable-projects-ai = true;
     enable-projects-biz = true;
+    enable-projects-home = true;
+    enable-projects-hyper = true;
     enable-projects-infra = true;
     enable-projects-python = false;
     enable-projects-rust = true;
+    enable-projects-security = false;
+    enable-projects-shuttle = true;
     enable-projects-typescript = false;
     enable-projects-website = true;
-    enable-projects-shuttle = true;
-    enable-projects-hyper = true;
-    enable-projects-ai = true;
-    enable-projects-security = false;
     enable-media = false;
   };
 }
