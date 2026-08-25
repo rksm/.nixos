@@ -35,7 +35,11 @@ in
     serviceConfig = {
       Type = "simple";
       WorkingDirectory = "%h";
-      ExecStartPre = "${moshiHook}/bin/moshi-hook install";
+      ExecStartPre = [
+        "${moshiHook}/bin/moshi-hook install"
+        "${herdr}/bin/herdr integration install claude"
+        "${herdr}/bin/herdr integration install codex"
+      ];
       ExecStart = "${moshiHook}/bin/moshi-hook serve";
       Restart = "on-failure";
       RestartSec = 5;
