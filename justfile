@@ -35,42 +35,44 @@ pair-moshi:
 macos-switch:
     sudo just switch
 
-[private]
-[working-directory: './macos']
-update-ai-macos: && macos-switch
-    nix flake update \
-      ai-quotas \
-      antigravity-nix \
-      ast-outline \
-      codex-cli-nix \
-      herdr-nix \
-      llm-agents \
-      skillshare-nix \
-      worktrunk-nix
-    git add flake.lock
-    git commit -m "macos: update ai"
-
-[private]
-update-ai-linux: && switch
-    nix flake update \
-      ai-quotas \
-      ast-outline \
-      codex-cli-nix \
-      herdr-nix \
-      llm-agents \
-      skillshare-nix \
-      worktrunk-nix
-    git add flake.lock
-    git commit -m "linux: update ai"
-
 update-ai:
     #!/usr/bin/env sh
     set -e
+
+    root="$PWD"
     if [ "$(uname)" = "Darwin" ]; then
-        just update-ai-macos
+        cd macos
+        set -- \
+          ai-quotas \
+          antigravity-nix \
+          ast-outline \
+          codex-cli-nix \
+          herdr-nix \
+          llm-agents \
+          skillshare-nix \
+          worktrunk-nix
+        commit_message="macos: update ai"
     else
-        just update-ai-linux
+        set -- \
+          ai-quotas \
+          ast-outline \
+          codex-cli-nix \
+          herdr-nix \
+          llm-agents \
+          skillshare-nix \
+          worktrunk-nix
+        commit_message="linux: update ai"
     fi
+
+    nix flake update "$@"
+    if git diff --quiet HEAD -- flake.lock; then
+        exit 0
+    fi
+
+    git add flake.lock
+    git commit -m "$commit_message"
+    cd "$root"
+    just switch
     herdr integration install claude
     herdr integration install codex
 
