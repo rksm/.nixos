@@ -21,6 +21,7 @@
       syncthing.enable-projects-typescript = lib.mkEnableOption "syncthing ~/projects/typescript/";
       syncthing.enable-projects-website = lib.mkEnableOption "syncthing ~/projects/website/";
       syncthing.enable-media = lib.mkEnableOption "syncthing /media/robert/LINUX_DATA/media/";
+      syncthing.enable-khoone = lib.mkEnableOption "syncthing ~/projects/home/khoone/ (home-ai agent state from khoone-1)";
     };
 
   ## more projects...
@@ -98,6 +99,10 @@
           };
           "agent-1" = {
             id = "OQTRMZU-SR5253H-TOX724P-7M3Y3HB-VN7SBMC-WUCZD7P-3DPYBMF-NNVGEAB";
+            autoAcceptFolders = false;
+          };
+          "khoone-1" = {
+            id = "H5U7PXD-I6IJ7G6-VPIRNSG-LVUX4OY-Q37WSWP-KUVR5OS-HZ7V3US-5YNVJQC";
             autoAcceptFolders = false;
           };
         };
@@ -227,6 +232,14 @@
             id = "projects/website";
             path = "/home/${user}/projects/website";
             devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
+          };
+        })
+
+          // (lib.optionalAttrs config.syncthing.enable-khoone {
+          "khoone" = {
+            id = "khoone";
+            path = "/home/${user}/projects/home/khoone";
+            devices = [ "storm" "khoone-1" ];
           };
         })
 
