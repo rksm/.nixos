@@ -75,7 +75,6 @@ in
     dnsutils
     fd
     fish
-    gh
     git
     git-filter-repo
     git-lfs

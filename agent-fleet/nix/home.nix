@@ -92,10 +92,14 @@ in
       ];
     };
 
+    gh = {
+      enable = true;
+      settings.aliases.co = "pr checkout";
+    };
+
     git = {
       enable = true;
       includes = [ { path = "~/configs/git/.gitconfig"; } ];
-      settings.credential."https://github.com".helper = "!${pkgs.gh}/bin/gh auth git-credential";
     };
 
     nix-index = {
