@@ -438,6 +438,9 @@ pair-moshi host:
 
 # Update every Nix flake input.
 update-ai host="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+
     nix flake update --flake ./nix \
       ai-quotas \
       ast-outline \
@@ -446,4 +449,11 @@ update-ai host="":
       herdr-nix \
       skillshare-nix \
       worktrunk-nix
+
+    if git diff --quiet HEAD -- nix/flake.lock; then
+        exit 0
+    fi
+
+    git add nix/flake.lock
+    git commit -m "update ai"
     just _for-hosts _deploy "$@"
