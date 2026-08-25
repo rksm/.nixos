@@ -75,6 +75,7 @@ update-ai:
     just switch
     herdr integration install claude
     herdr integration install codex
+    skillshare sync --all
 
 # stuff
 #
