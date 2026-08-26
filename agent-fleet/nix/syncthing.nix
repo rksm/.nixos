@@ -48,6 +48,17 @@
           ];
         };
 
+        "projects/home" = {
+          id = "projects/home";
+          path = "/home/robert/projects/home";
+          devices = [
+            "airy"
+            "nas"
+            "storm"
+            "tuxedo"
+          ];
+        };
+
         "projects/hyper" = {
           id = "projects/hyper";
           path = "/home/robert/projects/hyper";
