@@ -31,16 +31,19 @@ let
 
       mkdir -p ${lib.escapeShellArg cfg.directory}
 
+      # --poll 10s: detect changes to symlink targets outside the publish directory.
       # --ignore-nothing: watchexec must not filter events through gitignore files.
       # --on-busy-update queue: changes during a running sync cause one follow-up run.
+      # --copy-links: upload each symlink target under the symlink's path.
       # --use-server-modtime --update: compare against upload time, saves one HEAD per object.
       exec watchexec \
+        --poll 10s \
         --watch ${lib.escapeShellArg cfg.directory} \
         --debounce 2s \
         --on-busy-update queue \
         --ignore-nothing \
         -- rclone sync ${lib.escapeShellArg cfg.directory} ${lib.escapeShellArg "r2:${cfg.bucket}"} \
-        --use-server-modtime --update
+        --copy-links --use-server-modtime --update
     '';
   };
 in

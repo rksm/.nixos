@@ -27,12 +27,13 @@
       $DRY_RUN_CMD ln -sfn "../configs/ai/claude/CLAUDE.md" "/home/${user}/.claude/CLAUDE.md"
     '';
 
-  services.agent-files = {
-    enable = true;
-    bucket = "agent-files";
-    environmentFile = "/etc/nixos/shared/secrets/agent-files-r2.env";
-    directory = "/home/${user}/projects/ai/.agent-files";
-  };
+  # Run by agent-1 for now
+  # services.agent-files = {
+  #   enable = true;
+  #   bucket = "agent-files";
+  #   environmentFile = "/etc/nixos/shared/secrets/agent-files-r2.env";
+  #   directory = "/home/${user}/projects/ai/.agent-files";
+  # };
 
   programs.direnv = {
     enable = true;
