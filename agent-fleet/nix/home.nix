@@ -41,6 +41,10 @@ in
       ".local/share/fish/fish_history".source = fromConfigs "fish_history.linux";
       "bin/start.sh".source = fromConfigs "start.sh";
 
+      ".cli-proxy-api/config.yaml" = {
+        source = fromConfigs "ai/cli-proxy-api/config.yaml";
+        force = true;
+      };
       ".codex/AGENTS.md" = {
         source = fromConfigs "ai/codex/AGENTS.md";
         force = true;

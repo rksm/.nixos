@@ -184,10 +184,21 @@ The system installs these tools from =llm-agents.nix=:
 - OpenClaw: =openclaw=
 - Hermes Agent: =hermes=
 - Antigravity CLI: =agy=
-- Claude Code: =claude=
+- Claude Code through CLI Proxy API: =claude=
+- Claude Code without the proxy: =claude-plain=
 - Herdr: =herdr=
 - CLI Proxy API: =cli-proxy-api=
 - Claude usage: =ccusage=
 - RTK: =rtk=
 
-Codex comes from =codex-cli-nix= and is available as =codex=. Skillshare comes from =skillshare-nix= and is available as =skillshare=.
+Codex comes from =codex-cli-nix=. Use =codex= through CLI Proxy API or
+=codex-plain= without the proxy. Skillshare comes from =skillshare-nix= and is
+available as =skillshare=.
+
+CLI Proxy API runs as a user service and reads the synchronized configuration
+from =~/configs/ai/cli-proxy-api/config.yaml=. Add accounts with:
+
+#+BEGIN_SRC sh
+cli-proxy-api -config ~/.cli-proxy-api/config.yaml -claude-login
+cli-proxy-api -config ~/.cli-proxy-api/config.yaml -codex-login
+#+END_SRC

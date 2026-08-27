@@ -10,7 +10,6 @@ let
   agents = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
   aiQuotas = inputs.ai-quotas.packages.${pkgs.stdenv.hostPlatform.system}.default;
   astOutline = inputs.ast-outline.packages.${pkgs.stdenv.hostPlatform.system}.default;
-  codex = inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
   fluxReconciler = inputs.flux-reconciler.packages.${pkgs.stdenv.hostPlatform.system}.default;
   herdr = inputs.herdr-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
   skillshare = inputs.skillshare-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
@@ -21,6 +20,7 @@ in
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
     (modulesPath + "/profiles/qemu-guest.nix")
+    ./cli-proxy-api.nix
     ./syncthing.nix
   ];
 
@@ -119,10 +119,7 @@ in
     aiQuotas
     agents.antigravity-cli
     agents.ccusage
-    agents.claude-code
-    agents.cli-proxy-api
     astOutline
-    codex
     fluxReconciler
     herdr
     agents.hermes-agent
