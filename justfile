@@ -44,7 +44,6 @@ update-ai:
         cd macos
         set -- \
           ai-quotas \
-          antigravity-nix \
           ast-outline \
           codex-cli-nix \
           herdr-nix \
