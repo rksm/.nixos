@@ -72,8 +72,7 @@ update-ai:
     git commit -m "$commit_message"
     cd "$root"
     just switch
-    herdr integration install claude
-    herdr integration install codex
+    ./scripts/herdr-install
     skillshare sync --all
 
 # stuff

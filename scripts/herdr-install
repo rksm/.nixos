@@ -1,0 +1,34 @@
+#!/usr/bin/env sh
+# Install the herdr agent integrations and fix up the Claude settings.
+#
+# `herdr integration install claude` adds a SessionStart hook with an absolute
+# path to the hook script. ~/.claude/settings.json is synced between machines,
+# so the Linux and macOS installs each add their own entry and the foreign one
+# fails at every session start. herdr matches its entry by the exact command
+# string, so it re-adds the absolute one on every install. This script removes
+# all herdr hook entries and adds a single one that uses $HOME, which resolves
+# on both machines.
+set -eu
+
+herdr integration install claude
+herdr integration install codex
+
+settings="$(readlink -f "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json")"
+tmp="$settings.tmp"
+
+jq '
+  .hooks.SessionStart |= (
+    map(.hooks |= map(select(.command | test("herdr-agent-state\\.sh") | not)))
+    | map(select(.hooks | length > 0))
+    + [{
+        matcher: "*",
+        hooks: [{
+          type: "command",
+          command: "bash \"$HOME/.claude/hooks/herdr-agent-state.sh\" session",
+          timeout: 10
+        }]
+      }]
+  )
+' "$settings" > "$tmp"
+mv "$tmp" "$settings"
+echo "deduplicated herdr hook in $settings"
