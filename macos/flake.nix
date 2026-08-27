@@ -30,7 +30,6 @@
     codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     skillshare-nix.url = "github:hypervideo/skillshare-nix";
     ast-outline.url = "github:aeroxy/ast-outline";
-    antigravity-nix.url = "github:jacopone/antigravity-nix";
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
     flux-reconciler.url = "github:rksm/flux-reconciler";
@@ -47,7 +46,6 @@
     , codex-cli-nix
     , skillshare-nix
     , ast-outline
-    , antigravity-nix
     , llm-agents
     , herdr-nix
     , flux-reconciler
@@ -77,8 +75,6 @@
                 latest = import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
                 codex-cli = codex-cli-nix.packages.${machine.system}.default;
                 ast-outline = ast-outline.packages.${machine.system}.default;
-                google-antigravity = antigravity-nix.packages.${machine.system}.google-antigravity;
-                google-antigravity-cli = antigravity-nix.packages.${machine.system}.google-antigravity-cli;
                 llm-agents = llm-agents.packages.${machine.system};
                 flux-reconciler = flux-reconciler.packages.${machine.system}.default;
                 worktrunk = worktrunk-nix.packages.${machine.system}.default;

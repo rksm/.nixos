@@ -267,9 +267,7 @@ in
     skillshare
     ast-outline
     worktrunk
-    # llm-agents.gemini-cli
-    google-antigravity-cli
-    google-antigravity
+    llm-agents.antigravity-cli
     vale
 
     # emacs
