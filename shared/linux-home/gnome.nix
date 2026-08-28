@@ -7,6 +7,7 @@
 
 let
   gdctl = lib.getExe' pkgs.mutter "gdctl";
+  gnomeExtensionsCommand = lib.getExe' pkgs.gnome-shell "gnome-extensions";
 in
 {
   home.packages = with pkgs; [
@@ -192,5 +193,17 @@ in
         show-in-overview = true;
       };
     };
+  };
+
+  systemd.user.services.freestyle-focus-bridge = {
+    Unit = {
+      Description = "Enable the Freestyle Focus Bridge";
+      After = [ "org.gnome.Shell@user.service" ];
+    };
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${gnomeExtensionsCommand} enable freestyle-focus-bridge@freestyle-voice.dev";
+    };
+    Install.WantedBy = [ "gnome-session@gnome.target" ];
   };
 }
