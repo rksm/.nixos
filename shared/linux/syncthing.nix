@@ -126,7 +126,7 @@
           "configs" = {
             id = "configs";
             path = "/home/${user}/configs";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" "agent-1" ];
+            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" "agent-1" "khoone-1" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-emacs {
