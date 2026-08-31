@@ -164,7 +164,7 @@ Commands that take =HOST= accept one hostname or a comma-separated list. Omit
 | =just ssh-config=              | Update =~/.ssh/agent-fleet=                  |
 | =just install HOST=            | Replace the base image with NixOS            |
 | =just deploy HOST=             | Copy and activate the Nix flake              |
-| =just ensure-agent-hooks HOST= | Install the Herdr and RTK Claude hooks       |
+| =just ensure-agent-hooks HOST= | Install the Herdr hooks and RTK Claude hook  |
 | =just sync-skills HOST=        | Publish skills from the Skillshare source    |
 | =just ssh HOST=                | Open a user shell                            |
 | =just sync-auth HOST=          | Copy Codex and Claude OAuth files            |

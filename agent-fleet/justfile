@@ -241,7 +241,7 @@ _deploy host:
     just _ensure-agent-hooks {{ host }}
     just _sync-skills {{ host }}
 
-# Install or refresh the Claude hooks for Herdr and RTK.
+# Install or refresh the agent hooks for Herdr and RTK.
 ensure-agent-hooks host="":
     just _for-hosts _ensure-agent-hooks "$@"
 
@@ -266,6 +266,7 @@ _ensure-agent-hooks host:
     herdr integration install claude
     herdr integration install codex
     herdr integration install grok
+    grok login
     rtk init --global --hook-only --auto-patch
     REMOTE
 
