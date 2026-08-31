@@ -12,6 +12,7 @@ set -eu
 
 herdr integration install claude
 herdr integration install codex
+herdr integration install grok
 
 settings="$(readlink -f "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/settings.json")"
 tmp="$settings.tmp"
