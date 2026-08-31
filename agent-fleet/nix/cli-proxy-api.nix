@@ -11,6 +11,10 @@ let
   cliProxyApi = agents.cli-proxy-api;
   cliProxyKey = "sk-local-cli-proxy-api";
   codexCli = inputs.codex-cli-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  grokCli = agents.grok;
+  grokAuthProvider = pkgs.writeShellScript "grok-cli-proxy-auth" ''
+    ${pkgs.coreutils}/bin/printf '%s\n' ${lib.escapeShellArg cliProxyKey}
+  '';
 
   requireCliProxyApi = ''
     if ! ${pkgs.systemd}/bin/systemctl --user is-active --quiet cli-proxy-api.service; then
@@ -62,17 +66,35 @@ let
 
         ln -s ${lib.getExe codexCli} "$out/bin/codex-plain"
       '';
+
+  grokCommands =
+    pkgs.runCommand "grok-commands"
+      {
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+      }
+      ''
+        mkdir -p "$out/bin"
+
+        makeWrapper ${lib.getExe grokCli} "$out/bin/grok" \
+          --run ${lib.escapeShellArg requireCliProxyApi} \
+          --set GROK_AUTH_PROVIDER_COMMAND ${lib.escapeShellArg grokAuthProvider} \
+          --set GROK_MODELS_BASE_URL "http://127.0.0.1:8317/v1"
+
+        ln -s ${lib.getExe grokCli} "$out/bin/grok-plain"
+      '';
 in
 {
   environment.systemPackages = [
     claudeCommands
     cliProxyApi
     codexCommands
+    grokCommands
   ];
 
-  # Add another Claude or Codex account:
+  # Add another Claude, Codex, or xAI account:
   # cli-proxy-api -config ~/.cli-proxy-api/config.yaml -claude-login
   # cli-proxy-api -config ~/.cli-proxy-api/config.yaml -codex-login
+  # cli-proxy-api -config ~/.cli-proxy-api/config.yaml -xai-login
   systemd.user.services.cli-proxy-api = {
     description = "CLIProxyAPI";
     wantedBy = [ "default.target" ];

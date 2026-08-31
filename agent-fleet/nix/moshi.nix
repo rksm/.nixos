@@ -39,6 +39,7 @@ in
         "${moshiHook}/bin/moshi-hook install"
         "${herdr}/bin/herdr integration install claude"
         "${herdr}/bin/herdr integration install codex"
+        "${herdr}/bin/herdr integration install grok"
       ];
       ExecStart = "${moshiHook}/bin/moshi-hook serve";
       Restart = "on-failure";

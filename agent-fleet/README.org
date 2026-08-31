@@ -186,6 +186,8 @@ The system installs these tools from =llm-agents.nix=:
 - Antigravity CLI: =agy=
 - Claude Code through CLI Proxy API: =claude=
 - Claude Code without the proxy: =claude-plain=
+- Grok Build through CLI Proxy API: =grok=
+- Grok Build without the proxy: =grok-plain=
 - Herdr: =herdr=
 - CLI Proxy API: =cli-proxy-api=
 - Claude usage: =ccusage=
@@ -201,4 +203,5 @@ from =~/configs/ai/cli-proxy-api/config.yaml=. Add accounts with:
 #+BEGIN_SRC sh
 cli-proxy-api -config ~/.cli-proxy-api/config.yaml -claude-login
 cli-proxy-api -config ~/.cli-proxy-api/config.yaml -codex-login
+cli-proxy-api -config ~/.cli-proxy-api/config.yaml -xai-login
 #+END_SRC

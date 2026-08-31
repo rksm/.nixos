@@ -265,6 +265,7 @@ _ensure-agent-hooks host:
     fi
     herdr integration install claude
     herdr integration install codex
+    herdr integration install grok
     rtk init --global --hook-only --auto-patch
     REMOTE
 
