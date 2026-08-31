@@ -6,6 +6,7 @@
     ../home/agent-files.nix
     ../home/pi-local.nix
     ./emacs.nix
+    ./cli-proxy-api.nix
     ./devenv.nix
     ./devops.nix
     ./rust.nix
