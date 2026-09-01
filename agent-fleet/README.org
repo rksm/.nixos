@@ -51,7 +51,7 @@ just check
 just deploy agent-1
 #+END_SRC
 
-=just deploy= copies the flake and the Hyper Video Cachix netrc to =/etc/nixos= on the server. It writes the netrc as =root:root= with mode =0600=. It then activates the configuration. After activation, it refreshes the Claude hooks and publishes the synced Skillshare skills.
+=just deploy= copies the flake and the Hyper Video Cachix netrc to =/etc/nixos= on the server. It writes the netrc as =root:root= with mode =0600=. It then activates the configuration. After activation, it refreshes the agent hooks. It also publishes the Skillshare skills and refreshes the ~lessismore~ plugin.
 
 NixOS keeps Tailscale running. Browser authorization during =just install= joins a new server to the tailnet once. Later deployments preserve that identity.
 
@@ -73,7 +73,7 @@ just deploy agent-1
 7. Apply the local NixOS configuration with =just switch= in =/etc/nixos=.
 8. Wait for the =configs= and =projects/ai= folders to finish syncing with =just sync-status SERVER_NAME=.
 9. Run =just ensure-agent-hooks SERVER_NAME=.
-10. Run =just sync-skills SERVER_NAME=.
+10. Run =just sync-ai-resources SERVER_NAME=.
 11. Run =just sync-auth SERVER_NAME= if the server needs your Codex and Claude sessions.
 
 All servers use the shared NixOS configuration. Add a host-specific module only after a server needs different behavior.
@@ -165,7 +165,7 @@ Commands that take =HOST= accept one hostname or a comma-separated list. Omit
 | =just install HOST=            | Replace the base image with NixOS            |
 | =just deploy HOST=             | Copy and activate the Nix flake              |
 | =just ensure-agent-hooks HOST= | Install the Herdr hooks and RTK Claude hook  |
-| =just sync-skills HOST=        | Publish skills from the Skillshare source    |
+| =just sync-ai-resources HOST=  | Refresh Skillshare and ~lessismore~          |
 | =just ssh HOST=                | Open a user shell                            |
 | =just sync-auth HOST=          | Copy Codex and Claude OAuth files            |
 | =just syncthing-id HOST=       | Print the Syncthing device ID for a host     |

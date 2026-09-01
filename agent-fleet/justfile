@@ -239,7 +239,7 @@ _deploy host:
     just _sync {{ host }}
     just _switch {{ host }}
     just _ensure-agent-hooks {{ host }}
-    just _sync-skills {{ host }}
+    just _sync-ai-resources {{ host }}
 
 # Install or refresh the agent hooks for Herdr and RTK.
 ensure-agent-hooks host="":
@@ -270,12 +270,12 @@ _ensure-agent-hooks host:
     rtk init --global --hook-only --auto-patch
     REMOTE
 
-# Publish the synced Skillshare source to each configured AI tool.
-sync-skills host="":
-    just _for-hosts _sync-skills "$@"
+# Publish Skillshare and refresh lessismore on each host.
+sync-ai-resources host="":
+    just _for-hosts _sync-ai-resources "$@"
 
 [private]
-_sync-skills host:
+_sync-ai-resources host:
     #!/usr/bin/env bash
     set -euo pipefail
     ip=$(just _host-ip {{ host }})
@@ -292,7 +292,12 @@ _sync-skills host:
         echo "The Skillshare source has not synced to this host." >&2
         exit 1
     fi
+    if [[ ! -f "$HOME/projects/ai/lessismore/justfile" ]]; then
+        echo "The lessismore source has not synced to this host." >&2
+        exit 1
+    fi
     skillshare sync --all
+    just --justfile "$HOME/projects/ai/lessismore/justfile" sync
     REMOTE
 
 # Join the selected new hosts to the tailnet through browser authorization.
@@ -453,6 +458,7 @@ update-ai host="":
       worktrunk-nix
 
     if git diff --quiet HEAD -- nix/flake.lock; then
+        just _for-hosts _sync-ai-resources "$@"
         exit 0
     fi
 
