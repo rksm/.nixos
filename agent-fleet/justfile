@@ -297,6 +297,7 @@ _sync-ai-resources host:
         exit 1
     fi
     skillshare sync --all
+    # This also bootstraps missing host plugins.
     just --justfile "$HOME/projects/ai/lessismore/justfile" sync
     REMOTE
 
