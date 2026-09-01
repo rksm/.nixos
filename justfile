@@ -75,6 +75,7 @@ update-ai:
     fi
 
     skillshare sync --all
+    # This also bootstraps missing host plugins.
     just --justfile "$HOME/projects/ai/lessismore/justfile" sync
 
 # stuff
