@@ -64,16 +64,18 @@ update-ai:
     fi
 
     nix flake update "$@"
-    if git diff --quiet HEAD -- flake.lock; then
-        exit 0
+    if ! git diff --quiet HEAD -- flake.lock; then
+        git add flake.lock
+        git commit -m "$commit_message"
+        cd "$root"
+        just switch
+        ./scripts/herdr-install
+    else
+        cd "$root"
     fi
 
-    git add flake.lock
-    git commit -m "$commit_message"
-    cd "$root"
-    just switch
-    ./scripts/herdr-install
     skillshare sync --all
+    just --justfile "$HOME/projects/ai/lessismore/justfile" sync
 
 # stuff
 #
