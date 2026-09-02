@@ -254,14 +254,8 @@ in
     cachix
     # devbox
 
-    # jetbrains.rust-rover
-    # code-cursor
     llm-agents.claude-code
-    llm-agents.hermes-agent
-    llm-agents.ccusage
-    llm-agents.cli-proxy-api
     llm-agents.rtk
-    # llm-agents.herdr
     herdr
     codex-cli
     skillshare
