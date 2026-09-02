@@ -88,8 +88,10 @@ in
   };
 
   home.packages = [
-    codexCommands
-    claudeCommands
     grokCommands
+    codexCommands
+    # 2026-09-02: fable 5.1 currently does not work with the CLIProxyAPI
+    # claudeCommands
+    claudeCode
   ];
 }
