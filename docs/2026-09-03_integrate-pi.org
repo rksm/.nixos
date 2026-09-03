@@ -51,9 +51,10 @@ tasks below.
   =~/.pi/web-search.json= while preserving other settings. The activation sets
   mode ~0600~ on the generated config.
 - The activation reads the Brave key at runtime and does not interpolate it
-  into its Nix derivation. The repository ignores this key so the flake source
-  cannot copy it into the Nix store. Provision the local mode-~0600~ key file on
-  each Linux host, and do not print it.
+  into its Nix derivation. Git tracks the key with git-crypt, like the other
+  shared secrets. Run ~git-crypt unlock~ on each Linux host and keep the local
+  key at mode ~0600~. git-crypt protects the Git blob, but an unlocked flake
+  source can include the plaintext key in the Nix store.
 - The web package keeps its automatic provider order. Select
   ~provider: "brave"~ when the task must use Brave. Brave receives the search
   query and any domain or recency filters for that call.
@@ -63,8 +64,7 @@ tasks below.
 ** DONE 1. Configure native Pi package installation with Bun
 CLOSED: [2026-09-03 Thu 11:32]
 
-Owners: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]] and
-[[file:.gitignore][.gitignore]]
+Owner: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
 
 - [X] Keep the existing Linux-only Pi package.
 - [X] Add Bun to the ~PATH~ for the wrapped Pi process.
@@ -331,8 +331,8 @@ Owner: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
 - [X] Merge ~braveApiKey~ from
   [[file:shared/secrets/brave-search.key][shared/secrets/brave-search.key]] into the mutable
   =~/.pi/web-search.json= while preserving other settings.
-- [X] Keep the source key out of Git and the flake source. Provision it with
-  mode ~0600~ on each Linux host.
+- [X] Track the source key with git-crypt. Run ~git-crypt unlock~ on each Linux
+  host and keep the local file at mode ~0600~.
 - [X] Set mode ~0600~ on the generated config.
 - [X] Read the key during activation instead of placing its value in the
   activation derivation or a command argument.
@@ -342,8 +342,8 @@ Owner: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
 Completion checks:
 
 - ~pi list~ shows ~npm:pi-web-access~ exactly once.
-- Git ignores the source key. The file has mode ~0600~ and contains a nonempty
-  value.
+- The committed key blob has the git-crypt header. The local file has mode
+  ~0600~ and contains a nonempty value.
 - =~/.pi/web-search.json= has mode ~0600~ and contains a nonempty
   ~braveApiKey~.
 - A second activation preserves other web-search settings and does not add a
