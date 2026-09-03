@@ -1,0 +1,521 @@
+#+TITLE: Integrate Pi with the AI agent setup
+#+DATE: [2026-09-03 Thu]
+#+TODO: TODO NEXT WAIT | DONE CANCEL
+
+* Goal
+
+Give Pi the same shared instructions, skills, hooks, and session tooling as the
+other supported coding agents on Linux.
+
+The baseline does not include CLIProxyAPI routing, quota UI, general-purpose
+MCP connectors, Claude workflow ports, or macOS. Those are separate optional
+tasks below.
+
+* Starting point
+
+- [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]] already installs Pi from
+  ~pkgs.llm-agents.pi~.
+- [[file:shared/linux-home/default.nix::15][shared/linux-home/default.nix]] imports Pi only on Linux.
+- [[file:justfile::38][just update-ai]] already updates the ~llm-agents~ input, so it also updates Pi.
+- [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]] manages Ponytail,
+  ~pi-agent-browser-native~, ~@tintinweb/pi-subagents~, and ~pi-web-access~ as
+  unpinned Pi packages. Each live Home Manager activation installs or updates
+  them.
+- The same module installs the ~agent-browser~ executable through Nix.
+- The package activation needs network access when it installs or refreshes a
+  remote package.
+- Skillshare publishes 37 shared skills through its universal
+  =~/.agents/skills= target. Pi discovers that directory without a Pi-specific
+  Skillshare target.
+- Pi discovers project ~AGENTS.md~ and ~CLAUDE.md~ files without extra setup.
+- ~pi-agent-browser-native~ 0.5.0 requires exactly ~agent-browser~ 0.34.0, so
+  the Linux package stays pinned to that compatible browser version.
+- ~@tintinweb/pi-subagents~ provides Claude-compatible ~Agent~,
+  ~get_subagent_result~, and ~steer_subagent~ tools. It also provides the
+  ~SubagentWorkflow~ tool for scripts that discover their fan-out at runtime.
+  Release 0.19.0 requires Pi 0.84.0 or newer, and the managed Pi meets that
+  requirement.
+- The built-in ~Explore~ and ~Plan~ agents do not receive the write and edit
+  tools. Their prompts forbid changes. They still expose Bash, so the runtime
+  does not enforce read-only behavior.
+- The extension enables ~SubagentWorkflow~ automatically. It stands down if
+  another extension owns ~Workflow~ or ~SubagentWorkflow~, so the Nix setup
+  does not force ~workflowsEnabled~ in =~/.pi/agent/subagents.json=.
+- The extension does not enforce a confirmation before a workflow starts.
+  Workflow children run with the tools of their selected agent type and the
+  system privileges of the current user. Use workflows only for authorized
+  work.
+- ~pi-web-access~ provides ~web_search~, ~source_check~, ~fetch_content~, and
+  ~get_search_content~. The Pi activation merges the Brave key from
+  [[file:shared/secrets/brave-search.key][shared/secrets/brave-search.key]] into the mutable
+  =~/.pi/web-search.json= while preserving other settings. The activation sets
+  mode ~0600~ on the generated config.
+- The activation reads the Brave key at runtime and does not interpolate it
+  into its Nix derivation. The repository ignores this key so the flake source
+  cannot copy it into the Nix store. Provision the local mode-~0600~ key file on
+  each Linux host, and do not print it.
+- The web package keeps its automatic provider order. Select
+  ~provider: "brave"~ when the task must use Brave. Brave receives the search
+  query and any domain or recency filters for that call.
+
+* Baseline tasks
+
+** DONE 1. Configure native Pi package installation with Bun
+CLOSED: [2026-09-03 Thu 11:32]
+
+Owners: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]] and
+[[file:.gitignore][.gitignore]]
+
+- [X] Keep the existing Linux-only Pi package.
+- [X] Add Bun to the ~PATH~ for the wrapped Pi process.
+- [X] Merge ~"npmCommand": ["bun"]~ into =~/.pi/agent/settings.json= while
+  preserving all other mutable Pi settings.
+- [X] Keep Nix-managed Pi package sources in one list.
+- [X] Install or update each source during a live Home Manager activation.
+- [X] Manage ~git:github.com/DietrichGebert/ponytail~ without a ref so each
+  activation uses the latest commit on the repository default branch.
+- [X] Install ~agent-browser~ through Nix and manage
+  ~npm:pi-agent-browser-native~ as an unpinned Pi package.
+- [X] Manage ~npm:@tintinweb/pi-subagents~ as an unpinned Pi package.
+- [X] Keep Less Is More out of the managed package list until tasks 4 and 5
+  resume.
+
+Completion checks:
+
+- ~pi --version~ works.
+- ~pi install npm:<test-package>~ uses Bun and records the package in Pi
+  settings.
+- ~pi list~ shows ~git:github.com/DietrichGebert/ponytail~ once.
+- ~pi list~ shows ~npm:pi-agent-browser-native~ once.
+- ~pi list~ shows ~npm:@tintinweb/pi-subagents~ once.
+- The ~agent-browser~ command works inside Pi.
+- A second activation updates Ponytail and does not add another settings entry.
+- Existing Pi settings survive a Home Manager activation.
+
+** DONE 2. Add global Pi instructions
+CLOSED: [2026-09-03 Thu 11:32]
+
+Owner: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
+
+- [X] Link =~/.pi/agent/AGENTS.md= to
+  =~/configs/ai/codex/AGENTS.md= with an out-of-store Home Manager symlink.
+- [X] Reuse the Codex file as the single source of truth.
+- [X] Do not link the Claude file because it imports ~@RTK.md~.
+- [X] Create a separate Pi instructions file only if Pi-specific
+  ~/skill:name~ commands become necessary.
+
+Completion checks:
+
+- The Pi startup header lists the global ~AGENTS.md~ file.
+- A test prompt follows one distinctive instruction from the shared file.
+
+** DONE 3. Create one Pi integration bootstrap
+CLOSED: [2026-09-03 Thu 11:32]
+
+Owner: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
+
+- [X] Add the bootstrap to a Home Manager activation in ~pi.nix~.
+- [X] Create =~/.pi/agent/extensions= before running integration installers.
+- [X] Run these idempotent commands after the directory exists:
+
+#+BEGIN_EXAMPLE
+moshi-hook install --target pi
+herdr integration install pi
+rtk init --agent pi --global
+#+END_EXAMPLE
+
+- [X] Make this bootstrap the owner of explicit Pi integration installation.
+- [X] Do not add separate Pi-specific installer calls to
+  [[file:scripts/herdr-install::13][scripts/herdr-install]],
+  [[file:shared/linux/moshi.nix::39][shared/linux/moshi.nix]], and
+  [[file:justfile::38][just update-ai]]. The generic Moshi installation may remain as an
+  idempotent safety rerun.
+
+Completion checks:
+
+- ~moshi-hook status~ reports Pi as ~current~.
+- ~herdr integration status~ reports Pi as ~current~.
+- =~/.pi/agent/extensions/herdr-agent-state.ts= exists.
+- =~/.pi/agent/extensions/rtk.ts= exists.
+- A Pi bash command is rewritten by RTK without blocking Pi when RTK declines
+  or fails.
+
+** CANCEL 4. Add the Less Is More Pi package
+CLOSED: [2026-09-03 Do 10:46]
+
+Owner: =~/projects/ai/lessismore=
+
+- [ ] Add one Pi extension under the conventional package ~extensions/~
+  directory.
+- [ ] Handle the Pi ~before_agent_start~ event.
+- [ ] Load the body of the canonical ~skills/lessismore/SKILL.md~ instead of
+  duplicating its instructions.
+- [ ] Append that body to the system prompt for every agent turn.
+- [ ] Expose all five existing skills through the conventional package
+  ~skills/~ directory.
+- [ ] Keep Skillshare from publishing a second copy of these five skills.
+
+Completion checks:
+
+- Pi discovers the package extension and all five skills.
+- The injected text matches the canonical skill body.
+- Reloading or starting another session does not duplicate the instructions.
+- A headless child Pi process loads the same global extension.
+
+** CANCEL 5. Add Pi to the Less Is More lifecycle
+CLOSED: [2026-09-03 Do 10:46]
+
+Owner: [[file:/home/robert/projects/ai/lessismore/justfile::31][lessismore/justfile]]
+
+- [ ] Make ~just sync~ install or refresh the local package in Pi.
+- [ ] Add Pi checks to ~just check~.
+- [ ] Update ~README.org~ with Pi installation, behavior, and limitations.
+- [ ] Update ~skills/lessismore-help/SKILL.md~ to list Pi.
+- [ ] Document that Pi has no built-in subagent-start event. Child Pi
+  processes load the global extension themselves.
+- [ ] Confirm that [[file:justfile::77][the root update flow]] reaches the Pi package through
+  the existing Less Is More ~just sync~ call. Do not add another root command.
+
+Completion checks:
+
+- ~just check~ passes in =~/projects/ai/lessismore=.
+- Running its ~just sync~ twice is safe.
+- A new Pi session shows the Less Is More behavior and five skills.
+
+** DONE 6. Add the Pi session-history skill
+CLOSED: [2026-09-03 Thu 11:32]
+
+Owner: =~/projects/ai/skillshare/skills/pi/agent-history-pi=
+
+- [X] Document the default session layout:
+  =~/.pi/agent/sessions/--<encoded-cwd>--/<timestamp>_<uuid>.jsonl=.
+- [X] Read the version 3 header for the session UUID, real working directory,
+  and creation time.
+- [X] List sessions by header working directory and event timestamps.
+- [X] Search user, assistant, tool, custom, compaction, and branch-summary
+  records.
+- [X] Rebuild the active branch through ~id~ and ~parentId~ instead of treating
+  the file as a linear transcript.
+- [X] Document resume through ~pi --session <path-or-id>~.
+- [X] Document HTML export through ~pi --export~.
+- [X] Add focused fixtures or tests for a branched session and a compacted
+  session.
+
+Completion checks:
+
+- The skill finds the current =~etc-nixos= Pi session.
+- Its rendered conversation excludes abandoned branches unless requested.
+- Search and export work without reading credentials or unrelated Pi state.
+
+** DONE 7. Add the Pi session-sync skill
+CLOSED: [2026-09-03 Thu 11:32]
+
+Owner: =~/projects/ai/skillshare/skills/pi/sync-pi-sessions=
+
+- [X] Reuse the safety model of the existing Claude, Codex, and Grok sync
+  skills.
+- [X] Copy only session ~.jsonl~ files.
+- [X] Identify a session by the UUID in its header, not by its encoded path or
+  filename alone.
+- [X] Copy a session missing on one side.
+- [X] Advance a shorter copy only when it is an exact prefix of the longer
+  copy.
+- [X] Stop and report a conflict when both copies diverged.
+- [X] Never copy ~auth.json~, settings, model stores, packages, extensions, or
+  credentials.
+- [X] Support ~PI_CODING_AGENT_DIR~, ~PI_CODING_AGENT_SESSION_DIR~, and
+  explicit local and remote directories.
+- [X] Report session counts rather than raw file counts.
+
+Completion checks:
+
+- Preview mode reports new, advance, equal, and conflict actions correctly.
+- Apply mode copies only the approved new and append-only data.
+- Tests cover a moved session, an append-only update, and a divergent session.
+
+** DONE 8. Include Pi sessions in aggregate workflows
+CLOSED: [2026-09-03 Thu 11:32]
+
+Owner: =~/projects/ai/skillshare=
+
+- [X] Add ~agent-history-pi~ to
+  [[file:/home/robert/projects/ai/skillshare/skills/what-did-i-do/SKILL.md::21][what-did-i-do/SKILL.md]].
+- [X] Add Pi session rules to
+  [[file:/home/robert/projects/ai/skillshare/skills/what-did-i-do/references/sources.md::125][what-did-i-do/references/sources.md]].
+- [X] Add ~sync-pi-sessions~ to
+  [[file:/home/robert/projects/ai/skillshare/skills/update-systems/references/pull-agent-sessions.md::1][pull-agent-sessions.md]].
+- [X] Update all fixed Claude/Codex/Grok source lists, examples, coverage text,
+  and result counts to include Pi.
+- [X] Run ~skillshare sync --all~ and confirm Pi discovers the two new skills
+  through =~/.agents/skills=.
+
+Completion checks:
+
+- ~what-did-i-do~ includes Pi evidence once and still deduplicates work seen in
+  several agents.
+- ~pull-agent-sessions~ reports separate Claude, Codex, Grok, and Pi counts for
+  each host.
+
+** DONE 9. Add Pi subagents to skills that require agent tools
+CLOSED: [2026-09-03 Thu 12:18]
+
+Owners: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]] and
+=~/projects/ai/skillshare=
+
+- [X] Install ~npm:@tintinweb/pi-subagents~ to provide Pi with native subagent
+  tools and scripted workflows.
+- [X] Use its Claude-compatible ~Agent~ tool for the fixed parallel tasks in
+  [[file:/home/robert/projects/ai/skillshare/skills/update-systems/SKILL.md::9][update-systems]].
+- [X] Give
+  [[file:/home/robert/projects/ai/skillshare/skills/mattpocock/engineering/improve-codebase-architecture/SKILL.md::22][improve-codebase-architecture]] an ~Explore~ agent that only locates relevant
+  code while the parent analyzes the architecture.
+- [X] Use parallel ~Plan~ agents that inspect but do not change code for the
+  ~codebase-design~ design-it-twice process.
+- [X] Remove the direct headless Pi process fallbacks. The package now owns
+  subagent orchestration, result collection, and concurrency.
+- [X] Keep [[file:/home/robert/projects/ai/skillshare/skills/code-explainer/SKILL.md::46][code-explainer]] unchanged unless testing finds a Pi problem. It already
+  makes subagents optional.
+- [X] Keep ~yeet~ on its existing ~gh~ fallback when no GitHub connector is
+  available.
+
+Completion checks:
+
+- Pi exposes ~Agent~, ~get_subagent_result~, ~steer_subagent~, and
+  ~SubagentWorkflow~.
+- The affected skills use ~Agent~ without starting direct child Pi processes.
+- Fixed fan-outs start in one tool turn and collect every result before the
+  parent continues.
+
+** DONE 10. Validate the baseline end to end
+CLOSED: [2026-09-03 Thu 12:18]
+
+Depends on tasks 1 through 3 and 6 through 9. Less Is More remains deferred.
+
+- [X] Build the Linux Home Manager or NixOS configuration without changing the
+  active system first.
+- [X] Apply it on one Linux host.
+- [X] Start Pi in a repository that has a project ~AGENTS.md~.
+- [X] Confirm the global and project instructions are both loaded.
+- [X] Confirm the 37 shared Skillshare skills are available without duplicates.
+- [X] Confirm Ponytail loads from its Nix-managed package source.
+- [X] Confirm ~pi-agent-browser-native~ can run the Nix-installed
+  ~agent-browser~ command.
+- [X] Confirm Pi loads Moshi, Herdr, and RTK.
+- [X] Install, list, update, and remove one harmless test Pi package with Bun.
+- [X] Exercise Pi history and session sync in preview mode.
+- [X] Run one foreground ~Explore~ agent through Pi and confirm its complete
+  result reaches the parent.
+- [X] Confirm Pi loads ~Agent~ and ~SubagentWorkflow~ from
+  ~@tintinweb/pi-subagents~.
+- [X] Run Org lint and Vale on all changed documentation.
+
+Org lint passed. Vale found no issues in the new Pi prose. Its full-file scan
+still reports older findings in unchanged sections of existing skills.
+The skill validator passed both new Pi skills and ~codebase-design~. It does not
+accept the pre-existing ~disable-model-invocation~ frontmatter in
+~update-systems~ and ~improve-codebase-architecture~. This known schema mismatch
+does not concern their subagent instructions.
+
+The subagent update also passed a NixOS build and two live activations. Pi
+loaded ~@tintinweb/pi-subagents~ 0.19.0 exactly once. A foreground ~Explore~
+agent and a one-agent ~SubagentWorkflow~ both returned the expected value from
+the Nix module. The ~/agents~ command and the workflow startup flag were also
+present.
+
+** DONE 11. Add Pi web access with Brave
+CLOSED: [2026-09-03 Thu 12:35]
+
+Owner: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
+
+- [X] Manage ~npm:pi-web-access~ as an unpinned Pi package.
+- [X] Merge ~braveApiKey~ from
+  [[file:shared/secrets/brave-search.key][shared/secrets/brave-search.key]] into the mutable
+  =~/.pi/web-search.json= while preserving other settings.
+- [X] Keep the source key out of Git and the flake source. Provision it with
+  mode ~0600~ on each Linux host.
+- [X] Set mode ~0600~ on the generated config.
+- [X] Read the key during activation instead of placing its value in the
+  activation derivation or a command argument.
+- [X] Leave the default provider unset. Select ~brave~ explicitly when a task
+  requires Brave Search.
+
+Completion checks:
+
+- ~pi list~ shows ~npm:pi-web-access~ exactly once.
+- Git ignores the source key. The file has mode ~0600~ and contains a nonempty
+  value.
+- =~/.pi/web-search.json= has mode ~0600~ and contains a nonempty
+  ~braveApiKey~.
+- A second activation preserves other web-search settings and does not add a
+  duplicate package entry.
+- Pi exposes ~web_search~, ~source_check~, ~fetch_content~, and
+  ~get_search_content~.
+- ~web_search~ with ~provider: "brave"~ and ~workflow: "none"~ returns Brave
+  results with source URLs.
+- A Nix build, live activation, Org lint, and Vale pass without printing the
+  key.
+
+Two NixOS builds and three live activations passed. Pi loaded ~pi-web-access~
+0.27.0 exactly once. A repeat activation preserved an unrelated supported
+setting in =~/.pi/web-search.json=, and the final file has mode ~0600~. A live
+~web_search~ call with ~provider: "brave"~ and ~workflow: "none"~ returned
+~https://nixos.org/~. The extension source registers all four expected tools.
+
+* Upgrade the browser integration
+
+~pi-agent-browser-native~ stays unpinned, so each live Home Manager activation
+installs the latest npm release through Pi and Bun. The extension uses the
+~agent-browser~ executable from ~PATH~ and validates it against one exact
+capability baseline. Its wrapper relies on version-specific commands and output
+shapes, so an independent newer ~agent-browser~ release can be incompatible.
+The published ~pi-agent-browser-native~ 0.5.0 release targets 0.34.0, so
+[[file:shared/linux-home/pi.nix::9][shared/linux-home/pi.nix]] fixes that version.
+
+Use the extension target as the source of truth. Do not update the Nix package
+to the latest independent ~agent-browser~ release unless the latest extension
+targets it. The managed package source omits a version, so run this check before
+the first activation after a new npm release. An activation that updates only
+the extension can leave an incompatible pair.
+
+1. Check the latest extension against the installed browser before changing
+   the Nix pin:
+
+   #+BEGIN_EXAMPLE
+   nix shell nixpkgs#bun --command bunx \
+     --package pi-agent-browser-native@latest \
+     pi-agent-browser-doctor --skip-source-check
+   #+END_EXAMPLE
+
+   A passing result means the latest extension still targets the installed
+   browser. Skip to step 4 when it passes. If the doctor reports ~expected X,
+   found Y~, use ~X~ as the new Nix pin. Stop and investigate any other failure.
+
+2. If the target changed, update ~agentBrowserVersion~, the nearby comment,
+   and the ~fetchurl~ hash in
+   [[file:shared/linux-home/pi.nix::9][shared/linux-home/pi.nix]]. Calculate the new hash with:
+
+   #+BEGIN_EXAMPLE
+   agent_browser_version=X
+   nix store prefetch-file --json \
+     "https://registry.npmjs.org/agent-browser/-/agent-browser-${agent_browser_version}.tgz" \
+     | jq -r .hash
+   #+END_EXAMPLE
+
+3. Build the changed configuration without activating it:
+
+   #+BEGIN_EXAMPLE
+   just switch build
+   #+END_EXAMPLE
+
+4. Apply the configuration. The ~configurePi~ activation installs the latest
+   unpinned ~pi-agent-browser-native~ release while the new Nix wrapper supplies
+   its matching browser executable:
+
+   #+BEGIN_EXAMPLE
+   just switch
+   #+END_EXAMPLE
+
+5. Verify the installed versions, the compatibility baseline, and the browser
+   runtime:
+
+   #+BEGIN_EXAMPLE
+   agent-browser --version
+   jq -r .version ~/.pi/agent/npm/node_modules/pi-agent-browser-native/package.json
+   ~/.pi/agent/npm/node_modules/.bin/pi-agent-browser-doctor --cwd /etc/nixos
+   agent-browser doctor
+   pi list
+   #+END_EXAMPLE
+
+   The Pi extension doctor must report a matching baseline and one active
+   package source. ~pi list~ must show ~npm:pi-agent-browser-native~ exactly
+   once.
+
+6. Start Pi and make one ~agent_browser~ call with ~["--version"]~. Confirm
+   that the tool returns the same version as ~agent-browser --version~.
+
+* Optional parity tasks
+
+These tasks are independent of the baseline. Do not block baseline completion
+on them.
+
+** WAIT A. Decide whether Pi should use CLIProxyAPI
+
+- [ ] Choose direct provider authentication or CLIProxyAPI as the Pi default.
+- [ ] When choosing CLIProxyAPI, manage =~/.pi/agent/models.json= from
+  =~/configs/ai=.
+- [ ] Configure ~http://127.0.0.1:8317/v1~, ~openai-responses~, and an
+  environment-backed local key.
+- [ ] Reuse the service-running check from
+  [[file:shared/linux-home/cli-proxy-api.nix::13][cli-proxy-api.nix]].
+- [ ] Maintain a short static model list with correct context windows, output
+  limits, inputs, reasoning flags, and costs. The proxy ~/v1/models~ response
+  contains 41 IDs but not this metadata.
+
+** WAIT B. Decide whether Pi needs quota status
+
+- [ ] Keep the built-in Pi model, thinking, context, and cost footer by default.
+- [ ] If you need subscription limits, add a small extension using
+  ~ctx.ui.setStatus~. Replace the footer with ~setFooter~ only when necessary.
+- [ ] Reuse the existing upstream account providers in ~ai-quotas~. Do not add
+  a synthetic Pi quota provider.
+
+** WAIT C. Decide whether Pi needs MCP and connector parity
+
+- [ ] Decide whether Pi needs dedicated MCP access to Linear, Chrome DevTools,
+  and the OpenAI documentation server beyond general web search and fetching.
+- [ ] If required, review and pin
+  [[https://www.npmjs.com/package/pi-mcp-adapter][pi-mcp-adapter]] or another single MCP extension.
+- [ ] Prefer one tool-agnostic MCP configuration under =~/configs/ai=, or use
+  the explicit adapter import flow for Codex and Claude.
+- [ ] Test stdio transport for Chrome DevTools.
+- [ ] Test HTTP and OAuth for Linear.
+- [ ] Test the OpenAI documentation server.
+- [ ] Keep GitHub work on ~gh~ unless you require connector-only behavior.
+
+** WAIT D. Decide whether Pi needs other host-plugin parity
+
+- [X] Add browser behavior with Nix ~agent-browser~ and the unpinned
+  ~npm:pi-agent-browser-native~ Pi package.
+- [ ] Decide whether Pi needs Codex PDF behavior beyond the PDF extraction in
+  ~pi-web-access~.
+- [ ] Decide whether Pi needs Rust LSP behavior from Claude.
+- [ ] Add one reviewed Pi package per required capability. Do not install a
+  broad plugin collection only for speculative parity.
+
+** WAIT E. Decide whether to port Claude-only workflows
+
+The installed subagent package supplies the general workflow engine. It does
+not publish or approve the existing Magpie workflows in Skillshare.
+
+- [ ] Evaluate ~magpie-discuss~, ~magpie-review~, and ~codex-implementation~.
+- [ ] If required, build one Pi extension that coordinates the existing CLI
+  subprocesses and workflow state.
+- [ ] Do not port the ignored ~multi-agent-pr-review~ or
+  ~claude-adversarial-code-review~ skills unless you revive them first.
+
+** WAIT F. Add macOS support later
+
+- [ ] Reuse the Linux design after it has been stable on one or more Linux
+  hosts.
+- [ ] Add Pi to the macOS Home Manager configuration.
+- [ ] Recheck paths, credential storage, services, and extension installers on
+  macOS instead of copying Linux assumptions.
+
+* Baseline completion criteria
+
+- [X] Pi receives the shared global and project instructions.
+- [X] Pi discovers shared Skillshare skills without duplicate owners.
+- [X] Home Manager installs and updates Ponytail from its unpinned Git source.
+- [X] Home Manager installs ~agent-browser~ and Pi loads
+  ~npm:pi-agent-browser-native~.
+- [X] Moshi, Herdr, and RTK report healthy Pi integrations.
+- [X] Native Pi package installation uses Bun and preserves mutable settings.
+- [X] Pi history and sync have the same safety guarantees as the other agent
+  session tools.
+- [X] Shared skills do not fail only because Pi lacks Agent, Workflow, MCP, or
+  connector tools from another host.
+- [X] Pi supplies ~Agent~ and ~SubagentWorkflow~ for shared subagent workflows.
+- [X] Pi supplies web search and content fetching, and an explicit Brave search
+  succeeds.
+- [X] The Nix, runtime, Org, prose, and applicable skill checks pass. The list
+  above records the known skill validator incompatibilities.
