@@ -29,8 +29,6 @@ in
           Fingerprinting = true;
         };
         DisablePocket = true;
-        DisableFirefoxAccounts = true;
-        DisableAccounts = true;
         DisableFirefoxScreenshots = true;
         OverrideFirstRunPage = "";
         OverridePostUpdatePage = "";
@@ -64,6 +62,12 @@ in
           # dark reader
           "addon@darkreader.org" = {
             install_url = "https://addons.mozilla.org/firefox/downloads/latest/darkreader/latest.xpi";
+            installation_mode = "force_installed";
+          };
+
+          # Toggle dark mode
+          "toggle-dark-mode@Cimbali.github.com" = {
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/toggle-dark-mode/latest.xpi";
             installation_mode = "force_installed";
           };
 
