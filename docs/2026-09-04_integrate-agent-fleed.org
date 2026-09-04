@@ -219,90 +219,153 @@ Completion checks:
 - Every agent-fleet NixOS configuration evaluates.
 - The checks do not change infrastructure, hosts, or the local system.
 
-** TODO 6. Inventory duplicated behavior and choose one owner for each rule
+** DONE 6. Inventory duplicated behavior and choose one owner for each rule
+CLOSED: [2026-09-04 Fri 08:50]
 
-- [ ] Compare flake inputs, overlays, package sources, and lock-file ownership.
-- [ ] Compare core Nix and NixOS settings, caches, users, SSH, Tailscale, and
+- [X] Compare flake inputs, overlays, package sources, and lock-file ownership.
+- [X] Compare core Nix and NixOS settings, caches, users, SSH, Tailscale, and
   Syncthing.
-- [ ] Compare Home Manager settings, development tools, shells, editors, and AI
+- [X] Compare Home Manager settings, development tools, shells, editors, and AI
   agent setup.
-- [ ] Compare Moshi, CLIProxyAPI, agent-files, and other local modules or
+- [X] Compare Moshi, CLIProxyAPI, agent-files, and other local modules or
   scripts with the main repository.
-- [ ] Distinguish identical rules from machine-specific differences.
-- [ ] Add one concrete TODO task to this document for each proven group of
-  duplicated rules. State the main-repository owner and the fleet-specific
-  behavior that must remain.
-- [ ] Commit the inventory before changing shared behavior.
+- [X] Distinguish identical rules from machine-specific differences.
+- [X] Add one concrete TODO task for each proven group of duplicated rules.
+- [X] Commit the inventory before changing shared behavior.
+
+Findings:
+
+- The root and fleet flakes repeat ten inputs. Most inputs have the same locked
+  revision. Home Manager and Flux Reconciler have drifted. The root flake and
+  lock file will own all shared inputs and package overlays. Disko remains a
+  fleet input in the root flake.
+- =agent-fleet/nix/agent-files.nix= differs from
+  =shared/home/agent-files.nix= only by a copy warning. The shared Home Manager
+  module is an exact replacement.
+- The fleet has a copied Moshi package, release file, update script, and NixOS
+  service. The release and update files are identical. The package expression
+  differs only in formatting. The shared service lacks the Grok setup required
+  by the fleet.
+  The shared Moshi module and =custom/moshi-hook= will own this behavior. The
+  fleet-only remote pairing script will remain under =agent-fleet=.
+- Both CLIProxyAPI modules build the same Codex and Grok wrappers and user
+  service. The fleet also proxies Claude. The base Home Manager module currently
+  keeps Claude outside the proxy. The fleet will use that base behavior.
+- Both Syncthing modules repeat device IDs and folder membership. The base
+  module has the current peers, selectable folders, and GUI authentication. It
+  will own those rules. The fleet will keep its data path, open ports, selected
+  folders, and Tailscale Serve service.
+- The root and fleet repeat unfree-package policy, trusted Nix users, flake
+  settings, store optimization, and two binary caches. A focused shared Nix
+  module will own these rules. CUDA cache policy and fleet garbage collection
+  remain local.
+- Both Home Manager setups link the same configuration files and repeat Bash,
+  Fish, Direnv, Git, GitHub CLI, and nix-index settings. A shared home module
+  will own that command-line environment. Desktop-only packages and the minimal
+  fleet Emacs setup remain separate.
+- =agent-fleet/nix/ssh-key.pub= and =agent-fleet/ssh/id_ed25519.pub= are
+  identical. The copy that Terraform uses under =ssh= will remain. NixOS will
+  use it too.
+- The fleet package list and the desktop package profiles overlap, but they
+  serve different host roles. A shared lock and overlays remove version drift.
+  Combining the package lists would pull graphical and hardware tools onto the
+  headless host, so the lists will remain separate.
+- Terraform, the Disko layout, the QEMU profile, cloud boot, the firewall,
+  root-SSH recovery, browser-based Tailscale enrollment, headless packages,
+  minimal Emacs setup, and remote operations are intentional differences.
+- The base monolithic Linux and Home Manager modules include desktop behavior.
+  The fleet will import focused shared modules instead of those broad modules.
+
+The old absolute checkout path also occurs in a Codex trusted-project entry and
+the external update-systems skill. Codex already trusts =/etc/nixos=, and its
+configuration repository has unrelated changes, so this work will not edit that
+stale entry. The update-systems instruction is an active command and must move
+to the new path.
 
 Completion checks:
 
 - Every proposed deletion has a named replacement in the main repository.
 - Every intentional difference has a reason and one owner.
-- The inventory contains no speculative abstractions or unrelated cleanup.
+- The inventory contains no speculative abstraction or unrelated cleanup.
 
-** TODO 7. Deduplicate shared Nix inputs and package definitions
+** TODO 7. Reuse the shared agent-files module
 
-- [ ] Replace confirmed duplicate inputs, overlays, package lists, and version
-  choices with definitions from the main repository.
-- [ ] Keep fleet-only packages and inputs inside =agent-fleet=.
-- [ ] Remove definitions that no longer own behavior.
-- [ ] Commit each independent change with its checks and document update.
+- [ ] Import =shared/home/agent-files.nix= from the fleet Home Manager module.
+- [ ] Delete the copied fleet module.
+- [ ] Confirm that the service still uses the encrypted shared R2 file.
+- [ ] Evaluate the fleet Home Manager configuration and commit the change.
 
-Completion checks:
+** TODO 8. Reuse the shared Moshi package and service
 
-- Shared packages resolve from one definition.
-- Fleet-only package behavior does not change.
-- The affected local and fleet configurations evaluate after every commit.
+- [ ] Add the required fleet Grok setup to =shared/linux/moshi.nix=.
+- [ ] Import the shared Moshi module from the fleet NixOS configuration.
+- [ ] Delete the copied package, release, and update files.
+- [ ] Keep the remote pairing script as a fleet operation and update its path.
+- [ ] Make the fleet update recipe call the root Moshi update recipe.
+- [ ] Evaluate the desktop and fleet NixOS configurations and commit the
+  change.
 
-** TODO 8. Deduplicate shared NixOS modules
+** TODO 9. Use one flake and lock file
 
-- [ ] Reuse confirmed shared definitions from the main repository for Nix,
-  caches, users, SSH, networking, Tailscale, Syncthing, and other common system
-  behavior.
-- [ ] Keep hardware, disk layout, cloud boot, and fleet access rules local to
-  the fleet setup.
-- [ ] Commit each coherent module change separately.
+- [ ] Add Disko and the fleet host outputs to the root flake.
+- [ ] Add the fleet control-plane development shell to the root flake.
+- [ ] Apply the root package overlays to fleet hosts.
+- [ ] Update fleet commands and =.envrc= to use the root flake.
+- [ ] Remove the nested fleet flake and lock file.
+- [ ] Evaluate all Linux and fleet hosts and commit the change.
 
-Completion checks:
+** TODO 10. Reuse the shared CLIProxyAPI Home Manager module
 
-- Each shared system rule has one source of truth.
-- Fleet hosts retain their required cloud and headless behavior.
-- All affected NixOS configurations evaluate after every commit.
+- [ ] Import =shared/linux-home/cli-proxy-api.nix= from the fleet Home Manager
+  module.
+- [ ] Make that module install every command that its service and wrappers need.
+- [ ] Remove its duplicate package from the broad desktop package list.
+- [ ] Delete the fleet NixOS copy and its import.
+- [ ] Confirm that fleet behavior follows the base Claude routing choice.
+- [ ] Evaluate desktop and fleet Home Manager configurations and commit the
+  change.
 
-** TODO 9. Deduplicate shared Home Manager and AI-agent setup
+** TODO 11. Reuse the shared Syncthing inventory
 
-- [ ] Reuse confirmed shared definitions from the main repository for shell,
-  development, editor, and AI-agent behavior.
-- [ ] Remove copied Moshi, CLIProxyAPI, agent-files, and hook logic when the
-  main definition is an exact replacement.
-- [ ] Keep fleet-only credentials, services, and headless settings local.
-- [ ] Commit each coherent behavior change separately.
+- [ ] Make the shared module omit the current machine from its peer and folder
+  lists.
+- [ ] Import the shared module from the fleet wrapper.
+- [ ] Select the four fleet folders through the shared options.
+- [ ] Keep the fleet data path, firewall ports, and Tailscale Serve service in
+  the fleet wrapper.
+- [ ] Copy only the shared Syncthing password needed by fleet hosts.
+- [ ] Evaluate desktop and fleet Syncthing settings and commit the change.
 
-Completion checks:
+** TODO 12. Reuse core Nix settings
 
-- Shared user and AI-agent behavior has one source of truth.
-- Fleet-only behavior remains explicit and local.
-- Home Manager evaluates for desktop and fleet users after every commit.
+- [ ] Move common Nix settings from =shared/linux/default.nix= into one focused
+  shared module.
+- [ ] Import that module from the desktop base and fleet configuration.
+- [ ] Keep the CUDA cache in the desktop base.
+- [ ] Keep fleet garbage collection and any fleet-only trust setting local.
+- [ ] Evaluate desktop and fleet Nix settings and commit the change.
 
-** TODO 10. Simplify paths and operational commands
+** TODO 13. Reuse the command-line Home Manager setup
 
-- [ ] Update commands and references that still point to the old checkout.
-- [ ] Make all agent-fleet recipes work from
-  =/etc/nixos/agent-fleet=.
-- [ ] Update sync and deployment source paths to include reused definitions
-  without copying unrelated secrets to fleet hosts.
-- [ ] Remove obsolete compatibility code and duplicate files after all callers
-  use the shared owner.
-- [ ] Commit each independent path or command change separately.
+- [ ] Move shared configuration links and command-line program settings into a
+  focused =shared/home= module.
+- [ ] Import it from the Linux desktop and fleet Home Manager modules.
+- [ ] Remove the replaced fleet definitions.
+- [ ] Keep desktop-only tools and fleet-only Home Manager settings local.
+- [ ] Evaluate desktop and fleet Home Manager configurations and commit the
+  change.
 
-Completion checks:
+** TODO 14. Deduplicate paths and deployment inputs
 
-- No active command depends on
-  =/home/robert/projects/ai/agent-fleet=.
-- Deployment inputs contain only the files needed by the fleet.
-- Terraform state and credentials remain local and ignored.
+- [ ] Make NixOS use the Terraform public-key file and delete its duplicate.
+- [ ] Update every agent-fleet flake path and old-checkout command.
+- [ ] Copy only the root flake files, selected shared modules, fleet modules,
+  and required secrets to fleet hosts.
+- [ ] Update the external update-systems instruction in its own repository.
+- [ ] Confirm that no active command uses the old checkout and commit each
+  repository change separately.
 
-** TODO 11. Run final checks and finish the move
+** TODO 15. Run final checks and finish the move
 
 - [ ] Run the root repository checks that cover changed shared definitions.
 - [ ] Run the full agent-fleet =just check= recipe.
@@ -313,7 +376,7 @@ Completion checks:
 - [ ] Confirm that no private key, environment file, Terraform state, cache,
   or unrelated destination file entered a commit.
 - [ ] Record final results and any accepted limits in this document.
-- [ ] Apply the confirmed old-checkout policy.
+- [ ] Retain the old checkout as agreed.
 
 Completion checks:
 
