@@ -468,24 +468,3 @@ update-moshi:
 # Pair one fleet host with the Moshi phone app.
 pair-moshi host:
     @./scripts/pair-moshi "{{ host }}"
-
-# Update every Nix flake input.
-update-ai host="":
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    nix flake update --flake .. \
-      ai-quotas \
-      ast-outline \
-      codex-cli-nix \
-      llm-agents \
-      herdr-nix \
-      skillshare-nix \
-      worktrunk-nix
-
-    if ! git diff --quiet HEAD -- ../flake.lock; then
-        git add ../flake.lock
-        git commit -m "update ai"
-    fi
-
-    just _for-hosts _deploy "$@"

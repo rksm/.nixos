@@ -452,9 +452,10 @@ The sync recipe now builds a temporary tree with the root flake, fleet modules,
 public key, Moshi package, and the focused shared modules that =agent-1= imports.
 It mirrors that tree to =/etc/nixos= while protecting =shared/secrets=. A
 separate transfer installs the R2 environment, Cachix netrc, and Syncthing
-password as =root:root= with mode =0600=. The update recipe always deploys the
-current shared flake, even when another update step has already changed the root
-lock file. The Syncthing status command now includes =projects/home=.
+password as =root:root= with mode =0600=. The deploy recipe activates the
+current shared flake. The base =just update-ai= recipe remains the only owner of
+AI input updates. The external update workflow will deploy the fleet after that
+shared update. The Syncthing status command now includes =projects/home=.
 
 The first minimal-tree evaluation exposed a missing public-key input. Adding
 =agent-fleet/ssh/id_ed25519.pub= to the selected inputs fixed it. A local mirror
