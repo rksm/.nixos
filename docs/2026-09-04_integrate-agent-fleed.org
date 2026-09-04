@@ -358,16 +358,29 @@ The first check command used a =just --working-directory= form that this Just
 version rejects. It stopped before running a recipe or changing state. Running
 the check from =agent-fleet= worked.
 
-** TODO 11. Reuse the shared Syncthing inventory
+** DONE 11. Reuse the shared Syncthing inventory
+CLOSED: [2026-09-04 Fri 09:00]
 
-- [ ] Make the shared module omit the current machine from its peer and folder
+- [X] Make the shared module omit the current machine from its peer and folder
   lists.
-- [ ] Import the shared module from the fleet wrapper.
-- [ ] Select the four fleet folders through the shared options.
-- [ ] Keep the fleet data path, firewall ports, and Tailscale Serve service in
+- [X] Import the shared module from the fleet wrapper.
+- [X] Select the four fleet folders through the shared options.
+- [X] Keep the fleet data path, firewall ports, and Tailscale Serve service in
   the fleet wrapper.
-- [ ] Copy only the shared Syncthing password needed by fleet hosts.
-- [ ] Evaluate desktop and fleet Syncthing settings and commit the change.
+- [X] Copy only the shared Syncthing password needed by fleet hosts.
+- [X] Evaluate desktop and fleet Syncthing settings and commit the change.
+
+The shared module now owns all peer IDs, folder membership, and GUI
+authentication. It removes the current machine from its own peer and folder
+lists. The fleet wrapper selects =configs=, =projects/ai=, =projects/home=, and
+=projects/hyper=. It keeps the existing database path, opens the standard
+Syncthing ports, and exposes the GUI through Tailscale Serve.
+
+A focused check found that the fleet and shared data paths had equal module
+priority. The broad flake check had not forced that value. The fleet wrapper
+now uses =lib.mkForce= for its existing path. Focused checks confirm the path,
+folders, GUI authentication, services, and self-filtering on all three hosts.
+The full check passes.
 
 ** TODO 12. Reuse core Nix settings
 

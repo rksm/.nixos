@@ -190,8 +190,10 @@ _sync host:
     set -euo pipefail
     agent_files_env="/etc/nixos/shared/secrets/agent-files-r2.env"
     netrc_file="/etc/nixos/shared/secrets/hyper-video-cachix-netrc.key"
+    syncthing_password="/etc/nixos/shared/secrets/syncthing-password.key"
     test -f "$agent_files_env"
     test -f "$netrc_file"
+    test -f "$syncthing_password"
     ip=$(just _host-ip {{ host }})
     ssh=(
         ssh
@@ -217,6 +219,7 @@ _sync host:
         -e "${ssh[*]}" \
         "$agent_files_env" \
         "$netrc_file" \
+        "$syncthing_password" \
         "robert@$ip:/etc/nixos/shared/secrets/"
 
 # Activate the flake already stored on the selected hosts.
