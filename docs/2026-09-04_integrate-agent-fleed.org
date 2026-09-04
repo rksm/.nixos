@@ -580,8 +580,14 @@ A check of the minimal deployment tree found that the sync recipe omits the
 local CLI Proxy API package definition. This issue predates the module move and
 Task 17 tracks it.
 
-** TODO 17. Include the local package in fleet deployments
+** DONE 17. Include the local package in fleet deployments
+CLOSED: [2026-09-04 Fri 10:46]
 
-- [ ] Copy =packages/cliproxyapi/package.nix= into the deployment staging tree.
-- [ ] Evaluate the fleet configuration from the minimal staging tree.
-- [ ] Run the fleet checks and commit the fix.
+- [X] Copy =packages/cliproxyapi/package.nix= into the deployment staging tree.
+- [X] Evaluate the fleet configuration from the minimal staging tree.
+- [X] Run the fleet checks and commit the fix.
+
+The root flake creates the CLI Proxy API package before it builds any NixOS
+configuration. The deployment staging tree now includes that package
+definition. The minimal tree evaluates =agent-1= without relying on files that
+the sync recipe does not copy.

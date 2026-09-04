@@ -202,6 +202,7 @@ _sync host:
     rsync -aR \
         flake.nix \
         flake.lock \
+        packages/cliproxyapi/package.nix \
         agent-fleet/nix/ \
         agent-fleet/ssh/id_ed25519.pub \
         shared/home/agent-files.nix \
