@@ -52,7 +52,7 @@ fmt:
 check:
     tofu fmt -check -recursive
     tofu validate
-    nix flake check ./nix --no-build
+    nix flake check .. --impure --no-build
 
 # Initialize OpenTofu and install providers.
 tf-init:
@@ -148,7 +148,7 @@ _install host:
     ip=$(just _host-ip {{ host }})
     unset SSH_PRIVATE_KEY
     nixos-anywhere \
-        --flake "./nix#{{ host }}" \
+        --flake "..#{{ host }}" \
         -i "{{ ssh_key }}" \
         --ssh-option "IdentitiesOnly=yes" \
         --ssh-option "ControlMaster=no" \
@@ -230,7 +230,7 @@ _switch host:
     ip=$(just _host-ip {{ host }})
     export NIX_SSHOPTS='-i {{ ssh_key }} -o IdentitiesOnly=yes -o ControlMaster=no -o ControlPath=none -o UserKnownHostsFile={{ known_hosts }} -o StrictHostKeyChecking=accept-new'
     nixos-rebuild switch \
-        --flake "./nix#{{ host }}" \
+        --flake "..#{{ host }}" \
         --target-host "robert@$ip" \
         --sudo
 
@@ -434,11 +434,11 @@ build host="":
 
 [private]
 _build host:
-    nix build "./nix#nixosConfigurations.{{ host }}.config.system.build.toplevel"
+    nix build "..#nixosConfigurations.{{ host }}.config.system.build.toplevel"
 
 # Update every Nix flake input.
 update-inputs:
-    nix flake update --flake ./nix
+    nix flake update --flake ..
 
 # Update the pinned Moshi hook release.
 update-moshi:
@@ -453,7 +453,7 @@ update-ai host="":
     #!/usr/bin/env bash
     set -euo pipefail
 
-    nix flake update --flake ./nix \
+    nix flake update --flake .. \
       ai-quotas \
       ast-outline \
       codex-cli-nix \
@@ -462,11 +462,11 @@ update-ai host="":
       skillshare-nix \
       worktrunk-nix
 
-    if git diff --quiet HEAD -- nix/flake.lock; then
+    if git diff --quiet HEAD -- ../flake.lock; then
         just _for-hosts _sync-ai-resources "$@"
         exit 0
     fi
 
-    git add nix/flake.lock
+    git add ../flake.lock
     git commit -m "update ai"
     just _for-hosts _deploy "$@"

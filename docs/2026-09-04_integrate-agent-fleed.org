@@ -316,14 +316,26 @@ update recipe delegates to the root recipe. Fleet =just check= and the root
 flake check pass. The root check still reports the existing Tuxedo option rename
 warning.
 
-** TODO 9. Use one flake and lock file
+** DONE 9. Use one flake and lock file
+CLOSED: [2026-09-04 Fri 08:56]
 
-- [ ] Add Disko and the fleet host outputs to the root flake.
-- [ ] Add the fleet control-plane development shell to the root flake.
-- [ ] Apply the root package overlays to fleet hosts.
-- [ ] Update fleet commands and =.envrc= to use the root flake.
-- [ ] Remove the nested fleet flake and lock file.
-- [ ] Evaluate all Linux and fleet hosts and commit the change.
+- [X] Add Disko and the fleet host outputs to the root flake.
+- [X] Add the fleet control-plane development shell to the root flake.
+- [X] Apply the root package overlays to fleet hosts.
+- [X] Update fleet commands and =.envrc= to use the root flake.
+- [X] Remove the nested fleet flake and lock file.
+- [X] Evaluate all Linux and fleet hosts and commit the change.
+
+The root flake now provides =storm=, =tuxedo=, and =agent-1= through one host
+builder. It also provides the =agent-fleet= and =cuda= development shells. The
+root lock added the same Disko revision used by the removed fleet lock. No other
+root input changed. Fleet hosts now use the root Home Manager version, Flux
+Reconciler version, overlays, and shared Home Manager wiring.
+
+=nix develop ..#agent-fleet --command just check= passes from =agent-fleet=.
+The command checks OpenTofu and all three Linux NixOS configurations. The
+existing Tuxedo rename warning remains. Dry runs confirm that build, install,
+switch, and update recipes all use the root flake and lock file.
 
 ** TODO 10. Reuse the shared CLIProxyAPI Home Manager module
 

@@ -2,7 +2,8 @@
 
 * Overview
 
-This repository creates Hetzner Cloud servers and runs NixOS on them. OpenTofu manages the cloud resources. The flake in =nix/= installs and updates NixOS.
+This directory creates Hetzner Cloud servers and runs NixOS on them. OpenTofu
+manages the cloud resources. The root NixOS flake installs and updates NixOS.
 
 The file =nix/fleet.json= is the fleet inventory. OpenTofu creates every server in that file. The Nix flake creates a matching NixOS configuration for every server.
 
@@ -19,7 +20,7 @@ direnv allow
 You can also enter it directly:
 
 #+BEGIN_SRC sh
-nix develop ./nix
+nix develop ..#agent-fleet
 #+END_SRC
 
 The main NixOS repository stores the fleet SSH key at

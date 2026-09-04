@@ -6,6 +6,11 @@
     nixpkgs-latest.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nixpkgs-ai.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -23,116 +28,173 @@
     herdr-nix.url = "github:rksm/herdr";
     flux-reconciler.url = "github:rksm/flux-reconciler";
     worktrunk-nix.url = "github:max-sixty/worktrunk";
-    ai-quotas = { url = "github:rksm/ai-quotas"; inputs.nixpkgs.follows = "nixpkgs"; };
+    ai-quotas = {
+      url = "github:rksm/ai-quotas";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
-    inputs@{ self
-    , home-manager
-    , nixpkgs
-    , nixpkgs-latest
-    , nixpkgs-ai
-    , nixpkgs-rksm
-    , tuxedo-nixos
-    , codex-cli-nix
-    , skillshare-nix
-    , ast-outline
-    , llm-agents
-    , herdr-nix
-    , flux-reconciler
-    , worktrunk-nix
-    , ai-quotas
-    , ...
+    inputs@{
+      self,
+      ai-quotas,
+      ast-outline,
+      codex-cli-nix,
+      disko,
+      flux-reconciler,
+      herdr-nix,
+      home-manager,
+      llm-agents,
+      nixpkgs,
+      nixpkgs-ai,
+      nixpkgs-latest,
+      nixpkgs-rksm,
+      skillshare-nix,
+      tuxedo-nixos,
+      worktrunk-nix,
+      ...
     }:
     let
+      system = "x86_64-linux";
+      user = "robert";
+      fleet = builtins.fromJSON (builtins.readFile ./agent-fleet/nix/fleet.json);
 
-      nixosConfigurations =
-        let
-          system = "x86_64-linux";
-          machines = [ "storm" "tuxedo" ];
-          user = "robert";
-          overlays-nixpkgs = final: prev: {
-            latest = import nixpkgs-latest { inherit system; config.allowUnfree = true; };
-            ai = import nixpkgs-ai { inherit system; config.allowUnfree = true; };
-            rksm = import nixpkgs-rksm { inherit system nixpkgs; };
-            tuxedo-control-center = tuxedo-nixos.packages.${system}.default;
+      nixpkgsOverlay = _final: _prev: {
+        latest = import nixpkgs-latest {
+          inherit system;
+          config.allowUnfree = true;
+        };
+        ai = import nixpkgs-ai {
+          inherit system;
+          config.allowUnfree = true;
+        };
+        rksm = import nixpkgs-rksm { inherit system nixpkgs; };
+        tuxedo-control-center = tuxedo-nixos.packages.${system}.default;
 
-            codex-cli = codex-cli-nix.packages.${system}.default;
-            ast-outline = ast-outline.packages.${system}.default;
-            llm-agents = llm-agents.packages.${system};
-            flux-reconciler = flux-reconciler.packages.${system}.default;
-            worktrunk = worktrunk-nix.packages.${system}.default;
-          };
+        codex-cli = codex-cli-nix.packages.${system}.default;
+        ast-outline = ast-outline.packages.${system}.default;
+        llm-agents = llm-agents.packages.${system};
+        flux-reconciler = flux-reconciler.packages.${system}.default;
+        worktrunk = worktrunk-nix.packages.${system}.default;
+      };
 
-        in
-        builtins.listToAttrs
-          (map
-            (machine: {
-              name = machine;
-              value = nixpkgs.lib.nixosSystem {
-                inherit system;
-                specialArgs = { inherit inputs user machine; };
-                modules = [
-                  ./hosts/${machine}
-
-                  home-manager.nixosModules.home-manager
-                  {
-                    home-manager.backupFileExtension = "hm-backup";
-                    home-manager.overwriteBackup = true;
-                    home-manager.useGlobalPkgs = true;
-                    home-manager.useUserPackages = true;
-                    home-manager.extraSpecialArgs = {
-                      inherit user machine;
-                      nixosConfig = self.nixosConfigurations.${machine}.config;
-                    };
-                    home-manager.users.${user} = import ./hosts/${machine}/home.nix;
-                  }
-
-                  tuxedo-nixos.nixosModules.default
-
-                  ({ ... }: {
-                    nixpkgs.overlays = [
-                      overlays-nixpkgs
-                      ai-quotas.overlays.default
-                      skillshare-nix.overlays.default
-                      herdr-nix.overlays.default
-                    ];
-                  })
-                ];
-              };
-            })
-            machines);
-
-      devShells =
-        let
-          system = "x86_64-linux";
-          pkgs = import nixpkgs-ai {
-            inherit system;
-            config = {
-              allowUnfree = true;
-              cudaSupport = true;
-              nvidia.acceptLicense = true;
-            };
-          };
-        in
+      sharedModules = machine: homeModule: [
+        home-manager.nixosModules.home-manager
         {
-          ${system}.cuda = pkgs.mkShell {
-            packages = [
-              (pkgs.python3.withPackages (ps: [
-                ps.torch-bin
-                ps.torchvision-bin
-                ps.tensorflow-bin
-              ]))
-            ];
-            shellHook = ''
-              echo "CUDA dev shell ready. Run: python scripts/check-cuda.py"
-            '';
+          home-manager.backupFileExtension = "hm-backup";
+          home-manager.overwriteBackup = true;
+          home-manager.useGlobalPkgs = true;
+          home-manager.useUserPackages = true;
+          home-manager.extraSpecialArgs = {
+            inherit user machine;
+            nixosConfig = self.nixosConfigurations.${machine}.config;
           };
+          home-manager.users.${user} = import homeModule;
+        }
+        {
+          nixpkgs.overlays = [
+            nixpkgsOverlay
+            ai-quotas.overlays.default
+            skillshare-nix.overlays.default
+            herdr-nix.overlays.default
+          ];
+        }
+      ];
+
+      mkSystem =
+        {
+          machine,
+          homeModule,
+          modules,
+        }:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          specialArgs = { inherit inputs user machine; };
+          modules = modules ++ sharedModules machine homeModule;
         };
 
+      desktopMachines = [
+        "storm"
+        "tuxedo"
+      ];
+      desktopConfigurations = builtins.listToAttrs (
+        map (machine: {
+          name = machine;
+          value = mkSystem {
+            inherit machine;
+            homeModule = ./hosts/${machine}/home.nix;
+            modules = [
+              ./hosts/${machine}
+              tuxedo-nixos.nixosModules.default
+            ];
+          };
+        }) desktopMachines
+      );
+      fleetConfigurations = builtins.mapAttrs (
+        machine: _:
+        mkSystem {
+          inherit machine;
+          homeModule = ./agent-fleet/nix/home.nix;
+          modules = [
+            disko.nixosModules.disko
+            ./agent-fleet/nix/disk-config.nix
+            ./agent-fleet/nix/configuration.nix
+            ./shared/linux/moshi.nix
+            { networking.hostName = machine; }
+          ];
+        }
+      ) fleet;
+
+      agentFleetPackages = nixpkgs.legacyPackages.${system};
+      cudaPackages = import nixpkgs-ai {
+        inherit system;
+        config = {
+          allowUnfree = true;
+          cudaSupport = true;
+          nvidia.acceptLicense = true;
+        };
+      };
     in
     {
-      inherit nixosConfigurations devShells;
-    };
+      nixosConfigurations = desktopConfigurations // fleetConfigurations;
 
+      devShells.${system} = {
+        agent-fleet = agentFleetPackages.mkShell {
+          packages = with agentFleetPackages; [
+            hcloud
+            jq
+            just
+            nixfmt
+            nixos-anywhere
+            openssh
+            opentofu
+            rsync
+            vale
+          ];
+
+          shellHook = ''
+            repository_root="$(${agentFleetPackages.git}/bin/git rev-parse --show-toplevel)"
+            key="$repository_root/shared/secrets/agent-fleet-ssh.key"
+            if [ -f "$key" ]; then
+              chmod 600 "$key"
+            fi
+          '';
+        };
+
+        cuda = cudaPackages.mkShell {
+          packages = [
+            (cudaPackages.python3.withPackages (pythonPackages: [
+              pythonPackages.torch-bin
+              pythonPackages.torchvision-bin
+              pythonPackages.tensorflow-bin
+            ]))
+          ];
+          shellHook = ''
+            echo "CUDA dev shell ready. Run: python scripts/check-cuda.py"
+          '';
+        };
+      };
+
+      formatter.${system} = agentFleetPackages.nixfmt-tree;
+    };
 }
