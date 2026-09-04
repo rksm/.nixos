@@ -14,8 +14,9 @@ work.
 
 * Starting point
 
-- The destination is =/etc/nixos= on branch =main=. It is seven commits ahead
-  of =origin/main=.
+- The destination is =/etc/nixos= on branch =main=. It was seven commits ahead
+  of =origin/main= at the first inspection. The remote advanced during the
+  initial plan commit, so it is now one commit ahead.
 - The destination has two unrelated untracked files:
   =remote-need-airy.tsv= and =remote-need-airy.txt=. This work must not stage,
   edit, or remove them.
@@ -27,8 +28,8 @@ work.
   files.
 - The ignored =.terraform= provider cache is about 25 MB. It will remain local
   and untracked after the move.
-- The source tracks =ssh/id_ed25519=. It is a private key. The destination does
-  not have a Git attribute that would encrypt that path.
+- The source tracks =ssh/id_ed25519= and =nix/agent-files-r2.env=. They contain
+  a private key and R2 credentials. The source stores both files in plaintext.
 
 * Working rules
 
@@ -50,33 +51,69 @@ work.
 
 * Plan
 
-** TODO 1. Confirm the secret and old-checkout policy
+** DONE 1. Confirm the secret and old-checkout policy
+CLOSED: [2026-09-04 Fri 08:41]
 
-- [ ] Confirm removal of =ssh/id_ed25519= from every imported commit.
-- [ ] Add an ignore rule for the private key in the integrated subtree.
-- [ ] Copy the current private key to the new subtree as a mode-0600 ignored
-  local file.
-- [ ] Confirm whether to retain or remove the old checkout after validation.
+- [X] Remove =ssh/id_ed25519= from every imported commit.
+- [X] Move the current key to =shared/secrets/agent-fleet-ssh.key= and replace
+  all private-key usage with that path.
+- [X] Let the existing =*.key= Git attribute encrypt the moved key.
+- [X] Remove =nix/agent-files-r2.env= from every imported commit and reuse
+  =shared/secrets/agent-files-r2.env=.
+- [X] Keep ignored secret-bearing state local and untracked.
+- [X] Retain the old checkout after validation unless the user asks to remove
+  it.
 
-Recommended policy: preserve the full history except for the private key. Keep
-the current key only in the local worktree. This prevents the key from entering
-the destination repository or its remote while preserving all non-secret
-history.
+The Gitleaks history scan found the private key and two R2 credential fields.
+It found no other secret in the 47 reachable commits. The ignored =.env= holds
+the Hetzner token and an SSH-related value. The ignored Terraform state holds
+resource IDs and public addresses. The integration will copy these ignored
+files without adding them to Git.
 
-** TODO 2. Record a reproducible import baseline
+** DONE 2. Record a reproducible import baseline
+CLOSED: [2026-09-04 Fri 08:41]
 
-- [ ] Record the source and destination head commits, branches, worktree
+- [X] Record the source and destination head commits, branches, worktree
   states, remotes, tags, and reachable commit counts.
-- [ ] Record tracked source paths and ignored local paths without reading
+- [X] Record tracked source paths and ignored local paths without reading
   secrets.
-- [ ] Check references to the old absolute source path so later path changes
+- [X] Check references to the old absolute source path so later path changes
   have a complete owner list.
-- [ ] Note any change from the starting point before the import starts.
+- [X] Note any change from the starting point before the import starts.
+
+Baseline:
+
+- Destination head: =cb09fd5d97ee08ceef2cc4cb9976c685942217e0=.
+- Destination tree: =981057f9f5bc63f222590b3e446fe6094ccd0d1e=.
+- Destination =origin/main=: =8e4d22a942e033114379e14b8bc65bbfdb10399e=.
+- Destination history: 605 commits. Branch =main= is one commit ahead of its
+  remote.
+- Source head: =94eaad34053a11485f113687673c1e8e9efad37d=.
+- Source tree: =107fd6fecb6811d1983e4104318abc40b391931a=.
+- Source history: 47 commits from root
+  =306bf48a91118dd31f75e7d930ca051d26af1aad=. It has no tags or remotes.
+- Source commit metadata signature:
+  =7a005f88bf0f299ff87c1dfb73543472ea7a18916bd5d47df27232b1e84bfca4=.
+- Source topology signature:
+  =5af46e337558ba2f36349707d74fce0b498c4351205a9de46a31dd3f547b5520=.
+- Approved source tree signature after secret removal:
+  =5d812090c3fdba0f86bea617c4aa800531c0afb55e31d7d3e638d68e49f7ae72=.
+  It covers 24 paths.
+- Ignored local entries: =.direnv=, =.env=, =.terraform=, =known_hosts=,
+  =result=, =terraform.tfstate=, and =terraform.tfstate.backup=.
+- The old absolute path occurs in the Moshi copy note, the Codex trusted-project
+  list, and the agent-fleet update instructions.
+
+During the plan commit, another process pushed the seven earlier local commits
+and advanced =origin/main= from =184c7c8= to =8e4d22a=. No file in the worktree
+changed.
 
 Completion checks:
 
-- =remote-need-airy.tsv= and =remote-need-airy.txt= remain untracked and
-  unchanged.
+- =remote-need-airy.tsv= remains untracked with SHA-256
+  =0e316a71b921351d92ffb7684b3eedcf39e00df04985c1901bc7fb265299e696=.
+- =remote-need-airy.txt= remains untracked with SHA-256
+  =e3166c9cfee1612a46901845621dfc2259f175ebc0c88f8e29d2e98a088c3b7b=.
 - The source worktree remains unchanged.
 - The baseline provides enough detail to verify the filtered result.
 
@@ -85,7 +122,7 @@ Completion checks:
 - [ ] Clone the source into a temporary directory on the same machine.
 - [ ] Run =git filter-repo= there to prefix every source path with
   =agent-fleet/=.
-- [ ] Apply the confirmed private-key history policy in the same disposable
+- [ ] Remove both confirmed secret files from history in the same disposable
   repository.
 - [ ] Keep the filter-repo commit map until the import checks pass.
 - [ ] Compare commit count, topology, authors, dates, messages, and the current
@@ -95,8 +132,7 @@ Completion checks:
 
 - All expected source commits remain reachable from the filtered branch.
 - Every tracked path is under =agent-fleet/=.
-- The filtered current tree matches the source tree, apart from the confirmed
-  private-key exception and its ignore rule.
+- The filtered current tree matches the approved 24-path source tree.
 - The original source repository has not changed.
 
 ** TODO 4. Merge the filtered history and restore local state
@@ -107,6 +143,10 @@ Completion checks:
   directory.
 - [ ] Preserve all ignored local state, including =.terraform=, Terraform state,
   =.env=, =.direnv=, =known_hosts=, and =result=.
+- [ ] Copy the private key to =shared/secrets/agent-fleet-ssh.key=, replace its
+  old uses, and add it through git-crypt.
+- [ ] Reuse =shared/secrets/agent-files-r2.env= and replace its fleet use.
+- [ ] Ignore the two removed source paths to prevent accidental reintroduction.
 - [ ] Verify that Git still ignores local files and that staging contains no
   secret or generated file.
 - [ ] Update this task before creating the merge commit.
