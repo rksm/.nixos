@@ -299,15 +299,22 @@ CLOSED: [2026-09-04 Fri 08:52]
 =just check= passes. The evaluated service uses
 =/etc/nixos/shared/secrets/agent-files-r2.env=.
 
-** TODO 8. Reuse the shared Moshi package and service
+** DONE 8. Reuse the shared Moshi package and service
+CLOSED: [2026-09-04 Fri 08:54]
 
-- [ ] Add the required fleet Grok setup to =shared/linux/moshi.nix=.
-- [ ] Import the shared Moshi module from the fleet NixOS configuration.
-- [ ] Delete the copied package, release, and update files.
-- [ ] Keep the remote pairing script as a fleet operation and update its path.
-- [ ] Make the fleet update recipe call the root Moshi update recipe.
-- [ ] Evaluate the desktop and fleet NixOS configurations and commit the
+- [X] Add the required fleet Grok setup to =shared/linux/moshi.nix=.
+- [X] Import the shared Moshi module from the fleet NixOS configuration.
+- [X] Delete the copied package, release, and update files.
+- [X] Keep the remote pairing script as a fleet operation and update its path.
+- [X] Make the fleet update recipe call the root Moshi update recipe.
+- [X] Evaluate the desktop and fleet NixOS configurations and commit the
   change.
+
+The shared Moshi service now installs the Claude, Codex, and Grok integrations.
+The fleet remote-pairing helper moved to =agent-fleet/scripts/pair-moshi=. Its
+update recipe delegates to the root recipe. Fleet =just check= and the root
+flake check pass. The root check still reports the existing Tuxedo option rename
+warning.
 
 ** TODO 9. Use one flake and lock file
 

@@ -51,7 +51,7 @@
             home-manager.nixosModules.home-manager
             ./disk-config.nix
             ./configuration.nix
-            ./moshi.nix
+            ../../shared/linux/moshi.nix
             {
               networking.hostName = hostName;
 

@@ -1,4 +1,3 @@
-# Keep this module in sync with its copy at /home/robert/projects/ai/agent-fleet/nix/moshi.nix.
 {
   config,
   inputs,
@@ -39,6 +38,8 @@ in
         "${moshiHook}/bin/moshi-hook install"
         "${herdr}/bin/herdr integration install claude"
         "${herdr}/bin/herdr integration install codex"
+        "${pkgs.coreutils}/bin/mkdir -p /home/${user}/.grok"
+        "${herdr}/bin/herdr integration install grok"
       ];
       ExecStart = "${moshiHook}/bin/moshi-hook serve";
       Restart = "on-failure";

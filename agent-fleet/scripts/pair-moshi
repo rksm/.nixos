@@ -9,7 +9,7 @@ fail() {
 [[ $# -eq 1 ]] || fail "Usage: $0 HOST"
 readonly host=$1
 
-repository_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../../.." && pwd)
+repository_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 readonly repository_dir
 readonly justfile="$repository_dir/justfile"
 

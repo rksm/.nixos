@@ -442,11 +442,11 @@ update-inputs:
 
 # Update the pinned Moshi hook release.
 update-moshi:
-    nix shell --inputs-from ./nix nixpkgs#curl -c ./nix/custom/moshi-hook/update.sh
+    just --justfile ../justfile update-moshi
 
 # Pair one fleet host with the Moshi phone app.
 pair-moshi host:
-    @./nix/custom/moshi-hook/pair.sh "{{ host }}"
+    @./scripts/pair-moshi "{{ host }}"
 
 # Update every Nix flake input.
 update-ai host="":
