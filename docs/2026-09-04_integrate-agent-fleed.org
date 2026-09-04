@@ -434,14 +434,15 @@ One focused package assertion used the old Fzf version in its first form. The
 corrected assertion checks package-name prefixes and passes. The configuration
 already had the expected packages.
 
-** TODO 14. Deduplicate paths and deployment inputs
+** DONE 14. Deduplicate paths and deployment inputs
+CLOSED: [2026-09-04 Fri 09:27]
 
 - [X] Make NixOS use the Terraform public-key file and delete its duplicate.
-- [ ] Update every agent-fleet flake path and old-checkout command.
+- [X] Update every agent-fleet flake path and old-checkout command.
 - [X] Copy only the root flake files, selected shared modules, fleet modules,
   and required secrets to fleet hosts.
-- [ ] Update the external update-systems instruction in its own repository.
-- [ ] Confirm that no active command uses the old checkout and commit each
+- [X] Update the external update-systems instruction in its own repository.
+- [X] Confirm that no active command uses the old checkout and commit each
   repository change separately.
 
 The NixOS configuration now reads =agent-fleet/ssh/id_ed25519.pub=, which
@@ -462,6 +463,20 @@ The first minimal-tree evaluation exposed a missing public-key input. Adding
 test then evaluated the fleet system, removed a stale configuration file, and
 preserved all three secret files. The full fleet check passes. No host received
 a deployment during these checks.
+
+The fleet no longer has a second AI-input updater. The base root recipe owns
+updates to the shared lock file. Commit =d2c199e= in the =skillshare= repository
+updates the external system-update workflow. It now finishes the shared Nix
+update before it deploys the current fleet configuration from =storm=. This
+ordering prevents concurrent changes to one lock file. The source baseline in
+this document still records the old checkout. A stale Codex trusted project
+entry also remains, but neither reference is an active command.
+
+Vale and the reference checks pass for the external skill. The skill validator
+rejects its existing =disable-model-invocation= frontmatter key. Removing that
+key would change the invocation policy of the skill, so this integration
+preserved it. The unrelated untracked reports in the external repository remain
+unchanged.
 
 ** TODO 15. Run final checks and finish the move
 
