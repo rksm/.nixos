@@ -1,0 +1,241 @@
+#+TITLE: Integrate the agent fleet into the NixOS repository
+#+DATE: [2026-09-04 Fri]
+#+TODO: TODO WAIT | DONE CANCEL
+
+* Goal
+
+Move the complete agent-fleet setup into =/etc/nixos/agent-fleet=. Preserve its
+reachable Git history. Make the main NixOS definitions the source of truth for
+behavior that both setups share.
+
+Keep the Terraform configuration and current local runtime state. Do not apply
+Terraform changes, deploy a host, or switch a local system as part of this
+work.
+
+* Starting point
+
+- The destination is =/etc/nixos= on branch =main=. It is seven commits ahead
+  of =origin/main=.
+- The destination has two unrelated untracked files:
+  =remote-need-airy.tsv= and =remote-need-airy.txt=. This work must not stage,
+  edit, or remove them.
+- The source is =/home/robert/projects/ai/agent-fleet= on branch =main= at
+  commit =94eaad3=. It has 47 reachable commits, no tags, and no configured
+  remote.
+- The source has no tracked changes. Its ignored local state includes
+  =.direnv=, =.env=, =.terraform=, =known_hosts=, =result=, and Terraform state
+  files.
+- The ignored =.terraform= provider cache is about 25 MB. It will remain local
+  and untracked after the move.
+- The source tracks =ssh/id_ed25519=. It is a private key. The destination does
+  not have a Git attribute that would encrypt that path.
+
+* Working rules
+
+- Make the initial plan its own commit.
+- Import history from a temporary clone. Do not rewrite either existing
+  repository in place.
+- Preserve source commit authors, dates, messages, and topology. Record the old
+  and filtered head commits and compare the reachable commit counts.
+- Keep ignored local files ignored. Preserve their paths, file modes, and
+  symlinks without reading or printing secret values.
+- Use one focused commit for each deduplication change. Include the matching
+  progress update in this document in that commit when practical.
+- Mark a task =DONE= only after its checks pass. Record failed checks and other
+  issues under the task where they occurred.
+- Use the existing =just= recipes and Nix development shell for checks.
+- Do not stage or modify unrelated work in the destination.
+- Keep the old checkout until the integrated setup passes all checks. Removing
+  it is a separate destructive action.
+
+* Plan
+
+** TODO 1. Confirm the secret and old-checkout policy
+
+- [ ] Confirm removal of =ssh/id_ed25519= from every imported commit.
+- [ ] Add an ignore rule for the private key in the integrated subtree.
+- [ ] Copy the current private key to the new subtree as a mode-0600 ignored
+  local file.
+- [ ] Confirm whether to retain or remove the old checkout after validation.
+
+Recommended policy: preserve the full history except for the private key. Keep
+the current key only in the local worktree. This prevents the key from entering
+the destination repository or its remote while preserving all non-secret
+history.
+
+** TODO 2. Record a reproducible import baseline
+
+- [ ] Record the source and destination head commits, branches, worktree
+  states, remotes, tags, and reachable commit counts.
+- [ ] Record tracked source paths and ignored local paths without reading
+  secrets.
+- [ ] Check references to the old absolute source path so later path changes
+  have a complete owner list.
+- [ ] Note any change from the starting point before the import starts.
+
+Completion checks:
+
+- =remote-need-airy.tsv= and =remote-need-airy.txt= remain untracked and
+  unchanged.
+- The source worktree remains unchanged.
+- The baseline provides enough detail to verify the filtered result.
+
+** TODO 3. Rewrite a disposable copy of the agent-fleet history
+
+- [ ] Clone the source into a temporary directory on the same machine.
+- [ ] Run =git filter-repo= there to prefix every source path with
+  =agent-fleet/=.
+- [ ] Apply the confirmed private-key history policy in the same disposable
+  repository.
+- [ ] Keep the filter-repo commit map until the import checks pass.
+- [ ] Compare commit count, topology, authors, dates, messages, and the current
+  tracked tree with the source baseline.
+
+Completion checks:
+
+- All expected source commits remain reachable from the filtered branch.
+- Every tracked path is under =agent-fleet/=.
+- The filtered current tree matches the source tree, apart from the confirmed
+  private-key exception and its ignore rule.
+- The original source repository has not changed.
+
+** TODO 4. Merge the filtered history and restore local state
+
+- [ ] Fetch the filtered branch into =/etc/nixos= under a temporary local ref.
+- [ ] Merge it into =main= with unrelated histories allowed.
+- [ ] Copy the source worktree into =/etc/nixos/agent-fleet= without its =.git=
+  directory.
+- [ ] Preserve all ignored local state, including =.terraform=, Terraform state,
+  =.env=, =.direnv=, =known_hosts=, and =result=.
+- [ ] Verify that Git still ignores local files and that staging contains no
+  secret or generated file.
+- [ ] Update this task before creating the merge commit.
+
+Completion checks:
+
+- =git log= can traverse both the original NixOS history and the filtered
+  agent-fleet history.
+- The integrated tracked tree matches the approved filtered tree.
+- The integrated local tree contains the ignored source files with the same
+  modes and symlink targets.
+- The earlier untracked destination files remain unchanged.
+
+** TODO 5. Validate the unchanged integrated agent fleet
+
+- [ ] Enter the agent-fleet development shell from its new path.
+- [ ] Run =just fmt= only when a format check requires changes.
+- [ ] Run =just check= from =/etc/nixos/agent-fleet=.
+- [ ] Check that the OpenTofu commands can use the copied local state and
+  provider cache without applying a plan.
+- [ ] Check that each host configuration still evaluates from the new path.
+- [ ] Check operational recipes for stale absolute or relative paths.
+
+Completion checks:
+
+- OpenTofu formatting and validation pass.
+- Every agent-fleet NixOS configuration evaluates.
+- The checks do not change infrastructure, hosts, or the local system.
+
+** TODO 6. Inventory duplicated behavior and choose one owner for each rule
+
+- [ ] Compare flake inputs, overlays, package sources, and lock-file ownership.
+- [ ] Compare core Nix and NixOS settings, caches, users, SSH, Tailscale, and
+  Syncthing.
+- [ ] Compare Home Manager settings, development tools, shells, editors, and AI
+  agent setup.
+- [ ] Compare Moshi, CLIProxyAPI, agent-files, and other local modules or
+  scripts with the main repository.
+- [ ] Distinguish identical rules from machine-specific differences.
+- [ ] Add one concrete TODO task to this document for each proven group of
+  duplicated rules. State the main-repository owner and the fleet-specific
+  behavior that must remain.
+- [ ] Commit the inventory before changing shared behavior.
+
+Completion checks:
+
+- Every proposed deletion has a named replacement in the main repository.
+- Every intentional difference has a reason and one owner.
+- The inventory contains no speculative abstractions or unrelated cleanup.
+
+** TODO 7. Deduplicate shared Nix inputs and package definitions
+
+- [ ] Replace confirmed duplicate inputs, overlays, package lists, and version
+  choices with definitions from the main repository.
+- [ ] Keep fleet-only packages and inputs inside =agent-fleet=.
+- [ ] Remove definitions that no longer own behavior.
+- [ ] Commit each independent change with its checks and document update.
+
+Completion checks:
+
+- Shared packages resolve from one definition.
+- Fleet-only package behavior does not change.
+- The affected local and fleet configurations evaluate after every commit.
+
+** TODO 8. Deduplicate shared NixOS modules
+
+- [ ] Reuse confirmed shared definitions from the main repository for Nix,
+  caches, users, SSH, networking, Tailscale, Syncthing, and other common system
+  behavior.
+- [ ] Keep hardware, disk layout, cloud boot, and fleet access rules local to
+  the fleet setup.
+- [ ] Commit each coherent module change separately.
+
+Completion checks:
+
+- Each shared system rule has one source of truth.
+- Fleet hosts retain their required cloud and headless behavior.
+- All affected NixOS configurations evaluate after every commit.
+
+** TODO 9. Deduplicate shared Home Manager and AI-agent setup
+
+- [ ] Reuse confirmed shared definitions from the main repository for shell,
+  development, editor, and AI-agent behavior.
+- [ ] Remove copied Moshi, CLIProxyAPI, agent-files, and hook logic when the
+  main definition is an exact replacement.
+- [ ] Keep fleet-only credentials, services, and headless settings local.
+- [ ] Commit each coherent behavior change separately.
+
+Completion checks:
+
+- Shared user and AI-agent behavior has one source of truth.
+- Fleet-only behavior remains explicit and local.
+- Home Manager evaluates for desktop and fleet users after every commit.
+
+** TODO 10. Simplify paths and operational commands
+
+- [ ] Update commands and references that still point to the old checkout.
+- [ ] Make all agent-fleet recipes work from
+  =/etc/nixos/agent-fleet=.
+- [ ] Update sync and deployment source paths to include reused definitions
+  without copying unrelated secrets to fleet hosts.
+- [ ] Remove obsolete compatibility code and duplicate files after all callers
+  use the shared owner.
+- [ ] Commit each independent path or command change separately.
+
+Completion checks:
+
+- No active command depends on
+  =/home/robert/projects/ai/agent-fleet=.
+- Deployment inputs contain only the files needed by the fleet.
+- Terraform state and credentials remain local and ignored.
+
+** TODO 11. Run final checks and finish the move
+
+- [ ] Run the root repository checks that cover changed shared definitions.
+- [ ] Run the full agent-fleet =just check= recipe.
+- [ ] Verify every local NixOS and macOS configuration affected by shared code.
+- [ ] Verify every agent-fleet host configuration.
+- [ ] Review the final Git status, history graph, ignored files, and commit
+  boundaries.
+- [ ] Confirm that no private key, environment file, Terraform state, cache,
+  or unrelated destination file entered a commit.
+- [ ] Record final results and any accepted limits in this document.
+- [ ] Apply the confirmed old-checkout policy.
+
+Completion checks:
+
+- The integrated repository contains the full approved agent-fleet setup and
+  history under =agent-fleet/=.
+- Shared behavior has one owner in the main NixOS definitions.
+- Each deduplication change is a separate, checked commit.
+- The worktrees contain no unexpected tracked or untracked changes.
