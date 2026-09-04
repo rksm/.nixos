@@ -61,8 +61,14 @@ update-ai:
     fi
 
     nix flake update "$@"
-    if ! git diff --quiet HEAD -- flake.lock; then
-        git add flake.lock
+    updated_files="flake.lock"
+    if [ "$(uname)" != "Darwin" ]; then
+        # Pin the newest commit of the CLIProxyAPI dev branch.
+        nix run --inputs-from . nixpkgs#nix-update -- --flake --version=branch=dev cliproxyapi
+        updated_files="$updated_files packages/cliproxyapi/package.nix"
+    fi
+    if ! git diff --quiet HEAD -- $updated_files; then
+        git add $updated_files
         git commit -m "$commit_message"
         cd "$root"
         just switch

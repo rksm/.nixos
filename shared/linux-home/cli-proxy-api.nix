@@ -7,7 +7,7 @@
 
 let
   claudeCode = pkgs.llm-agents.claude-code;
-  cliProxyApi = pkgs.llm-agents.cli-proxy-api;
+  cliProxyApi = pkgs.cliproxyapi;
   cliProxyKey = "sk-local-cli-proxy-api";
   codexCli = pkgs.codex-cli;
   grokCli = pkgs.llm-agents.grok;

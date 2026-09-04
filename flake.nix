@@ -58,6 +58,7 @@
       system = "x86_64-linux";
       user = "robert";
       fleet = builtins.fromJSON (builtins.readFile ./agent-fleet/nix/fleet.json);
+      cliproxyapi = nixpkgs.legacyPackages.${system}.callPackage ./packages/cliproxyapi/package.nix { };
 
       nixpkgsOverlay = _final: _prev: {
         latest = import nixpkgs-latest {
@@ -76,6 +77,7 @@
         llm-agents = llm-agents.packages.${system};
         flux-reconciler = flux-reconciler.packages.${system}.default;
         worktrunk = worktrunk-nix.packages.${system}.default;
+        inherit cliproxyapi;
       };
 
       sharedModules = machine: homeModule: [
@@ -130,6 +132,7 @@
           };
         }) desktopMachines
       );
+
       fleetConfigurations = builtins.mapAttrs (
         machine: _:
         mkSystem {
@@ -144,8 +147,8 @@
           ];
         }
       ) fleet;
-
       agentFleetPackages = nixpkgs.legacyPackages.${system};
+
       cudaPackages = import nixpkgs-ai {
         inherit system;
         config = {
@@ -157,6 +160,10 @@
     in
     {
       nixosConfigurations = desktopConfigurations // fleetConfigurations;
+
+      packages.${system} = {
+        inherit cliproxyapi;
+      };
 
       devShells.${system} = {
         agent-fleet = agentFleetPackages.mkShell {
