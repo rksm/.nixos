@@ -288,12 +288,16 @@ Completion checks:
 - Every intentional difference has a reason and one owner.
 - The inventory contains no speculative abstraction or unrelated cleanup.
 
-** TODO 7. Reuse the shared agent-files module
+** DONE 7. Reuse the shared agent-files module
+CLOSED: [2026-09-04 Fri 08:52]
 
-- [ ] Import =shared/home/agent-files.nix= from the fleet Home Manager module.
-- [ ] Delete the copied fleet module.
-- [ ] Confirm that the service still uses the encrypted shared R2 file.
-- [ ] Evaluate the fleet Home Manager configuration and commit the change.
+- [X] Import =shared/home/agent-files.nix= from the fleet Home Manager module.
+- [X] Delete the copied fleet module.
+- [X] Confirm that the service still uses the encrypted shared R2 file.
+- [X] Evaluate the fleet Home Manager configuration and commit the change.
+
+=just check= passes. The evaluated service uses
+=/etc/nixos/shared/secrets/agent-files-r2.env=.
 
 ** TODO 8. Reuse the shared Moshi package and service
 
