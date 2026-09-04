@@ -117,23 +117,37 @@ Completion checks:
 - The source worktree remains unchanged.
 - The baseline provides enough detail to verify the filtered result.
 
-** TODO 3. Rewrite a disposable copy of the agent-fleet history
+** DONE 3. Rewrite a disposable copy of the agent-fleet history
+CLOSED: [2026-09-04 Fri 08:42]
 
-- [ ] Clone the source into a temporary directory on the same machine.
-- [ ] Run =git filter-repo= there to prefix every source path with
+- [X] Clone the source into a temporary directory on the same machine.
+- [X] Run =git filter-repo= there to prefix every source path with
   =agent-fleet/=.
-- [ ] Remove both confirmed secret files from history in the same disposable
+- [X] Remove both confirmed secret files from history in the same disposable
   repository.
-- [ ] Keep the filter-repo commit map until the import checks pass.
-- [ ] Compare commit count, topology, authors, dates, messages, and the current
+- [X] Keep the filter-repo commit map until the import checks pass.
+- [X] Compare commit count, topology, authors, dates, messages, and the current
   tracked tree with the source baseline.
+
+Results:
+
+- Filtered head: =3c5e7a5d8b3c4f890ac687ea7f105786c563ca54=.
+- Filtered tree: =8877650d9187cae1290f64bdbfa3ab69f9a59b82=.
+- The commit map contains all 47 source commits. The filtered history has one
+  root and no tags, like the source.
+- The metadata, topology, and approved tree signatures match the baseline.
+- All 24 approved paths start with =agent-fleet/=.
+- Neither removed secret path occurs in the filtered history.
+- Gitleaks scanned the 47 filtered commits and found no secret.
+- =git fsck --full --strict= passes.
 
 Completion checks:
 
 - All expected source commits remain reachable from the filtered branch.
 - Every tracked path is under =agent-fleet/=.
 - The filtered current tree matches the approved 24-path source tree.
-- The original source repository has not changed.
+- The original source remains clean at
+  =94eaad34053a11485f113687673c1e8e9efad37d=.
 
 ** TODO 4. Merge the filtered history and restore local state
 
