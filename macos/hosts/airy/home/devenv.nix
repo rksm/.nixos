@@ -49,6 +49,11 @@ in
     "$HOME/npm/bin"
   ];
 
+  home.activation.createGrokConfigDirectory =
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      $DRY_RUN_CMD ${pkgs.coreutils}/bin/install --directory --mode 0700 "$HOME/.grok"
+    '';
+
   programs.emacs = {
     enable = true;
     package = emacs;
@@ -255,6 +260,7 @@ in
     # devbox
 
     llm-agents.claude-code
+    llm-agents.grok
     llm-agents.rtk
     herdr
     codex-cli
