@@ -65,7 +65,6 @@
     enable-projects-shuttle = true;
     enable-projects-typescript = true;
     enable-projects-website = true;
-    enable-media = false;
     enable-khoone = true;
   };
 

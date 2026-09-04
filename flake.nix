@@ -49,7 +49,7 @@
       nixosConfigurations =
         let
           system = "x86_64-linux";
-          machines = [ "titan-linux" "storm" "tuxedo" ];
+          machines = [ "storm" "tuxedo" ];
           user = "robert";
           overlays-nixpkgs = final: prev: {
             latest = import nixpkgs-latest { inherit system; config.allowUnfree = true; };

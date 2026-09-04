@@ -4,7 +4,6 @@ nixos configuration for the following systems:
 
 at ./flake.nix:
 - storm: My main workstation
-- titan-linux: Older workstation, used for batch jobs and computation intensive tasks
 - tuxedo: Laptop
 
 at ./macos/flake.nix:
@@ -29,10 +28,6 @@ just switch build
 ├── flake.nix
 ├── hosts
 │   ├── storm
-│   │   ├── default.nix
-│   │   ├── hardware-configuration.nix
-│   │   └── home.nix
-│   ├── titan-linux
 │   │   ├── default.nix
 │   │   ├── hardware-configuration.nix
 │   │   └── home.nix

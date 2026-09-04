@@ -71,6 +71,5 @@
     enable-projects-shuttle = true;
     enable-projects-typescript = false;
     enable-projects-website = true;
-    enable-media = false;
   };
 }

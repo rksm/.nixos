@@ -20,7 +20,6 @@
       syncthing.enable-projects-shuttle = lib.mkEnableOption "syncthing ~/projects/shuttle/";
       syncthing.enable-projects-typescript = lib.mkEnableOption "syncthing ~/projects/typescript/";
       syncthing.enable-projects-website = lib.mkEnableOption "syncthing ~/projects/website/";
-      syncthing.enable-media = lib.mkEnableOption "syncthing /media/robert/LINUX_DATA/media/";
       syncthing.enable-khoone = lib.mkEnableOption "syncthing ~/projects/home/khoone/ (home-ai agent state from khoone-1)";
     };
 
@@ -77,10 +76,6 @@
             id = "CLPXG4D-HFUVBBU-UVFTOKW-K6RTSPB-4SRS3V2-FAEOK5Y-W577FYA-LG4PTAQ";
             autoAcceptFolders = false;
           };
-          "titan-linux" = {
-            id = "RYQZGHF-73GMHMW-UC6U4U7-FR5AXRH-MOIM7VY-DWVVYCH-JENHYTW-4LBYKAN";
-            autoAcceptFolders = false;
-          };
           "mbp" = {
             id = "ESRECEY-LRO4O4F-W6T4MCD-JJEUB23-UEMKLC6-3CAPFXO-B75BGCG-V2SIQA6";
             autoAcceptFolders = false;
@@ -112,28 +107,28 @@
           "org" = {
             id = "org";
             path = "/home/${user}/org";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
+            devices = [ "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-documents {
           "Documents" = {
             id = "Documents";
             path = "/home/${user}/Documents";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
+            devices = [ "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-configs {
           "configs" = {
             id = "configs";
             path = "/home/${user}/configs";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" "agent-1" "khoone-1" ];
+            devices = [ "storm" "mbp" "nas" "tuxedo" "airy" "agent-1" "khoone-1" ];
           };
         })
           // (lib.optionalAttrs config.syncthing.enable-emacs {
           ".emacs.d" = {
             id = ".emacs.d";
             path = "/home/${user}/.emacs.d";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
+            devices = [ "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
 
@@ -143,7 +138,7 @@
           "projects/ai" = {
             id = "projects/ai";
             path = "/home/${user}/projects/ai";
-            devices = [ "titan-linux" "storm" "nas" "tuxedo" "airy" "agent-1" ];
+            devices = [ "storm" "nas" "tuxedo" "airy" "agent-1" ];
           };
         })
 
@@ -151,7 +146,7 @@
           "projects/biz" = {
             id = "projects/biz";
             path = "/home/${user}/projects/biz";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
+            devices = [ "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
 
@@ -183,7 +178,7 @@
           "projects/infra" = {
             id = "projects/infra";
             path = "/home/${user}/projects/infra";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
+            devices = [ "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
 
@@ -191,7 +186,7 @@
           "projects/python" = {
             id = "projects/python";
             path = "/home/${user}/projects/python";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
+            devices = [ "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
 
@@ -199,7 +194,7 @@
           "projects/rust" = {
             id = "projects/rust";
             path = "/home/${user}/projects/rust";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
+            devices = [ "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
 
@@ -207,7 +202,7 @@
           "security" = {
             id = "projects/security";
             path = "/home/${user}/projects/security";
-            devices = [ "titan-linux" "nas" ];
+            devices = [ "nas" ];
           };
         })
 
@@ -223,7 +218,7 @@
           "projects/typescript" = {
             id = "projects/typescript";
             path = "/home/${user}/projects/typescript";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
+            devices = [ "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
 
@@ -231,7 +226,7 @@
           "projects/website" = {
             id = "projects/website";
             path = "/home/${user}/projects/website";
-            devices = [ "titan-linux" "storm" "mbp" "nas" "tuxedo" "airy" ];
+            devices = [ "storm" "mbp" "nas" "tuxedo" "airy" ];
           };
         })
 
@@ -243,13 +238,6 @@
           };
         })
 
-          // (lib.optionalAttrs config.syncthing.enable-media {
-          "media" = {
-            id = "media";
-            path = "/media/robert/LINUX_DATA/media";
-            devices = [ "titan-linux" "nas" ];
-          };
-        })
           // { };
 
         options = {
