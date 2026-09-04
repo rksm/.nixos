@@ -436,11 +436,15 @@ already had the expected packages.
 
 ** TODO 14. Deduplicate paths and deployment inputs
 
-- [ ] Make NixOS use the Terraform public-key file and delete its duplicate.
+- [X] Make NixOS use the Terraform public-key file and delete its duplicate.
 - [ ] Update every agent-fleet flake path and old-checkout command.
 - [ ] Copy only the root flake files, selected shared modules, fleet modules,
   and required secrets to fleet hosts.
 - [ ] Update the external update-systems instruction in its own repository.
+
+The NixOS configuration now reads =agent-fleet/ssh/id_ed25519.pub=, which
+OpenTofu already uses. The deleted =agent-fleet/nix/ssh-key.pub= file had the
+same SHA-256 hash.
 - [ ] Confirm that no active command uses the old checkout and commit each
   repository change separately.
 

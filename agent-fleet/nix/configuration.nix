@@ -14,7 +14,7 @@ let
   herdr = inputs.herdr-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
   skillshare = inputs.skillshare-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
   worktrunk = inputs.worktrunk-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
-  sshKey = lib.removeSuffix "\n" (builtins.readFile ./ssh-key.pub);
+  sshKey = lib.removeSuffix "\n" (builtins.readFile ../ssh/id_ed25519.pub);
 in
 {
   imports = [
