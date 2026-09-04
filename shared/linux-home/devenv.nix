@@ -6,7 +6,7 @@
 }:
 
 {
-  imports = [ ../home/devenv.nix ];
+  imports = [ ./command-line.nix ];
 
   home.file.".config/herdr-mirror".source =
     config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/herdr/herdr-mirror;

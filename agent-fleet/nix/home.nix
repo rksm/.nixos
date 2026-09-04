@@ -2,7 +2,7 @@
 {
   imports = [
     ../../shared/home/agent-files.nix
-    ../../shared/home/devenv.nix
+    ../../shared/linux-home/command-line.nix
     ../../shared/linux-home/cli-proxy-api.nix
   ];
 

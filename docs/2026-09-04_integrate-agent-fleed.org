@@ -411,19 +411,19 @@ not evaluate a system configuration or change machine state.
 CLOSED: [2026-09-04 Fri 09:19]
 
 - [X] Move shared configuration links and command-line program settings into a
-  focused =shared/home= module.
+  focused =shared/linux-home= module.
 - [X] Import it from the Linux desktop and fleet Home Manager modules.
 - [X] Remove the replaced fleet definitions.
 - [X] Keep desktop-only tools and fleet-only Home Manager settings local.
 - [X] Evaluate desktop and fleet Home Manager configurations and commit the
   change.
 
-The new =shared/home/devenv.nix= module owns the common configuration links,
-Claude settings activation, shell setup, Git and GitHub configuration, Direnv,
-Nix Index, Fzf, and Oh My Fish. The desktop keeps its GUI links, development
-packages, Autojump, session path, and mkcert files. The fleet keeps its minimal
-Emacs setup, Kubernetes package, editor setting, agent-files service, and
-=gh co= alias.
+The new =shared/linux-home/command-line.nix= module owns the common
+configuration links, Claude settings activation, shell setup, Git and GitHub
+configuration, Direnv, Nix Index, Fzf, and Oh My Fish. The desktop keeps its GUI
+links, development packages, Autojump, session path, and mkcert files. The fleet
+keeps its minimal Emacs setup, Kubernetes package, editor setting, agent-files
+service, and =gh co= alias.
 
 The desktop produces the same focused-settings hash as before. The fleet now
 uses the base Bash and Fish startup, SSH as the GitHub protocol, and the base
@@ -561,3 +561,27 @@ Completion checks:
 - Shared behavior has one owner in the main NixOS definitions.
 - Each deduplication change is a separate, checked commit.
 - The worktrees contain no unexpected tracked or untracked changes.
+
+** DONE 16. Keep Linux Home Manager modules together
+CLOSED: [2026-09-04 Fri 10:42]
+
+- [X] Move the common command-line module from =shared/home= to
+  =shared/linux-home=.
+- [X] Update its desktop, fleet, and deployment-sync references.
+- [X] Evaluate the affected configurations and commit the change.
+
+The command-line module assumes Linux paths and uses the Linux Fish history.
+The =shared/home= directory remains for Home Manager modules that macOS and
+Linux can both import. The move keeps its contents and the focused desktop and
+fleet Home Manager outputs unchanged. The full fleet check also passes, apart
+from the existing Tuxedo option rename warning.
+
+A check of the minimal deployment tree found that the sync recipe omits the
+local CLI Proxy API package definition. This issue predates the module move and
+Task 17 tracks it.
+
+** TODO 17. Include the local package in fleet deployments
+
+- [ ] Copy =packages/cliproxyapi/package.nix= into the deployment staging tree.
+- [ ] Evaluate the fleet configuration from the minimal staging tree.
+- [ ] Run the fleet checks and commit the fix.
