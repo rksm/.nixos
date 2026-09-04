@@ -9,14 +9,46 @@
 #     bucket = "agent-files";
 #     environmentFile = "/path/to/agent-files-r2.env";
 #   };
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.services.agent-files;
 
+  syncOnce = pkgs.writeShellApplication {
+    name = "agent-files-sync-once";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.findutils
+      pkgs.rclone
+    ];
+    text = ''
+      files=$(mktemp)
+      trap 'rm -f -- "$files"' EXIT
+
+      # List only regular files and symlinks whose targets are available here.
+      # lessismore: publication paths must not contain newlines. Revisit when such a path exists.
+      find -L ${lib.escapeShellArg cfg.directory} -type f -printf '%P\n' > "$files"
+
+      rclone sync ${lib.escapeShellArg cfg.directory} ${lib.escapeShellArg "r2:${cfg.bucket}"} \
+        --copy-links \
+        --files-from-raw "$files" \
+        --delete-excluded \
+        --use-server-modtime \
+        --update
+    '';
+  };
+
   sync = pkgs.writeShellApplication {
     name = "agent-files-sync";
-    runtimeInputs = [ pkgs.watchexec pkgs.rclone ];
+    runtimeInputs = [
+      pkgs.watchexec
+      syncOnce
+    ];
     text = ''
       set -a
       # shellcheck disable=SC1090,SC1091
@@ -34,16 +66,13 @@ let
       # --poll 10s: detect changes to symlink targets outside the publish directory.
       # --ignore-nothing: watchexec must not filter events through gitignore files.
       # --on-busy-update queue: changes during a running sync cause one follow-up run.
-      # --copy-links: upload each symlink target under the symlink's path.
-      # --use-server-modtime --update: compare against upload time, saves one HEAD per object.
       exec watchexec \
         --poll 10s \
         --watch ${lib.escapeShellArg cfg.directory} \
         --debounce 2s \
         --on-busy-update queue \
         --ignore-nothing \
-        -- rclone sync ${lib.escapeShellArg cfg.directory} ${lib.escapeShellArg "r2:${cfg.bucket}"} \
-        --copy-links --use-server-modtime --update
+        -- ${lib.getExe syncOnce}
     '';
   };
 in
@@ -74,30 +103,32 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable (lib.mkMerge [
-    (lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
-      systemd.user.services.agent-files = {
-        Unit.Description = "Mirror ${cfg.directory} to R2 bucket ${cfg.bucket}";
-        Service = {
-          ExecStart = lib.getExe sync;
-          Restart = "on-failure";
-          RestartSec = 5;
+  config = lib.mkIf cfg.enable (
+    lib.mkMerge [
+      (lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
+        systemd.user.services.agent-files = {
+          Unit.Description = "Mirror ${cfg.directory} to R2 bucket ${cfg.bucket}";
+          Service = {
+            ExecStart = lib.getExe sync;
+            Restart = "on-failure";
+            RestartSec = 5;
+          };
+          Install.WantedBy = [ "default.target" ];
         };
-        Install.WantedBy = [ "default.target" ];
-      };
-    })
+      })
 
-    (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
-      launchd.agents.agent-files = {
-        enable = true;
-        config = {
-          ProgramArguments = [ (lib.getExe sync) ];
-          RunAtLoad = true;
-          KeepAlive = true;
-          StandardOutPath = "${config.home.homeDirectory}/Library/Logs/agent-files.log";
-          StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/agent-files.log";
+      (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+        launchd.agents.agent-files = {
+          enable = true;
+          config = {
+            ProgramArguments = [ (lib.getExe sync) ];
+            RunAtLoad = true;
+            KeepAlive = true;
+            StandardOutPath = "${config.home.homeDirectory}/Library/Logs/agent-files.log";
+            StandardErrorPath = "${config.home.homeDirectory}/Library/Logs/agent-files.log";
+          };
         };
-      };
-    })
-  ]);
+      })
+    ]
+  );
 }

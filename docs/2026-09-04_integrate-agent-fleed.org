@@ -630,3 +630,12 @@ R2 environment file. The sync recipe had installed all runtime secrets as
 file needs user access. The secret directory is now =root:users= mode =0710=,
 the R2 file is =robert:users= mode =0600=, and the other files stay
 =root:root= mode =0600=.
+
+After the permission fix, the first R2 sync found eight dangling publication
+links. Their targets are in =projects/shuttle=, which the agent does not sync.
+That Syncthing folder contains about 246 GB and does not fit on the 149 GB
+agent disk. The shared publisher now builds a raw list of regular files and
+available symlink targets before each sync. Rclone uses that list and deletes
+excluded remote files. A dangling link behaves like a removed local
+file instead of making the whole sync fail. A local source and destination test
+confirmed the copy and deletion behavior.
