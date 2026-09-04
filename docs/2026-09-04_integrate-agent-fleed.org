@@ -592,13 +592,14 @@ configuration. The deployment staging tree now includes that package
 definition. The minimal tree evaluates =agent-1= without relying on files that
 the sync recipe does not copy.
 
-** TODO 18. Deploy and test the integrated fleet
+** DONE 18. Deploy and test the integrated fleet
+CLOSED: [2026-09-04 Fri 12:25]
 
 - [X] Confirm that OpenTofu state resolves =agent-1= and that SSH works.
 - [X] Fix host lookup in the deployment sync recipe.
-- [ ] Deploy the current configuration to every fleet host.
-- [ ] Check the remote system, services, and agent commands.
-- [ ] Record the results and commit this task.
+- [X] Deploy the current configuration to every fleet host.
+- [X] Check the remote system, services, and agent commands.
+- [X] Record the results and commit this task.
 
 The first deployment stopped before it copied files. The sync recipe changed
 to the repository root before it called the private =_host-ip= recipe. At that
@@ -637,5 +638,27 @@ That Syncthing folder contains about 246 GB and does not fit on the 149 GB
 agent disk. The shared publisher now builds a raw list of regular files and
 available symlink targets before each sync. Rclone uses that list and deletes
 excluded remote files. A dangling link behaves like a removed local
-file instead of making the whole sync fail. A local source and destination test
-confirmed the copy and deletion behavior.
+file instead of making the whole sync fail. A local source and destination
+test confirmed the copy and deletion behavior.
+
+The final deployment activated
+=/nix/store/cfk5xbb3apaz12711vy9p80pbaag4p6p-nixos-system-agent-1-26.05.20260611.a037402=.
+The following checks passed:
+
+- SSH, Tailscale, Syncthing, the tailnet Syncthing proxy, Home Manager, the CLI
+  proxy, =agent-files=, and Moshi are active.
+- Systemd reports no failed system or user units and no recent error messages.
+- The CLI proxy model endpoint returns HTTP 200.
+- Codex 0.153.2, Grok 1.0.13, Claude Code 2.1.260, and Syncthing 2.1.2 run.
+  Their plain wrappers, Herdr, Skillshare, RTK, and the installed hooks are
+  present.
+- The R2 reconciliation reports success. Watchexec still prints nonfatal poll
+  warnings for the eight missing link targets, but the service stays active.
+- All four Syncthing folders are idle with no missing bytes or errors.
+- The secret directory and its three files have the intended ownership and
+  modes. The root filesystem has ample free space after the cleanup and sync.
+
+The repository advanced to the separate =cc5363a= AI update while the deploy
+ran. Its uncommitted =shared/linux-home/cli-proxy-api.nix= change was present
+during the final build and passed the live Claude and proxy checks. This task
+left that change and the two earlier untracked remote-need reports untouched.
