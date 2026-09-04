@@ -407,15 +407,32 @@ The first evaluation could not see the new module because flakes exclude
 untracked files. Staging the module fixed the input. That failed evaluation did
 not evaluate a system configuration or change machine state.
 
-** TODO 13. Reuse the command-line Home Manager setup
+** DONE 13. Reuse the command-line Home Manager setup
+CLOSED: [2026-09-04 Fri 09:19]
 
-- [ ] Move shared configuration links and command-line program settings into a
+- [X] Move shared configuration links and command-line program settings into a
   focused =shared/home= module.
-- [ ] Import it from the Linux desktop and fleet Home Manager modules.
-- [ ] Remove the replaced fleet definitions.
-- [ ] Keep desktop-only tools and fleet-only Home Manager settings local.
-- [ ] Evaluate desktop and fleet Home Manager configurations and commit the
+- [X] Import it from the Linux desktop and fleet Home Manager modules.
+- [X] Remove the replaced fleet definitions.
+- [X] Keep desktop-only tools and fleet-only Home Manager settings local.
+- [X] Evaluate desktop and fleet Home Manager configurations and commit the
   change.
+
+The new =shared/home/devenv.nix= module owns the common configuration links,
+Claude settings activation, shell setup, Git and GitHub configuration, Direnv,
+Nix Index, Fzf, and Oh My Fish. The desktop keeps its GUI links, development
+packages, Autojump, session path, and mkcert files. The fleet keeps its minimal
+Emacs setup, Kubernetes package, editor setting, agent-files service, and
+=gh co= alias.
+
+The desktop produces the same focused-settings hash as before. The fleet now
+uses the base Bash and Fish startup, SSH as the GitHub protocol, and the base
+file replacement rules. Focused evaluations confirm the shared links, Claude
+activation, and fleet packages. The full fleet check passes.
+
+One focused package assertion used the old Fzf version in its first form. The
+corrected assertion checks package-name prefixes and passes. The configuration
+already had the expected packages.
 
 ** TODO 14. Deduplicate paths and deployment inputs
 

@@ -1,15 +1,8 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
-let
-  fromConfigs = path: config.lib.file.mkOutOfStoreSymlink "/home/robert/configs/${path}";
-in
+{ pkgs, ... }:
 {
   imports = [
     ../../shared/home/agent-files.nix
+    ../../shared/home/devenv.nix
     ../../shared/linux-home/cli-proxy-api.nix
   ];
 
@@ -26,98 +19,13 @@ in
     stateVersion = "26.05";
     sessionVariables.EDITOR = "emacs";
 
-    file = {
-      ".authinfo.gpg".source = fromConfigs ".authinfo.gpg";
-      ".aws".source = fromConfigs ".aws";
-      ".gnupg".source = fromConfigs ".gnupg";
-      ".npmrc".source = fromConfigs ".npmrc";
-      ".style.yapf".source = fromConfigs ".style.yapf";
-      ".config/herdr".source = fromConfigs "herdr";
-      ".config/skillshare/config.yaml" = {
-        source = config.lib.file.mkOutOfStoreSymlink "/home/robert/projects/ai/skillshare/config.yaml";
-        force = true;
-      };
-      ".config/vale".source = fromConfigs "vale";
-      ".emacs.d/init.el".source = ./emacs/init.el;
-      ".local/share/fish/fish_history".source = fromConfigs "fish_history.linux";
-      "bin/start.sh".source = fromConfigs "start.sh";
-
-      ".cli-proxy-api/config.yaml" = {
-        source = fromConfigs "ai/cli-proxy-api/config.yaml";
-        force = true;
-      };
-      ".codex/AGENTS.md" = {
-        source = fromConfigs "ai/codex/AGENTS.md";
-        force = true;
-      };
-      ".codex/config.toml" = {
-        source = fromConfigs "ai/codex/config.toml";
-        force = true;
-      };
-      ".claude/CLAUDE.md" = {
-        source = fromConfigs "ai/claude/CLAUDE.md";
-        force = true;
-      };
-      ".claude/settings.json" = {
-        source = fromConfigs "ai/claude/settings.json";
-        force = true;
-      };
-    };
+    file.".emacs.d/init.el".source = ./emacs/init.el;
   };
 
-  programs = {
-    bash = {
-      enable = true;
-      initExtra = ''
-        if [ -f "$HOME/configs/.bashrc" ]; then
-          source "$HOME/configs/.bashrc"
-        fi
-      '';
-    };
-
-    direnv = {
-      enable = true;
-      nix-direnv.enable = true;
-    };
-
-    fish = {
-      enable = true;
-      shellInitLast = ''
-        if status is-interactive
-          set -gx OMF_PATH "${pkgs.oh-my-fish}/share/oh-my-fish"
-          source $OMF_PATH/init.fish
-          source $HOME/configs/fish/config.fish
-        end
-      '';
-      plugins = [
-        {
-          name = "myfish";
-          src = fromConfigs "fish";
-        }
-      ];
-    };
-
-    gh = {
-      enable = true;
-      settings.aliases.co = "pr checkout";
-    };
-
-    git = {
-      enable = true;
-      includes = [ { path = "~/configs/git/.gitconfig"; } ];
-    };
-
-    nix-index = {
-      enable = true;
-      enableBashIntegration = true;
-      enableFishIntegration = true;
-    };
-  };
+  programs.gh.settings.aliases.co = "pr checkout";
 
   home.packages = with pkgs; [
     emacs-nox
-    fzf
     kubectl
-    oh-my-fish
   ];
 }
