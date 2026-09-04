@@ -230,15 +230,21 @@ _sync host:
         -e "${ssh[*]}" \
         "$staging/" "robert@$ip:/etc/nixos/"
     "${ssh[@]}" "robert@$ip" \
-        "sudo install -d -m 700 -o root -g root /etc/nixos/shared/secrets"
+        "sudo install -d -m 710 -o root -g users /etc/nixos/shared/secrets"
     rsync -a \
         --chmod=F600 \
         --chown=root:root \
         --rsync-path="sudo rsync" \
         -e "${ssh[*]}" \
-        "$agent_files_env" \
         "$netrc_file" \
         "$syncthing_password" \
+        "robert@$ip:/etc/nixos/shared/secrets/"
+    rsync -a \
+        --chmod=F600 \
+        --chown=robert:users \
+        --rsync-path="sudo rsync" \
+        -e "${ssh[*]}" \
+        "$agent_files_env" \
         "robert@$ip:/etc/nixos/shared/secrets/"
 
 # Activate the current root flake on the selected hosts.

@@ -622,3 +622,11 @@ The existing =nixpkgs-latest= input now uses the former fleet revision from
 =pkgs.latest=, and the full repository check passes. This avoids an unsupported
 stateful package downgrade without adding another Nixpkgs input or changing
 the base package set.
+
+The corrected deployment then switched without errors and completed its hook
+and resource sync. Smoke testing found that =agent-files= could not read its
+R2 environment file. The sync recipe had installed all runtime secrets as
+=root:root= mode =0600= behind a root-only directory. Only the R2 environment
+file needs user access. The secret directory is now =root:users= mode =0710=,
+the R2 file is =robert:users= mode =0600=, and the other files stay
+=root:root= mode =0600=.
