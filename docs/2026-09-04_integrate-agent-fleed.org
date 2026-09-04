@@ -478,20 +478,21 @@ key would change the invocation policy of the skill, so this integration
 preserved it. The unrelated untracked reports in the external repository remain
 unchanged.
 
-** TODO 15. Run final checks and finish the move
+** DONE 15. Run final checks and finish the move
+CLOSED: [2026-09-04 Fri 09:34]
 
-- [ ] Run the root repository checks that cover changed shared definitions.
-- [ ] Run the full agent-fleet =just check= recipe.
-- [ ] Verify every local NixOS and macOS configuration affected by shared code.
-- [ ] Verify every agent-fleet host configuration.
-- [ ] Review the final Git status, history graph, ignored files, and commit
+- [X] Run the root repository checks that cover changed shared definitions.
+- [X] Run the full agent-fleet =just check= recipe.
+- [X] Verify every local NixOS and macOS configuration affected by shared code.
+- [X] Verify every agent-fleet host configuration.
+- [X] Review the final Git status, history graph, ignored files, and commit
   boundaries.
-- [ ] Confirm that no private key, environment file, Terraform state, cache,
-  or unrelated destination file entered a commit.
+- [X] Confirm that no plaintext private key, environment file, Terraform state,
+  cache, or unrelated destination file entered a commit.
 - [X] Keep the ignored fleet environment and Terraform state files private on
   the local filesystem.
-- [ ] Record final results and any accepted limits in this document.
-- [ ] Retain the old checkout as agreed.
+- [X] Record final results and any accepted limits in this document.
+- [X] Retain the old checkout as agreed.
 
 The final secret audit found that =agent-fleet/.env= already had mode =0600=,
 but both ignored Terraform state files had mode =0644=. Terraform state can
@@ -499,6 +500,59 @@ contain provider-private data even when its resource attributes contain no
 credentials. The fleet development shell now uses umask =077= and enforces mode
 =0600= on the environment file, Terraform state, and fleet SSH key. The state
 and environment files remain ignored.
+
+Final validation results:
+
+- The fleet =just check= recipe passes. It covers OpenTofu formatting and
+  validation plus the root flake check for =agent-1=, =storm=, and =tuxedo=.
+- =tofu show -json= reads the copied local state without changing it.
+- Full system builds pass for =agent-1=, =storm=, and =tuxedo=. The root flake
+  evaluates and realizes every affected NixOS configuration.
+- The separate macOS flake check passes, and =airy= evaluates directly. No
+  changed shared module feeds a macOS configuration.
+- Gitleaks scanned the 60 commits reachable in the integration range and found
+  no secret. The private-key blob has the git-crypt header, and =git crypt
+  status -e= reports it as encrypted.
+- The filtered fleet head remains reachable with all 47 source commits. The
+  merge retains both parents, and strict Git object validation passes.
+- All 43 ignored source entries still match the integrated copies by content
+  and symlink target. Only the two Terraform state modes changed, from =0644=
+  to =0600=, as part of the final hardening.
+- The old source checkout remains clean at =94eaad3=. The destination has only
+  its two recorded unrelated files. The external repository has only its six
+  earlier untracked reports. The import cleanup removed the empty directories
+  left by deleted fleet modules.
+
+Secret review:
+
+- The imported history contains neither the SSH private key nor the R2
+  environment file. The encrypted shared files replace both paths.
+- The ignored =agent-fleet/.env= contains the Hetzner token under two variable
+  names. The current OpenTofu configuration uses =HCLOUD_TOKEN=. The matching
+  =TF_VAR_hcloud_token= entry is redundant. The file also names another local
+  copy of the same fleet private key, although the install recipe unsets that
+  variable and uses the git-crypt-managed key explicitly.
+- The Terraform state contains provider-private metadata and infrastructure
+  identifiers but no credential-named resource attributes. It remains ignored
+  and mode =0600= because future provider state can contain secrets.
+- The Cachix netrc and Syncthing password already use git-crypt. Codex and
+  Claude OAuth credentials remain outside the repository and copy only through
+  the explicit runtime recipe.
+
+Filtering changed only the imported history, which means the old fleet key and
+R2 credentials remain in the retained source repository and its history. Rotate
+both credentials when convenient, then update their git-crypt-managed
+replacements. Rotation changes live Hetzner and Cloudflare access, so this
+repository-only integration left the live credentials unchanged.
+
+Accepted limits:
+
+- =tuxedo= still reports the existing =hardware.tuxedo-keyboard= rename warning.
+- The Intel Mac configuration still fails direct evaluation because its flake
+  lacks the existing =nixpkgs-firefox-darwin= input. This integration did not
+  touch any module that it imports. The =airy= configuration evaluates.
+- The external skill validator rejects the preserved
+  =disable-model-invocation= field, as Task 14 records.
 
 Completion checks:
 
