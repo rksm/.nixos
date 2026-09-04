@@ -21,7 +21,6 @@
 
     tuxedo-nixos.url = "github:blitz/tuxedo-nixos";
 
-    codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     skillshare-nix.url = "github:hypervideo/skillshare-nix";
     ast-outline.url = "github:aeroxy/ast-outline";
     llm-agents.url = "github:numtide/llm-agents.nix";
@@ -39,7 +38,6 @@
       self,
       ai-quotas,
       ast-outline,
-      codex-cli-nix,
       disko,
       flux-reconciler,
       herdr-nix,
@@ -72,7 +70,6 @@
         rksm = import nixpkgs-rksm { inherit system nixpkgs; };
         tuxedo-control-center = tuxedo-nixos.packages.${system}.default;
 
-        codex-cli = codex-cli-nix.packages.${system}.default;
         ast-outline = ast-outline.packages.${system}.default;
         llm-agents = llm-agents.packages.${system};
         flux-reconciler = flux-reconciler.packages.${system}.default;

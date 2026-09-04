@@ -263,7 +263,7 @@ in
     llm-agents.grok
     llm-agents.rtk
     herdr
-    codex-cli
+    llm-agents.codex
     skillshare
     ast-outline
     worktrunk

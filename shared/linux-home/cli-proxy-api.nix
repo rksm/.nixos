@@ -9,7 +9,7 @@ let
   claudeCode = pkgs.llm-agents.claude-code;
   cliProxyApi = pkgs.cliproxyapi;
   cliProxyKey = "sk-local-cli-proxy-api";
-  codexCli = pkgs.codex-cli;
+  codexCli = pkgs.llm-agents.codex;
   grokCli = pkgs.llm-agents.grok;
   grokAuthProvider = pkgs.writeShellScript "grok-cli-proxy-auth" ''
     ${pkgs.coreutils}/bin/printf '%s\n' ${lib.escapeShellArg cliProxyKey}

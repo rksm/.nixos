@@ -27,7 +27,6 @@
     attic.url = "github:zhaofengli/attic";
     attic.inputs.nixpkgs.follows = "nixpkgs-darwin";
 
-    codex-cli-nix.url = "github:sadjow/codex-cli-nix";
     skillshare-nix.url = "github:hypervideo/skillshare-nix";
     ast-outline.url = "github:aeroxy/ast-outline";
     llm-agents.url = "github:numtide/llm-agents.nix";
@@ -43,7 +42,6 @@
     , darwin
     , home-manager
     , attic
-    , codex-cli-nix
     , skillshare-nix
     , ast-outline
     , llm-agents
@@ -73,7 +71,6 @@
               overlays-nixpkgs = final: prev: {
                 inherit (inputs.attic.packages.${machine.system}) attic attic-client attic-server;
                 latest = import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
-                codex-cli = codex-cli-nix.packages.${machine.system}.default;
                 ast-outline = ast-outline.packages.${machine.system}.default;
                 llm-agents = llm-agents.packages.${machine.system};
                 flux-reconciler = flux-reconciler.packages.${machine.system}.default;
