@@ -194,6 +194,7 @@ _sync host:
     test -f "$agent_files_env"
     test -f "$netrc_file"
     test -f "$syncthing_password"
+    ip=$(just _host-ip {{ host }})
     repository_root=$(git rev-parse --show-toplevel)
     staging=$(mktemp -d)
     trap 'rm -rf -- "$staging"' EXIT
@@ -214,7 +215,6 @@ _sync host:
         custom/moshi-hook/ \
         "$staging/"
 
-    ip=$(just _host-ip {{ host }})
     ssh=(
         ssh
         -i "{{ ssh_key }}"

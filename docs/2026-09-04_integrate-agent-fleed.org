@@ -591,3 +591,16 @@ The root flake creates the CLI Proxy API package before it builds any NixOS
 configuration. The deployment staging tree now includes that package
 definition. The minimal tree evaluates =agent-1= without relying on files that
 the sync recipe does not copy.
+
+** TODO 18. Deploy and test the integrated fleet
+
+- [X] Confirm that OpenTofu state resolves =agent-1= and that SSH works.
+- [X] Fix host lookup in the deployment sync recipe.
+- [ ] Deploy the current configuration to every fleet host.
+- [ ] Check the remote system, services, and agent commands.
+- [ ] Record the results and commit this task.
+
+The first deployment stopped before it copied files. The sync recipe changed
+to the repository root before it called the private =_host-ip= recipe. At that
+point, =just= loaded the root justfile, which does not contain that recipe. The
+sync recipe now resolves the host address before it changes directories.
