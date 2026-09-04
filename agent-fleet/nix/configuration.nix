@@ -20,10 +20,9 @@ in
   imports = [
     (modulesPath + "/installer/scan/not-detected.nix")
     (modulesPath + "/profiles/qemu-guest.nix")
+    ../../shared/linux/nix.nix
     ./syncthing.nix
   ];
-
-  nixpkgs.config.allowUnfree = true;
 
   boot.loader = {
     efi.canTouchEfiVariables = false;
@@ -140,30 +139,10 @@ in
       dates = "daily";
       options = "--delete-older-than 1d";
     };
-    settings = {
-      auto-optimise-store = true;
-      experimental-features = [
-        "nix-command"
-        "flakes"
-      ];
-      netrc-file = "/etc/nixos/shared/secrets/hyper-video-cachix-netrc.key";
-      substituters = [
-        "https://nix-community.cachix.org"
-        "https://hyper-video.cachix.org"
-      ];
-      trusted-public-keys = [
-        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-        "hyper-video.cachix.org-1:47YSCAg+fJBEH3oAhSzlcZAbjTMgnHTmQ6gI1la0Su4="
-      ];
-      trusted-substituters = [
-        "https://nix-community.cachix.org"
-        "https://hyper-video.cachix.org"
-      ];
-      trusted-users = [
-        "root"
-        "robert"
-      ];
-    };
+    settings.trusted-substituters = [
+      "https://nix-community.cachix.org"
+      "https://hyper-video.cachix.org"
+    ];
   };
 
   systemd.tmpfiles.rules = [

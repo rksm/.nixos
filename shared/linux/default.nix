@@ -1,10 +1,5 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ inputs, config, pkgs, options, user, lib, ... }:
+{ ... }:
 {
-
   imports = [
     ./linux.nix
     ./virtualization.nix
@@ -26,41 +21,15 @@
     ./postgres.nix
     ./audio-video-image-editing.nix
     ./nix-cache.nix
+    ./nix.nix
     ./vibetyper.nix
     ./freestyle.nix
   ];
 
-  options = {
-    more-nix-substituters = lib.mkOption { default = [ ]; };
-    more-nix-trusted-public-keys = lib.mkOption { default = [ ]; };
-  };
+  environment.variables.EDITOR = "emacs -Q -nw";
 
-  config = {
-
-    nixpkgs.config.allowUnfree = true;
-    environment.variables.EDITOR = "emacs -Q -nw";
-
-    nix = {
-      settings = {
-        trusted-users = [ "root" user ];
-
-        auto-optimise-store = true;
-        experimental-features = [ "flakes" "nix-command" ];
-
-        netrc-file = "/etc/nixos/shared/secrets/hyper-video-cachix-netrc.key";
-
-        substituters = [
-          "https://nix-community.cachix.org"
-          "https://cuda-maintainers.cachix.org"
-          "https://hyper-video.cachix.org"
-        ] ++ config.more-nix-substituters;
-
-        trusted-public-keys = [
-          "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-          "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
-          "hyper-video.cachix.org-1:47YSCAg+fJBEH3oAhSzlcZAbjTMgnHTmQ6gI1la0Su4="
-        ] ++ config.more-nix-trusted-public-keys;
-      };
-    };
-  };
+  more-nix-substituters = [ "https://cuda-maintainers.cachix.org" ];
+  more-nix-trusted-public-keys = [
+    "cuda-maintainers.cachix.org-1:0dq3bujKpuEPMCX6U4WylrUDZ9JyUG0VpVZa7CNfq5E="
+  ];
 }

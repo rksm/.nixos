@@ -373,8 +373,8 @@ CLOSED: [2026-09-04 Fri 09:00]
 The shared module now owns all peer IDs, folder membership, and GUI
 authentication. It removes the current machine from its own peer and folder
 lists. The fleet wrapper selects =configs=, =projects/ai=, =projects/home=, and
-=projects/hyper=. It keeps the existing database path, opens the standard
-Syncthing ports, and exposes the GUI through Tailscale Serve.
+=projects/hyper=. It keeps the existing database path and standard Syncthing
+ports. It also exposes the GUI through Tailscale Serve.
 
 A focused check found that the fleet and shared data paths had equal module
 priority. The broad flake check had not forced that value. The fleet wrapper
@@ -382,14 +382,30 @@ now uses =lib.mkForce= for its existing path. Focused checks confirm the path,
 folders, GUI authentication, services, and self-filtering on all three hosts.
 The full check passes.
 
-** TODO 12. Reuse core Nix settings
+** DONE 12. Reuse core Nix settings
+CLOSED: [2026-09-04 Fri 09:15]
 
-- [ ] Move common Nix settings from =shared/linux/default.nix= into one focused
+- [X] Move common Nix settings from =shared/linux/default.nix= into one focused
   shared module.
-- [ ] Import that module from the desktop base and fleet configuration.
-- [ ] Keep the CUDA cache in the desktop base.
-- [ ] Keep fleet garbage collection and any fleet-only trust setting local.
-- [ ] Evaluate desktop and fleet Nix settings and commit the change.
+- [X] Import that module from the desktop base and fleet configuration.
+- [X] Keep the CUDA cache in the desktop base.
+- [X] Keep fleet garbage collection and any fleet-only trust setting local.
+- [X] Evaluate desktop and fleet Nix settings and commit the change.
+
+The new =shared/linux/nix.nix= module owns the common unfree policy, trusted
+users, store optimization, experimental features, netrc path, and shared
+binary caches. The desktop base adds its CUDA cache through the existing
+extension options. The fleet keeps its garbage collection schedule and
+=trusted-substituters= setting local.
+
+A focused evaluation produced the same selected-settings hash for =storm= as
+before the change. The =agent-1= settings changed only by adopting the base
+order for =experimental-features=: =flakes= followed by =nix-command=. The
+full fleet check passes.
+
+The first evaluation could not see the new module because flakes exclude
+untracked files. Staging the module fixed the input. That failed evaluation did
+not evaluate a system configuration or change machine state.
 
 ** TODO 13. Reuse the command-line Home Manager setup
 
