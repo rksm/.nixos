@@ -488,8 +488,17 @@ unchanged.
   boundaries.
 - [ ] Confirm that no private key, environment file, Terraform state, cache,
   or unrelated destination file entered a commit.
+- [X] Keep the ignored fleet environment and Terraform state files private on
+  the local filesystem.
 - [ ] Record final results and any accepted limits in this document.
 - [ ] Retain the old checkout as agreed.
+
+The final secret audit found that =agent-fleet/.env= already had mode =0600=,
+but both ignored Terraform state files had mode =0644=. Terraform state can
+contain provider-private data even when its resource attributes contain no
+credentials. The fleet development shell now uses umask =077= and enforces mode
+=0600= on the environment file, Terraform state, and fleet SSH key. The state
+and environment files remain ignored.
 
 Completion checks:
 

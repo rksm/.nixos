@@ -174,10 +174,15 @@
 
           shellHook = ''
             repository_root="$(${agentFleetPackages.git}/bin/git rev-parse --show-toplevel)"
-            key="$repository_root/shared/secrets/agent-fleet-ssh.key"
-            if [ -f "$key" ]; then
-              chmod 600 "$key"
-            fi
+            umask 077
+            for sensitive_file in \
+              "$repository_root/shared/secrets/agent-fleet-ssh.key" \
+              "$repository_root/agent-fleet/.env" \
+              "$repository_root"/agent-fleet/terraform.tfstate*; do
+              if [ -f "$sensitive_file" ]; then
+                chmod 600 "$sensitive_file"
+              fi
+            done
           '';
         };
 
