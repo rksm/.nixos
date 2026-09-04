@@ -14,6 +14,7 @@ The initial fleet contains one =cx43= server, =agent-1=, in =nbg1=.
 Direnv loads =.env= and enters the Nix development shell:
 
 #+BEGIN_SRC sh
+cd /etc/nixos/agent-fleet
 direnv allow
 #+END_SRC
 
@@ -24,16 +25,16 @@ nix develop ..#agent-fleet
 #+END_SRC
 
 The main NixOS repository stores the fleet SSH key at
-=shared/secrets/agent-fleet-ssh.key=. Git-crypt encrypts it. The development
+=../shared/secrets/agent-fleet-ssh.key=. Git-crypt encrypts it. The development
 shell sets its local mode to =0600= after a checkout.
 
 * Create a server
 
-Run these commands from the repository root:
+Run these commands from =/etc/nixos/agent-fleet=:
 
 #+BEGIN_SRC sh
-just init
-just plan
+just tf-init
+just tf-plan
 just create agent-1
 #+END_SRC
 
@@ -55,10 +56,10 @@ just deploy agent-1
 #+END_SRC
 
 =just deploy= copies the flake, the Hyper Video Cachix netrc, and the R2
-credentials to =/etc/nixos= on the server. It writes both secret files as
-=root:root= with mode =0600=. It then activates the configuration. After
-activation, it refreshes the agent hooks. It also publishes the Skillshare
-skills and installs or refreshes the ~lessismore~ plugin.
+credentials to =/etc/nixos= on the server. It also copies the Syncthing password
+hash. The recipe writes all three files as =root:root= with mode =0600=. It then
+activates the configuration and refreshes the agent hooks. It also publishes
+the Skillshare skills and installs or refreshes the ~lessismore~ plugin.
 
 The first ~lessismore~ refresh bootstraps Codex, Claude, and Grok automatically. The refresh trusts a new Grok installation as part of this explicit update. Codex still requires manual hook trust through =/hooks= on each host.
 
@@ -74,8 +75,8 @@ just deploy agent-1
 * Add a server
 
 1. Add one entry to =nix/fleet.json=.
-2. Run =just plan= and check the plan.
-3. Run =just apply=.
+2. Run =just tf-plan= and check the plan.
+3. Run =just tf-apply=.
 4. Run =just install SERVER_NAME=.
 5. Run =just syncthing-id SERVER_NAME=.
 6. Add the device ID to =/etc/nixos/shared/linux/syncthing.nix= and share the required folders with it.
@@ -87,15 +88,15 @@ just deploy agent-1
 
 All servers use the shared NixOS configuration. Add a host-specific module only after a server needs different behavior.
 
-=just apply= regenerates =~/.ssh/agent-fleet= from the OpenTofu state. It also
+=just tf-apply= regenerates =~/.ssh/agent-fleet= from the OpenTofu state. It also
 adds =Include ~/.ssh/agent-fleet= at the top of =~/.ssh/config= once. Each entry
 uses the public IPv4 address of the server and the SSH key in this repository.
 
 * Remove a server
 
 1. Remove the server from =nix/fleet.json=.
-2. Run =just plan= and check the plan.
-3. Run =just apply=.
+2. Run =just tf-plan= and check the plan.
+3. Run =just tf-apply=.
 
 OpenTofu removes the server. The apply command also removes its generated SSH
 entry. Run =just ssh-config= to refresh the entries without changing any cloud
@@ -168,8 +169,8 @@ Commands that take =HOST= accept one hostname or a comma-separated list. Omit
 
 | Command                        | Purpose                                      |
 |--------------------------------+----------------------------------------------|
-| =just plan=                    | Show cloud changes                           |
-| =just apply=                   | Apply cloud changes                          |
+| =just tf-plan=                 | Show cloud changes                           |
+| =just tf-apply=                | Apply cloud changes                          |
 | =just ssh-config=              | Update =~/.ssh/agent-fleet=                  |
 | =just install HOST=            | Replace the base image with NixOS            |
 | =just deploy HOST=             | Copy and activate the Nix flake              |
@@ -184,7 +185,7 @@ Commands that take =HOST= accept one hostname or a comma-separated list. Omit
 | =just tailscale-status HOST=   | Show the Tailscale connection state          |
 | =just build HOST=              | Build the host configuration locally         |
 | =just update-inputs=           | Update the flake lock file                   |
-| =just destroy=                 | Destroy the Hetzner resources after approval |
+| =just tf-destroy=              | Destroy the Hetzner resources after approval |
 
 * Installed agent tools
 

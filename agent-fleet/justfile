@@ -180,7 +180,7 @@ _refresh-host-key host:
     echo "Could not read the SSH host key for {{ host }} ($ip)" >&2
     exit 1
 
-# Copy the Nix flake and Cachix credentials to the selected hosts.
+# Copy the fleet configuration and its runtime secrets to the selected hosts.
 sync host="":
     just _for-hosts _sync "$@"
 
@@ -194,6 +194,25 @@ _sync host:
     test -f "$agent_files_env"
     test -f "$netrc_file"
     test -f "$syncthing_password"
+    repository_root=$(git rev-parse --show-toplevel)
+    staging=$(mktemp -d)
+    trap 'rm -rf -- "$staging"' EXIT
+
+    cd "$repository_root"
+    rsync -aR \
+        flake.nix \
+        flake.lock \
+        agent-fleet/nix/ \
+        agent-fleet/ssh/id_ed25519.pub \
+        shared/home/agent-files.nix \
+        shared/home/devenv.nix \
+        shared/linux-home/cli-proxy-api.nix \
+        shared/linux/moshi.nix \
+        shared/linux/nix.nix \
+        shared/linux/syncthing.nix \
+        custom/moshi-hook/ \
+        "$staging/"
+
     ip=$(just _host-ip {{ host }})
     ssh=(
         ssh
@@ -205,11 +224,10 @@ _sync host:
         -o StrictHostKeyChecking=accept-new
     )
     rsync -az --delete \
-        --exclude result \
-        --exclude /shared/ \
+        --exclude /shared/secrets/ \
         --rsync-path="sudo rsync" \
         -e "${ssh[*]}" \
-        ./nix/ "robert@$ip:/etc/nixos/"
+        "$staging/" "robert@$ip:/etc/nixos/"
     "${ssh[@]}" "robert@$ip" \
         "sudo install -d -m 700 -o root -g root /etc/nixos/shared/secrets"
     rsync -a \
@@ -222,7 +240,7 @@ _sync host:
         "$syncthing_password" \
         "robert@$ip:/etc/nixos/shared/secrets/"
 
-# Activate the flake already stored on the selected hosts.
+# Activate the current root flake on the selected hosts.
 switch host="":
     just _for-hosts _switch "$@"
 
@@ -382,7 +400,7 @@ _syncthing-id host:
         "robert@$ip" \
         'syncthing device-id --home="$HOME/.config/syncthing"'
 
-# Show Syncthing progress for the three fleet folders.
+# Show Syncthing progress for the fleet folders.
 sync-status host="":
     just _for-hosts _sync-status "$@"
 
@@ -401,7 +419,7 @@ _sync-status host:
         "robert@$ip" 'bash -s' <<'REMOTE'
     set -euo pipefail
     api_key=$(syncthing cli -H "$HOME/.config/syncthing" config gui apikey get)
-    for folder in configs projects/ai projects/hyper; do
+    for folder in configs projects/ai projects/home projects/hyper; do
         curl -fsS \
             -H "X-API-Key: $api_key" \
             --get \
@@ -465,11 +483,9 @@ update-ai host="":
       skillshare-nix \
       worktrunk-nix
 
-    if git diff --quiet HEAD -- ../flake.lock; then
-        just _for-hosts _sync-ai-resources "$@"
-        exit 0
+    if ! git diff --quiet HEAD -- ../flake.lock; then
+        git add ../flake.lock
+        git commit -m "update ai"
     fi
 
-    git add ../flake.lock
-    git commit -m "update ai"
     just _for-hosts _deploy "$@"

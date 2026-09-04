@@ -2,6 +2,10 @@
 #+DATE: [2026-08-14 Fri]
 #+OPTIONS: toc:2
 
+This document records the setup before the 2026-09-04 repository integration.
+Its paths, validation results, and recommendations are historical. See
+[[file:../docs/2026-09-04_integrate-agent-fleed.org][the integration log]] for the current structure.
+
 * Decision summary
 
 The headless fleet now has the portable command-line, operations, and AI-agent
@@ -26,7 +30,8 @@ headless host.
 
 This comparison covers the current source and evaluated configurations in:
 
-- [[file:nix/flake.nix][=./nix=]], including its NixOS, Home Manager, disk, Syncthing, Emacs, and fleet files
+- The former =./nix= flake, including its NixOS, Home Manager, disk, Syncthing,
+  Emacs, and fleet files
 - [[file:/etc/nixos/flake.nix][=/etc/nixos=]], including the three Linux hosts and their shared Linux and Home Manager modules
 
 The macOS configuration under =/etc/nixos/macos= is outside the comparison. This

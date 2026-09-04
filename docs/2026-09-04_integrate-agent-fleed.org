@@ -438,15 +438,29 @@ already had the expected packages.
 
 - [X] Make NixOS use the Terraform public-key file and delete its duplicate.
 - [ ] Update every agent-fleet flake path and old-checkout command.
-- [ ] Copy only the root flake files, selected shared modules, fleet modules,
+- [X] Copy only the root flake files, selected shared modules, fleet modules,
   and required secrets to fleet hosts.
 - [ ] Update the external update-systems instruction in its own repository.
+- [ ] Confirm that no active command uses the old checkout and commit each
+  repository change separately.
 
 The NixOS configuration now reads =agent-fleet/ssh/id_ed25519.pub=, which
 OpenTofu already uses. The deleted =agent-fleet/nix/ssh-key.pub= file had the
 same SHA-256 hash.
-- [ ] Confirm that no active command uses the old checkout and commit each
-  repository change separately.
+
+The sync recipe now builds a temporary tree with the root flake, fleet modules,
+public key, Moshi package, and the focused shared modules that =agent-1= imports.
+It mirrors that tree to =/etc/nixos= while protecting =shared/secrets=. A
+separate transfer installs the R2 environment, Cachix netrc, and Syncthing
+password as =root:root= with mode =0600=. The update recipe always deploys the
+current shared flake, even when another update step has already changed the root
+lock file. The Syncthing status command now includes =projects/home=.
+
+The first minimal-tree evaluation exposed a missing public-key input. Adding
+=agent-fleet/ssh/id_ed25519.pub= to the selected inputs fixed it. A local mirror
+test then evaluated the fleet system, removed a stale configuration file, and
+preserved all three secret files. The full fleet check passes. No host received
+a deployment during these checks.
 
 ** TODO 15. Run final checks and finish the move
 
