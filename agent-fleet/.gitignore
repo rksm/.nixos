@@ -1,0 +1,10 @@
+.direnv/
+.env
+.terraform/
+/nix/agent-files-r2.env
+/ssh/id_ed25519
+terraform.tfstate
+terraform.tfstate.*
+known_hosts
+result
+result-*

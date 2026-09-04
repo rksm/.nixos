@@ -149,21 +149,36 @@ Completion checks:
 - The original source remains clean at
   =94eaad34053a11485f113687673c1e8e9efad37d=.
 
-** TODO 4. Merge the filtered history and restore local state
+** DONE 4. Merge the filtered history and restore local state
+CLOSED: [2026-09-04 Fri 08:45]
 
-- [ ] Fetch the filtered branch into =/etc/nixos= under a temporary local ref.
-- [ ] Merge it into =main= with unrelated histories allowed.
-- [ ] Copy the source worktree into =/etc/nixos/agent-fleet= without its =.git=
+- [X] Fetch the filtered branch into =/etc/nixos= under a temporary local ref.
+- [X] Merge it into =main= with unrelated histories allowed.
+- [X] Copy the source worktree into =/etc/nixos/agent-fleet= without its =.git=
   directory.
-- [ ] Preserve all ignored local state, including =.terraform=, Terraform state,
+- [X] Preserve all ignored local state, including =.terraform=, Terraform state,
   =.env=, =.direnv=, =known_hosts=, and =result=.
-- [ ] Copy the private key to =shared/secrets/agent-fleet-ssh.key=, replace its
+- [X] Copy the private key to =shared/secrets/agent-fleet-ssh.key=, replace its
   old uses, and add it through git-crypt.
-- [ ] Reuse =shared/secrets/agent-files-r2.env= and replace its fleet use.
-- [ ] Ignore the two removed source paths to prevent accidental reintroduction.
-- [ ] Verify that Git still ignores local files and that staging contains no
+- [X] Reuse =shared/secrets/agent-files-r2.env= and replace its fleet use.
+- [X] Ignore the two removed source paths to prevent accidental reintroduction.
+- [X] Verify that Git still ignores local files and that staging contains no
   secret or generated file.
-- [ ] Update this task before creating the merge commit.
+- [X] Update this task before creating the merge commit.
+
+Results:
+
+- Local branch =import-agent-fleet= points to filtered head =3c5e7a5=.
+- The pending merge has =1d8c93a= and =3c5e7a5= as its parents.
+- Byte and directory comparisons confirm that all ignored local state matches
+  the source. The =result= symlink also has the same target.
+- The moved private key matches the source and has local mode =0600=.
+- The staged private-key blob and the existing R2 blob have the git-crypt
+  header.
+- The sync recipe now copies the R2 credentials and Cachix netrc to the remote
+  =shared/secrets= directory with mode =0600=.
+- Git ignores both removed source paths. No removed secret remains in
+  =agent-fleet=.
 
 Completion checks:
 
@@ -174,15 +189,29 @@ Completion checks:
   modes and symlink targets.
 - The earlier untracked destination files remain unchanged.
 
-** TODO 5. Validate the unchanged integrated agent fleet
+** DONE 5. Validate the unchanged integrated agent fleet
+CLOSED: [2026-09-04 Fri 08:45]
 
-- [ ] Enter the agent-fleet development shell from its new path.
-- [ ] Run =just fmt= only when a format check requires changes.
-- [ ] Run =just check= from =/etc/nixos/agent-fleet=.
-- [ ] Check that the OpenTofu commands can use the copied local state and
+- [X] Enter the agent-fleet development shell from its new path.
+- [X] Run =just fmt= only when a format check requires changes.
+- [X] Run =just check= from =/etc/nixos/agent-fleet=.
+- [X] Check that the OpenTofu commands can use the copied local state and
   provider cache without applying a plan.
-- [ ] Check that each host configuration still evaluates from the new path.
-- [ ] Check operational recipes for stale absolute or relative paths.
+- [X] Check that each host configuration still evaluates from the new path.
+- [X] Check operational recipes for stale absolute or relative paths.
+
+Results:
+
+- =nix develop ./nix --command just check= passes from the new directory.
+- OpenTofu formatting and validation pass with the copied provider cache.
+- =tofu show -json= reads the copied local state without changing it.
+- The =agent-1= NixOS configuration, development shell, and formatter evaluate.
+- The new private-key path resolves to the git-crypt-managed file.
+- No old absolute checkout path remains inside =agent-fleet=.
+- The format check found no change, so =just fmt= was not needed.
+- Vale and Org lint pass for the changed documentation. Nixpkgs has no Fish
+  Babel backend, so Org loaded the shell backend and did not execute the Fish
+  example.
 
 Completion checks:
 
