@@ -14,6 +14,7 @@
     group = "users";
     dataDir = lib.mkForce "/home/robert/.local/share/syncthing";
     openDefaultPorts = true;
+    package = pkgs.latest.syncthing;
   };
 
   systemd.services.tailscale-serve-syncthing = {

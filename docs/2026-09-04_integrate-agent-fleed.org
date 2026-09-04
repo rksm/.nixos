@@ -604,3 +604,21 @@ The first deployment stopped before it copied files. The sync recipe changed
 to the repository root before it called the private =_host-ip= recipe. At that
 point, =just= loaded the root justfile, which does not contain that recipe. The
 sync recipe now resolves the host address before it changes directories.
+
+The next deployment built and copied the integrated system, then switched to
+generation 47. Activation found that the 149 GB root filesystem was full.
+Rust =target= directories below =/home/robert/projects= used 65 GB. Removing
+only those generated build directories reduced disk use from 100% to 57%.
+Home Manager, Moshi, and =mandb= then started successfully.
+
+Syncthing still could not start. The integrated root lock supplied version
+2.0.15. The previous fleet generation used version 2.1.2 and had already
+written configuration format 52.
+
+I tested the former fleet revision as the root Nixpkgs input. It made the
+desktop configuration fail to evaluate, so I reverted that broader change.
+The existing =nixpkgs-latest= input now uses the former fleet revision from
+2026-08-12, =9f78f44=. The fleet selects its Syncthing package from
+=pkgs.latest=, and the full repository check passes. This avoids an unsupported
+stateful package downgrade without adding another Nixpkgs input or changing
+the base package set.
