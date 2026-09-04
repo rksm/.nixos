@@ -8,7 +8,10 @@ let
   fromConfigs = path: config.lib.file.mkOutOfStoreSymlink "/home/robert/configs/${path}";
 in
 {
-  imports = [ ../../shared/home/agent-files.nix ];
+  imports = [
+    ../../shared/home/agent-files.nix
+    ../../shared/linux-home/cli-proxy-api.nix
+  ];
 
   services.agent-files = {
     enable = true;

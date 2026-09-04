@@ -1,35 +1,49 @@
-{ config, pkgs, user, lib, ... }:
+{
+  config,
+  pkgs,
+  user,
+  lib,
+  ...
+}:
 
 {
   home.file.".config/herdr".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/herdr;
-  home.file.".config/herdr-mirror".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/herdr/herdr-mirror;
-  home.file.".wezterm.lua".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.wezterm.lua;
+  home.file.".config/herdr-mirror".source =
+    config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/herdr/herdr-mirror;
+  home.file.".wezterm.lua".source =
+    config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.wezterm.lua;
   home.file.".gnupg".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.gnupg;
-  home.file.".authinfo.gpg".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.authinfo.gpg;
+  home.file.".authinfo.gpg".source =
+    config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.authinfo.gpg;
   home.file.".aws".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.aws;
   home.file.".npmrc".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.npmrc;
-  home.file.".style.yapf".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.style.yapf;
+  home.file.".style.yapf".source =
+    config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.style.yapf;
   home.file.".config/vale".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/vale;
 
-  home.file.".config/skillshare/config.yaml".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/projects/ai/skillshare/config.yaml;
-  home.file.".config/ai-quotas/config.yaml".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/ai-quotas/config.yaml;
+  home.file.".config/skillshare/config.yaml".source =
+    config.lib.file.mkOutOfStoreSymlink /home/${user}/projects/ai/skillshare/config.yaml;
+  home.file.".config/ai-quotas/config.yaml".source =
+    config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/ai-quotas/config.yaml;
   home.file.".cli-proxy-api/config.yaml" = {
     source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/cli-proxy-api/config.yaml;
     force = true;
   };
-  home.file.".codex/config.toml".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/codex/config.toml;
+  home.file.".codex/config.toml".source =
+    config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/codex/config.toml;
   home.file.".codex/config.toml".force = true;
-  home.file.".codex/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/codex/AGENTS.md;
+  home.file.".codex/AGENTS.md".source =
+    config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/codex/AGENTS.md;
   home.file.".codex/AGENTS.md".force = true;
-  home.file."bin/start.sh".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/start.sh;
+  home.file."bin/start.sh".source =
+    config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/start.sh;
   home.file."bin/start.sh".force = true;
 
-  home.activation.linkClaudeSettings =
-    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD mkdir -p "$HOME/.claude"
-      $DRY_RUN_CMD ln -sfn "../configs/ai/claude/settings.json" "/home/${user}/.claude/settings.json"
-      $DRY_RUN_CMD ln -sfn "../configs/ai/claude/CLAUDE.md" "/home/${user}/.claude/CLAUDE.md"
-    '';
+  home.activation.linkClaudeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    $DRY_RUN_CMD mkdir -p "$HOME/.claude"
+    $DRY_RUN_CMD ln -sfn "../configs/ai/claude/settings.json" "/home/${user}/.claude/settings.json"
+    $DRY_RUN_CMD ln -sfn "../configs/ai/claude/CLAUDE.md" "/home/${user}/.claude/CLAUDE.md"
+  '';
 
   # Run by agent-1 for now
   # services.agent-files = {
@@ -72,12 +86,15 @@
     '';
 
     plugins = [
-      { name = "myfish"; src = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/fish; }
+      {
+        name = "myfish";
+        src = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/fish;
+      }
     ];
   };
 
-  home.file.".local/share/fish/fish_history".source = config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/fish_history.linux;
-
+  home.file.".local/share/fish/fish_history".source =
+    config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/fish_history.linux;
 
   # find missing packages
   # https://discourse.nixos.org/t/command-not-found-unable-to-open-database/3807/4
@@ -122,23 +139,27 @@
     graphviz
 
     jujutsu
-    (lazyjj.overrideAttrs (oldAttrs: { doCheck = false; }))
+    (lazyjj.overrideAttrs (oldAttrs: {
+      doCheck = false;
+    }))
     git-crypt
     git-extras
     difftastic
 
     # useful python packages
-    (pkgs.python312.withPackages (packages: with packages; [
-      loguru
-      requests
-      pydantic
-      polars
-      matplotlib
-      seaborn
-      pdftotext
-      tqdm
-      networkx
-    ]))
+    (pkgs.python312.withPackages (
+      packages: with packages; [
+        loguru
+        requests
+        pydantic
+        polars
+        matplotlib
+        seaborn
+        pdftotext
+        tqdm
+        networkx
+      ]
+    ))
 
     # nix related
     #
@@ -158,7 +179,6 @@
     # codex-cli
 
     llm-agents.antigravity-cli
-    llm-agents.cli-proxy-api
     llm-agents.hermes-agent
     llm-agents.ccusage
     llm-agents.rtk
@@ -179,6 +199,8 @@
   ];
 
   # mkcert suuport
-  home.file.".local/share/mkcert/rootCA-key.pem".source = config.lib.file.mkOutOfStoreSymlink /etc/nixos/shared/secrets/mkcert/rootCA-key.pem;
-  home.file.".local/share/mkcert/rootCA.pem".source = config.lib.file.mkOutOfStoreSymlink /etc/nixos/shared/secrets/mkcert/rootCA.pem;
+  home.file.".local/share/mkcert/rootCA-key.pem".source =
+    config.lib.file.mkOutOfStoreSymlink /etc/nixos/shared/secrets/mkcert/rootCA-key.pem;
+  home.file.".local/share/mkcert/rootCA.pem".source =
+    config.lib.file.mkOutOfStoreSymlink /etc/nixos/shared/secrets/mkcert/rootCA.pem;
 }

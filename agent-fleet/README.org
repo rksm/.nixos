@@ -193,8 +193,7 @@ The system installs these tools from =llm-agents.nix=:
 - OpenClaw: =openclaw=
 - Hermes Agent: =hermes=
 - Antigravity CLI: =agy=
-- Claude Code through CLI Proxy API: =claude=
-- Claude Code without the proxy: =claude-plain=
+- Claude Code without the proxy: =claude=
 - Grok Build through CLI Proxy API: =grok=
 - Grok Build without the proxy: =grok-plain=
 - Herdr: =herdr=

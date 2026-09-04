@@ -337,16 +337,26 @@ The command checks OpenTofu and all three Linux NixOS configurations. The
 existing Tuxedo rename warning remains. Dry runs confirm that build, install,
 switch, and update recipes all use the root flake and lock file.
 
-** TODO 10. Reuse the shared CLIProxyAPI Home Manager module
+** DONE 10. Reuse the shared CLIProxyAPI Home Manager module
+CLOSED: [2026-09-04 Fri 08:58]
 
-- [ ] Import =shared/linux-home/cli-proxy-api.nix= from the fleet Home Manager
+- [X] Import =shared/linux-home/cli-proxy-api.nix= from the fleet Home Manager
   module.
-- [ ] Make that module install every command that its service and wrappers need.
-- [ ] Remove its duplicate package from the broad desktop package list.
-- [ ] Delete the fleet NixOS copy and its import.
-- [ ] Confirm that fleet behavior follows the base Claude routing choice.
-- [ ] Evaluate desktop and fleet Home Manager configurations and commit the
+- [X] Make that module install every command that its service and wrappers need.
+- [X] Remove its duplicate package from the broad desktop package list.
+- [X] Delete the fleet NixOS copy and its import.
+- [X] Confirm that fleet behavior follows the base Claude routing choice.
+- [X] Evaluate desktop and fleet Home Manager configurations and commit the
   change.
+
+The shared Home Manager module now owns the CLIProxyAPI executable, service,
+Codex wrapper, Grok wrapper, and direct Claude package. Evaluated package and
+service checks match on =agent-1= and =storm=. The fleet no longer defines a
+NixOS-level copy. The full check passes.
+
+The first check command used a =just --working-directory= form that this Just
+version rejects. It stopped before running a recipe or changing state. Running
+the check from =agent-fleet= worked.
 
 ** TODO 11. Reuse the shared Syncthing inventory
 
