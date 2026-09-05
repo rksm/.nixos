@@ -17,6 +17,11 @@ switch cmd="switch" *args="":
 switch-debug:
     just switch --print-build-logs --verbose
 
+# Deploy to the agent-files fleet hosts. Omit HOST for all hosts in agent-fleet/nix/fleet.json.
+[working-directory: './agent-fleet']
+agent-files-deploy host="":
+    nix develop ..#agent-fleet -c just deploy {{ host }}
+
 build-abort-on-warn:
     just switch build --option abort-on-warn --show-trace
 
