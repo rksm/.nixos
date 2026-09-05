@@ -13,23 +13,31 @@ tasks below.
 
 * Starting point
 
-- [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]] already installs Pi from
+- [[file:../shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]] already installs Pi from
   ~pkgs.llm-agents.pi~.
-- [[file:shared/linux-home/default.nix::15][shared/linux-home/default.nix]] imports Pi only on Linux.
-- [[file:justfile::38][just update-ai]] already updates the ~llm-agents~ input, so it also updates Pi.
-- [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]] manages Ponytail,
-  ~pi-agent-browser-native~, ~@tintinweb/pi-subagents~, and ~pi-web-access~ as
-  unpinned Pi packages. Each live Home Manager activation installs or updates
-  them.
-- The same module installs the ~agent-browser~ executable through Nix.
+- [[file:../shared/linux-home/default.nix::15][shared/linux-home/default.nix]] imports Pi only on Linux.
+- [[file:../justfile::38][just update-ai]] already updates the ~llm-agents~ input, so it also updates Pi.
+- [[file:../shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]] manages Ponytail,
+  ~@tintinweb/pi-subagents~ and ~pi-web-access~ as unpinned Pi packages. Each
+  live Home Manager activation installs or updates them. It also installs the
+  exact ~pi-agent-browser-native~ version recorded with ~pkgs.agent-browser~.
+- [[file:../shared/linux-home/devenv.nix][shared/linux-home/devenv.nix]] installs
+  ~pkgs.agent-browser~. Pi's wrapper puts the same package on ~PATH~.
+- Home Manager links the packaged ~SKILL.md~ into
+  =~/projects/ai/skillshare/skills/agent-browser/=. Skillshare requires a real
+  source directory, so only the file is a symlink. Run ~skillshare sync~ to
+  distribute it to the configured agents. Later Home Manager switches update
+  the file link to match the installed package.
+- The Skillshare repository ignores this generated directory. Nix manages the
+  skill version together with the executable.
 - The package activation needs network access when it installs or refreshes a
   remote package.
-- Skillshare publishes 37 shared skills through its universal
+- Skillshare publishes shared skills through its universal
   =~/.agents/skills= target. Pi discovers that directory without a Pi-specific
   Skillshare target.
 - Pi discovers project ~AGENTS.md~ and ~CLAUDE.md~ files without extra setup.
-- ~pi-agent-browser-native~ 0.5.0 requires exactly ~agent-browser~ 0.34.0, so
-  the Linux package stays pinned to that compatible browser version.
+- ~pi-agent-browser-native~ 0.6.6 requires stable ~agent-browser~ 0.35.0 or
+  newer. The Linux package pins its recommended version, 0.36.0.
 - ~@tintinweb/pi-subagents~ provides Claude-compatible ~Agent~,
   ~get_subagent_result~, and ~steer_subagent~ tools. It also provides the
   ~SubagentWorkflow~ tool for scripts that discover their fan-out at runtime.
@@ -47,7 +55,7 @@ tasks below.
   work.
 - ~pi-web-access~ provides ~web_search~, ~source_check~, ~fetch_content~, and
   ~get_search_content~. The Pi activation merges the Brave key from
-  [[file:shared/secrets/brave-search.key][shared/secrets/brave-search.key]] into the mutable
+  [[file:../shared/secrets/brave-search.key][shared/secrets/brave-search.key]] into the mutable
   =~/.pi/web-search.json= while preserving other settings. The activation sets
   mode ~0600~ on the generated config.
 - The activation reads the Brave key at runtime and does not interpolate it
@@ -64,7 +72,7 @@ tasks below.
 ** DONE 1. Configure native Pi package installation with Bun
 CLOSED: [2026-09-03 Thu 11:32]
 
-Owner: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
+Owner: [[file:../shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
 
 - [X] Keep the existing Linux-only Pi package.
 - [X] Add Bun to the ~PATH~ for the wrapped Pi process.
@@ -75,7 +83,7 @@ Owner: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
 - [X] Manage ~git:github.com/DietrichGebert/ponytail~ without a ref so each
   activation uses the latest commit on the repository default branch.
 - [X] Install ~agent-browser~ through Nix and manage
-  ~npm:pi-agent-browser-native~ as an unpinned Pi package.
+  ~npm:pi-agent-browser-native~ at the version recorded with the browser.
 - [X] Manage ~npm:@tintinweb/pi-subagents~ as an unpinned Pi package.
 - [X] Keep Less Is More out of the managed package list until tasks 4 and 5
   resume.
@@ -95,7 +103,7 @@ Completion checks:
 ** DONE 2. Add global Pi instructions
 CLOSED: [2026-09-03 Thu 11:32]
 
-Owner: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
+Owner: [[file:../shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
 
 - [X] Link =~/.pi/agent/AGENTS.md= to
   =~/configs/ai/codex/AGENTS.md= with an out-of-store Home Manager symlink.
@@ -112,7 +120,7 @@ Completion checks:
 ** DONE 3. Create one Pi integration bootstrap
 CLOSED: [2026-09-03 Thu 11:32]
 
-Owner: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
+Owner: [[file:../shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
 
 - [X] Add the bootstrap to a Home Manager activation in ~pi.nix~.
 - [X] Create =~/.pi/agent/extensions= before running integration installers.
@@ -126,9 +134,9 @@ rtk init --agent pi --global
 
 - [X] Make this bootstrap the owner of explicit Pi integration installation.
 - [X] Do not add separate Pi-specific installer calls to
-  [[file:scripts/herdr-install::13][scripts/herdr-install]],
-  [[file:shared/linux/moshi.nix::39][shared/linux/moshi.nix]], and
-  [[file:justfile::38][just update-ai]]. The generic Moshi installation may remain as an
+  [[file:../scripts/herdr-install::13][scripts/herdr-install]],
+  [[file:../shared/linux/moshi.nix::39][shared/linux/moshi.nix]], and
+  [[file:../justfile::38][just update-ai]]. The generic Moshi installation may remain as an
   idempotent safety rerun.
 
 Completion checks:
@@ -173,7 +181,7 @@ Owner: [[file:/home/robert/projects/ai/lessismore/justfile::31][lessismore/justf
 - [ ] Update ~skills/lessismore-help/SKILL.md~ to list Pi.
 - [ ] Document that Pi has no built-in subagent-start event. Child Pi
   processes load the global extension themselves.
-- [ ] Confirm that [[file:justfile::77][the root update flow]] reaches the Pi package through
+- [ ] Confirm that [[file:../justfile::77][the root update flow]] reaches the Pi package through
   the existing Less Is More ~just sync~ call. Do not add another root command.
 
 Completion checks:
@@ -259,7 +267,7 @@ Completion checks:
 ** DONE 9. Add Pi subagents to skills that require agent tools
 CLOSED: [2026-09-03 Thu 12:18]
 
-Owners: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]] and
+Owners: [[file:../shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]] and
 =~/projects/ai/skillshare=
 
 - [X] Install ~npm:@tintinweb/pi-subagents~ to provide Pi with native subagent
@@ -325,11 +333,11 @@ present.
 ** DONE 11. Add Pi web access with Brave
 CLOSED: [2026-09-03 Thu 12:35]
 
-Owner: [[file:shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
+Owner: [[file:../shared/linux-home/pi.nix::1][shared/linux-home/pi.nix]]
 
 - [X] Manage ~npm:pi-web-access~ as an unpinned Pi package.
 - [X] Merge ~braveApiKey~ from
-  [[file:shared/secrets/brave-search.key][shared/secrets/brave-search.key]] into the mutable
+  [[file:../shared/secrets/brave-search.key][shared/secrets/brave-search.key]] into the mutable
   =~/.pi/web-search.json= while preserving other settings.
 - [X] Track the source key with git-crypt. Run ~git-crypt unlock~ on each Linux
   host and keep the local file at mode ~0600~.
@@ -363,75 +371,49 @@ setting in =~/.pi/web-search.json=, and the final file has mode ~0600~. A live
 
 * Upgrade the browser integration
 
-~pi-agent-browser-native~ stays unpinned, so each live Home Manager activation
-installs the latest npm release through Pi and Bun. The extension uses the
-~agent-browser~ executable from ~PATH~ and validates it against one exact
-capability baseline. Its wrapper relies on version-specific commands and output
-shapes, so an independent newer ~agent-browser~ release can be incompatible.
-The published ~pi-agent-browser-native~ 0.5.0 release targets 0.34.0, so
-[[file:shared/linux-home/pi.nix::9][shared/linux-home/pi.nix]] fixes that version.
+On Linux, ~just update-ai~ runs ~just update-agent-browser~ before committing
+and switching. The updater reads the latest ~pi-agent-browser-native~ release
+from npm and uses its ~TARGET_AGENT_BROWSER_VERSION~ recommendation. It fetches
+that browser tarball and writes its version and hash to
+[[file:../packages/agent-browser/package.nix][packages/agent-browser/package.nix]].
+It records the extension version there too, as ~piAgentBrowserNativeVersion~.
 
-Use the extension target as the source of truth. Do not update the Nix package
-to the latest independent ~agent-browser~ release unless the latest extension
-targets it. The managed package source omits a version, so run this check before
-the first activation after a new npm release. An activation that updates only
-the extension can leave an incompatible pair.
+Home Manager installs that exact extension version. Both Linux hosts use the
+same pair, even if npm publishes another extension release before a
+switch. An extension release that keeps the same browser recommendation still
+updates the extension pin. The existing update commit includes both pins.
 
-1. Check the latest extension against the installed browser before changing
-   the Nix pin:
+The updater checks the npm integrity hash before reading the extension tarball.
+It reads the recommendation as data without running downloaded code. If that
+field changes format or a download fails, it stops before writing the pins.
+The macOS update flow skips this Linux-only package.
 
-   #+BEGIN_EXAMPLE
-   nix shell nixpkgs#bun --command bunx \
-     --package pi-agent-browser-native@latest \
-     pi-agent-browser-doctor --skip-source-check
-   #+END_EXAMPLE
+To update just this pair without committing or activating it:
 
-   A passing result means the latest extension still targets the installed
-   browser. Skip to step 4 when it passes. If the doctor reports ~expected X,
-   found Y~, use ~X~ as the new Nix pin. Stop and investigate any other failure.
+#+BEGIN_EXAMPLE
+just update-agent-browser
+nix build .#agent-browser
+#+END_EXAMPLE
 
-2. If the target changed, update ~agentBrowserVersion~, the nearby comment,
-   and the ~fetchurl~ hash in
-   [[file:shared/linux-home/pi.nix::9][shared/linux-home/pi.nix]]. Calculate the new hash with:
+Check the updater without network access:
 
-   #+BEGIN_EXAMPLE
-   agent_browser_version=X
-   nix store prefetch-file --json \
-     "https://registry.npmjs.org/agent-browser/-/agent-browser-${agent_browser_version}.tgz" \
-     | jq -r .hash
-   #+END_EXAMPLE
+#+BEGIN_EXAMPLE
+nix shell --inputs-from . nixpkgs#python3 -c python3 packages/agent-browser/test_update.py
+#+END_EXAMPLE
 
-3. Build the changed configuration without activating it:
+After ~just switch~, verify the installed pair and browser runtime:
 
-   #+BEGIN_EXAMPLE
-   just switch build
-   #+END_EXAMPLE
+#+BEGIN_EXAMPLE
+agent-browser --version
+jq -r .version ~/.pi/agent/npm/node_modules/pi-agent-browser-native/package.json
+~/.pi/agent/npm/node_modules/.bin/pi-agent-browser-doctor --cwd /etc/nixos
+agent-browser doctor
+pi list
+#+END_EXAMPLE
 
-4. Apply the configuration. The ~configurePi~ activation installs the latest
-   unpinned ~pi-agent-browser-native~ release while the new Nix wrapper supplies
-   its matching browser executable:
-
-   #+BEGIN_EXAMPLE
-   just switch
-   #+END_EXAMPLE
-
-5. Verify the installed versions, the compatibility baseline, and the browser
-   runtime:
-
-   #+BEGIN_EXAMPLE
-   agent-browser --version
-   jq -r .version ~/.pi/agent/npm/node_modules/pi-agent-browser-native/package.json
-   ~/.pi/agent/npm/node_modules/.bin/pi-agent-browser-doctor --cwd /etc/nixos
-   agent-browser doctor
-   pi list
-   #+END_EXAMPLE
-
-   The Pi extension doctor must report a matching baseline and one active
-   package source. ~pi list~ must show ~npm:pi-agent-browser-native~ exactly
-   once.
-
-6. Start Pi and make one ~agent_browser~ call with ~["--version"]~. Confirm
-   that the tool returns the same version as ~agent-browser --version~.
+The extension doctor must report a supported browser version. ~pi list~ must
+show exactly one versioned ~npm:pi-agent-browser-native@...~ entry. Pi replaces
+the previous package entry when Home Manager installs the pinned version.
 
 * Optional parity tasks
 
@@ -446,7 +428,7 @@ on them.
 - [ ] Configure ~http://127.0.0.1:8317/v1~, ~openai-responses~, and an
   environment-backed local key.
 - [ ] Reuse the service-running check from
-  [[file:shared/linux-home/cli-proxy-api.nix::13][cli-proxy-api.nix]].
+  [[file:../shared/linux-home/cli-proxy-api.nix::13][cli-proxy-api.nix]].
 - [ ] Maintain a short static model list with correct context windows, output
   limits, inputs, reasoning flags, and costs. The proxy ~/v1/models~ response
   contains 41 IDs but not this metadata.
@@ -474,7 +456,7 @@ on them.
 
 ** WAIT D. Decide whether Pi needs other host-plugin parity
 
-- [X] Add browser behavior with Nix ~agent-browser~ and the unpinned
+- [X] Add browser behavior with Nix ~agent-browser~ and its paired
   ~npm:pi-agent-browser-native~ Pi package.
 - [ ] Decide whether Pi needs Codex PDF behavior beyond the PDF extraction in
   ~pi-web-access~.

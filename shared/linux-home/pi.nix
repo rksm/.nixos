@@ -6,54 +6,10 @@
 }:
 
 let
-  # pi-agent-browser-native validates agent-browser against an exact capability
-  # baseline and rejects other versions at runtime. This pin follows the
-  # managed extension, not the latest independent agent-browser release. See
-  # docs/2026-09-03_integrate-pi.org for the paired upgrade procedure.
-  agentBrowserVersion = "0.34.0";
-  agentBrowser = pkgs.stdenvNoCC.mkDerivation {
-    pname = "agent-browser";
-    version = agentBrowserVersion;
-
-    src = pkgs.fetchurl {
-      url = "https://registry.npmjs.org/agent-browser/-/agent-browser-${agentBrowserVersion}.tgz";
-      hash = "sha256-pHRPsYnlmEZ6vPs6zd4HEY2eXLQ9w7MXJ/hpr0651Zg=";
-    };
-
-    nativeBuildInputs = [
-      pkgs.autoPatchelfHook
-      pkgs.makeWrapper
-    ];
-    dontUnpack = true;
-
-    installPhase = ''
-      runHook preInstall
-      tar -xzf "$src" \
-        package/bin/agent-browser-linux-x64 \
-        package/skill-data \
-        package/skills
-      install -Dm755 package/bin/agent-browser-linux-x64 $out/bin/agent-browser
-      cp -r package/skill-data package/skills $out/
-      runHook postInstall
-    '';
-
-    postFixup = ''
-      wrapProgram $out/bin/agent-browser \
-        --set AGENT_BROWSER_EXECUTABLE_PATH ${pkgs.chromium}/bin/chromium
-    '';
-
-    meta = {
-      description = "Headless browser automation CLI for AI agents";
-      homepage = "https://github.com/vercel-labs/agent-browser";
-      license = lib.licenses.asl20;
-      mainProgram = "agent-browser";
-      platforms = [ "x86_64-linux" ];
-    };
-  };
   moshiHook = pkgs.callPackage ../../custom/moshi-hook { };
   piPackages = [
     "git:github.com/DietrichGebert/ponytail"
-    "npm:pi-agent-browser-native"
+    "npm:pi-agent-browser-native@${pkgs.agent-browser.piAgentBrowserNativeVersion}"
     "npm:@tintinweb/pi-subagents"
     "npm:pi-web-access"
   ];
@@ -70,7 +26,7 @@ let
         --set NPM_CONFIG_PREFIX "${piNpmDir}" \
         --prefix PATH : ${
           lib.makeBinPath [
-            agentBrowser
+            pkgs.agent-browser
             moshiHook
             pkgs.bun
             pkgs.git
@@ -83,10 +39,7 @@ let
   };
 in
 {
-  home.packages = [
-    agentBrowser
-    pi
-  ];
+  home.packages = [ pi ];
 
   home.file.".pi/agent/AGENTS.md" = {
     source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/configs/ai/codex/AGENTS.md";

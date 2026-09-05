@@ -28,6 +28,9 @@ build-abort-on-warn:
 update-moshi:
     nix shell --inputs-from . nixpkgs#curl -c ./custom/moshi-hook/update.sh
 
+update-agent-browser:
+    nix shell --inputs-from . nixpkgs#python3 -c python3 packages/agent-browser/update.py
+
 pair-moshi:
     @./custom/moshi-hook/pair.sh
 
@@ -68,9 +71,10 @@ update-ai:
     nix flake update "$@"
     updated_files="flake.lock"
     if [ "$(uname)" != "Darwin" ]; then
+        just update-agent-browser
         # Pin the newest commit of the CLIProxyAPI dev branch.
         nix run --inputs-from . nixpkgs#nix-update -- --flake --version=branch=dev cliproxyapi
-        updated_files="$updated_files packages/cliproxyapi/package.nix"
+        updated_files="$updated_files packages/agent-browser/package.nix packages/cliproxyapi/package.nix"
     fi
     if ! git diff --quiet HEAD -- $updated_files; then
         git add $updated_files

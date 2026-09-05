@@ -16,6 +16,13 @@
   home.file.".config/ai-quotas/config.yaml".source =
     config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/ai-quotas/config.yaml;
 
+  # Skillshare discovers real directories, so link the skill file inside one.
+  home.file."projects/ai/skillshare/skills/agent-browser/SKILL.md" = {
+    source = "${pkgs.agent-browser}/skills/agent-browser/SKILL.md";
+    # Take ownership of the generated skill, including bootstrap symlinks.
+    force = true;
+  };
+
   # Run by agent-1 for now
   # services.agent-files = {
   #   enable = true;
@@ -94,6 +101,7 @@
     llm-agents.hermes-agent
     llm-agents.ccusage
     llm-agents.rtk
+    agent-browser
     herdr
     skillshare
     ast-outline

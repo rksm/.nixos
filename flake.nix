@@ -56,6 +56,9 @@
       system = "x86_64-linux";
       user = "robert";
       fleet = builtins.fromJSON (builtins.readFile ./agent-fleet/nix/fleet.json);
+      agent-browser =
+        nixpkgs.legacyPackages.${system}.callPackage ./packages/agent-browser/package.nix
+          { };
       cliproxyapi = nixpkgs.legacyPackages.${system}.callPackage ./packages/cliproxyapi/package.nix { };
 
       nixpkgsOverlay = _final: _prev: {
@@ -74,7 +77,7 @@
         llm-agents = llm-agents.packages.${system};
         flux-reconciler = flux-reconciler.packages.${system}.default;
         worktrunk = worktrunk-nix.packages.${system}.default;
-        inherit cliproxyapi;
+        inherit agent-browser cliproxyapi;
       };
 
       sharedModules = machine: homeModule: [
@@ -159,7 +162,7 @@
       nixosConfigurations = desktopConfigurations // fleetConfigurations;
 
       packages.${system} = {
-        inherit cliproxyapi;
+        inherit agent-browser cliproxyapi;
       };
 
       devShells.${system} = {

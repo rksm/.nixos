@@ -3,3 +3,4 @@
 .DS_Store
 /.antigravitycli/
 /shared/secrets/brave-search.key
+__pycache__
