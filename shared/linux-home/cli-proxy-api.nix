@@ -38,6 +38,16 @@ let
           --set ANTHROPIC_BASE_URL "http://127.0.0.1:8317" \
           --set ANTHROPIC_AUTH_TOKEN ${lib.escapeShellArg cliProxyKey}
 
+        makeWrapper "$out/bin/claude" "$out/bin/claude-gpt" \
+          --add-flag "--dangerously-skip-permissions" \
+          --set CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY "1" \
+          --set ANTHROPIC_MODEL "gpt-6-astra(high)" \
+          --set ANTHROPIC_DEFAULT_OPUS_MODEL "gpt-6-astra(high)" \
+          --set ANTHROPIC_DEFAULT_FABLE_MODEL "gpt-6-astra(high)" \
+          --set ANTHROPIC_DEFAULT_SONNET_MODEL "gpt-5.6-sol" \
+          --set ANTHROPIC_DEFAULT_HAIKU_MODEL "gpt-5.6-luna" \
+          --set CLAUDE_CODE_SUBAGENT_MODEL "gpt-5.6-sol"
+
         ln -s ${lib.getExe claudeCode} "$out/bin/claude-plain"
       '';
 
