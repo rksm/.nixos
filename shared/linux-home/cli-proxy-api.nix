@@ -41,7 +41,7 @@ let
         makeWrapper "$out/bin/claude" "$out/bin/claude-gpt" \
           --add-flag "--dangerously-skip-permissions" \
           --set CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY "1" \
-          --set ANTHROPIC_MODEL "gpt-6-astra(high)" \
+          --set ANTHROPIC_MODEL "gpt-6-astra-fast(high)" \
           --set ANTHROPIC_DEFAULT_OPUS_MODEL "gpt-6-astra(high)" \
           --set ANTHROPIC_DEFAULT_FABLE_MODEL "gpt-6-astra(high)" \
           --set ANTHROPIC_DEFAULT_SONNET_MODEL "gpt-5.6-sol" \
