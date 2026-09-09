@@ -31,6 +31,24 @@ update-moshi:
 update-agent-browser:
     nix shell --inputs-from . nixpkgs#python3 -c python3 packages/agent-browser/update.py
 
+update-computer-use:
+    nix develop .#computer-use -c nix-update --flake --use-github-releases computer-use-linux
+    just check-computer-use
+
+check-computer-use:
+    nix develop .#computer-use -c shellcheck packages/computer-use-linux/separate.sh packages/computer-use-linux/session.sh
+    nix build .#computer-use-linux .#computer-use-desktop --no-link
+
+[positional-arguments]
+test-computer-use *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    desktop_package=$(nix build .#computer-use-desktop --no-link --print-out-paths)
+    host_bus_id=$(gdbus call --session --dest org.freedesktop.DBus --object-path /org/freedesktop/DBus --method org.freedesktop.DBus.GetId)
+    check_state=$(mktemp -d)
+    trap 'rm -rf -- "$check_state"' EXIT
+    XDG_STATE_HOME="$check_state" nix develop .#computer-use -c "$desktop_package/bin/computer-use-separate" --run python3 "$HOME/workspace/packages/computer-use-linux/check-session.py" "$host_bus_id" "$@"
+
 pair-moshi:
     @./custom/moshi-hook/pair.sh
 
@@ -48,9 +66,7 @@ update-ai:
     if [ "$(uname)" = "Darwin" ]; then
         cd macos
         set -- \
-          ai-quotas \
           ast-outline \
-          codex-cli-nix \
           herdr-nix \
           llm-agents \
           skillshare-nix \
@@ -60,7 +76,6 @@ update-ai:
         set -- \
           ai-quotas \
           ast-outline \
-          codex-cli-nix \
           herdr-nix \
           llm-agents \
           skillshare-nix \
@@ -72,9 +87,10 @@ update-ai:
     updated_files="flake.lock"
     if [ "$(uname)" != "Darwin" ]; then
         just update-agent-browser
+        just update-computer-use
         # Pin the newest commit of the CLIProxyAPI dev branch.
         nix run --inputs-from . nixpkgs#nix-update -- --flake --version=branch=dev cliproxyapi
-        updated_files="$updated_files packages/agent-browser/package.nix packages/cliproxyapi/package.nix"
+        updated_files="$updated_files packages/agent-browser/package.nix packages/cliproxyapi/package.nix packages/computer-use-linux/package.nix"
     fi
     if ! git diff --quiet HEAD -- $updated_files; then
         git add $updated_files

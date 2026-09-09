@@ -11,6 +11,7 @@
     ./rust.nix
     ./gnome.nix
     ./freestyle.nix
+    ./computer-use.nix
     ./packages.nix
     ./pi.nix
   ];

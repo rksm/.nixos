@@ -60,6 +60,14 @@
         nixpkgs.legacyPackages.${system}.callPackage ./packages/agent-browser/package.nix
           { };
       cliproxyapi = nixpkgs.legacyPackages.${system}.callPackage ./packages/cliproxyapi/package.nix { };
+      computer-use-linux =
+        nixpkgs.legacyPackages.${system}.callPackage ./packages/computer-use-linux/package.nix
+          { };
+      computer-use-desktop =
+        nixpkgs.legacyPackages.${system}.callPackage ./packages/computer-use-linux/desktop.nix
+          {
+            inherit computer-use-linux;
+          };
 
       nixpkgsOverlay = _final: _prev: {
         latest = import nixpkgs-latest {
@@ -77,7 +85,12 @@
         llm-agents = llm-agents.packages.${system};
         flux-reconciler = flux-reconciler.packages.${system}.default;
         worktrunk = worktrunk-nix.packages.${system}.default;
-        inherit agent-browser cliproxyapi;
+        inherit
+          agent-browser
+          cliproxyapi
+          computer-use-linux
+          computer-use-desktop
+          ;
       };
 
       sharedModules = machine: homeModule: [
@@ -161,11 +174,30 @@
     {
       nixosConfigurations = desktopConfigurations // fleetConfigurations;
 
+      overlays.default = _final: _prev: {
+        inherit computer-use-linux computer-use-desktop;
+      };
+
       packages.${system} = {
-        inherit agent-browser cliproxyapi;
+        inherit
+          agent-browser
+          cliproxyapi
+          computer-use-linux
+          computer-use-desktop
+          ;
       };
 
       devShells.${system} = {
+        computer-use = agentFleetPackages.mkShell {
+          packages = with agentFleetPackages; [
+            just
+            nixfmt
+            nix-update
+            python3
+            shellcheck
+            vale
+          ];
+        };
         agent-fleet = agentFleetPackages.mkShell {
           packages = with agentFleetPackages; [
             hcloud

@@ -24,6 +24,7 @@
     ./nix.nix
     ./vibetyper.nix
     ./freestyle.nix
+    ./computer-use.nix
   ];
 
   environment.variables.EDITOR = "emacs -Q -nw";

@@ -1,0 +1,19 @@
+--- a/src/atspi_tree.rs
++++ b/src/atspi_tree.rs
+@@ -239,7 +239,15 @@ pub async fn list_accessible_apps(limit: usize) -> Result<Vec<AccessibleAppSummary>
+ 
+     for object_ref in roots.into_iter().take(limit) {
+         if let Ok(proxy) = open_accessible(&conn, &object_ref).await {
+-            apps.push(read_app_summary(&proxy, &object_ref, dbus.as_ref()).await);
++            // An unresponsive app must not block discovery of the target app.
++            if let Ok(app) = timeout(
++                Duration::from_secs(1),
++                read_app_summary(&proxy, &object_ref, dbus.as_ref()),
++            )
++            .await
++            {
++                apps.push(app);
++            }
+         }
+     }
+ 

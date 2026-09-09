@@ -1,0 +1,122 @@
+#+TITLE: Desktop control from Codex
+#+DATE: [2026-09-09 Wed]
+
+* Choose a desktop
+
+Both modes use the pinned [[https://github.com/agent-sh/computer-use-linux][computer-use-linux]] MCP server.
+It provides screenshots, accessibility trees, window control, clicks, dragging,
+scrolling, and keyboard input.
+
+| Command                 | Desktop                                      |
+|-------------------------+----------------------------------------------|
+| =codex-desktop-live=     | Your current GNOME session and running apps   |
+| =codex-desktop-separate= | A separate GNOME desktop in a visible window  |
+
+The Codex launchers call the existing =codex= command and add one MCP server
+for that run. Your model, provider, and permission settings still apply.
+They do not edit =~/.codex/config.toml=.
+
+* Install
+
+From this repository:
+
+#+begin_src sh
+just check-computer-use
+just switch
+#+end_src
+
+Log out and back in to load the GNOME extensions and start the input daemon.
+The configuration installs both modes on storm and tuxedo. It includes the
+window-control extension and [[https://github.com/siddhpant/allow-gnome-screenshot][Allow gnome-screenshot]], which restores
+screenshot access on GNOME 49 and 50.
+
+Check the current desktop before using it:
+
+#+begin_src sh
+computer-use-live doctor
+codex-desktop-live
+#+end_src
+
+The first portal input request may show a screen-sharing or remote-control
+dialog. Approve it in the desktop that you intend to control.
+
+* Separate desktop
+
+Start from the project directory you want to use:
+
+#+begin_src sh
+codex-desktop-separate
+#+end_src
+
+GNOME's Mutter development viewer displays the separate desktop. It has its
+own home directory, D-Bus session, accessibility bus, and PipeWire server.
+The project directory appears at =~/workspace=. The Mutter viewer synchronizes
+the clipboard between the two desktops.
+
+The separate session cannot use the host's uinput device or input-daemon
+socket. Portal input and Xwayland input stay inside the separate desktop.
+This separates desktop state and input. It is not a VM or a general security
+sandbox: it runs as your user and shares the host filesystem and network.
+
+Application profiles persist under
+=~/.local/state/computer-use-desktop/home=, or the corresponding
+=$XDG_STATE_HOME/computer-use-desktop/home= when set. Only one separate session
+can use this profile at a time.
+
+Save work before exiting Codex or closing the viewer. Either action closes
+the separate desktop and its applications. The session log is in the profile
+at =home/.local/state/computer-use-desktop/session.log=.
+
+To run a command in a temporary desktop session:
+
+#+begin_src sh
+computer-use-separate doctor
+computer-use-separate --run kgx
+#+end_src
+
+* Other MCP clients
+
+Use =computer-use-live mcp= or =computer-use-separate mcp= as a stdio server.
+Allow 180 seconds for startup of the separate desktop.
+
+The flake exports =computer-use-linux= and =computer-use-desktop= packages for
+=x86_64-linux=. Its default overlay provides the same packages to other
+flakes. For example, add this repository as an input named =desktop-tools=,
+include =inputs.desktop-tools.overlays.default= in =nixpkgs.overlays=, and add
+=pkgs.computer-use-desktop= to =home.packages= for the separate desktop.
+For live control, also install the extensions in
+=pkgs.computer-use-desktop.gnomeExtensions=, enable them in GNOME, and configure
+accessibility and uinput as in this repository's Linux modules.
+
+* Updates
+
+#+begin_src sh
+just update-ai
+#+end_src
+
+The existing update recipe calls =just update-computer-use=. That recipe
+checks GitHub releases with =nix-update=, refreshes the source and Cargo
+hashes, and builds both packages. The server and its window-control extension
+come from the same source pin. GNOME, its screenshot compatibility extension,
+and the other desktop dependencies follow this repository's NixOS package pin.
+
+To update only these packages:
+
+#+begin_src sh
+just update-computer-use
+#+end_src
+
+Run =just test-computer-use= from the repository to open a separate desktop.
+It checks MCP, screenshots, window focus, and Unicode editing in a scratch
+file. It also checks separation from host input devices and the session bus.
+
+Run =just test-computer-use --input= to also test mouse clicks and keyboard
+input, then check the saved file. Allow the remote-control prompts inside the
+separate desktop when they appear. The input check needs this GNOME consent.
+
+The package includes a small fix that skips apps whose accessibility
+discovery calls do not respond within one second. This prevents the Mutter
+viewer from blocking access to the target app. The GUI check covers this case.
+
+After applying a GNOME extension update, log out and back in. Start a new
+Codex session to use the updated MCP executable.
