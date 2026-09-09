@@ -192,7 +192,6 @@ Commands that take =HOST= accept one hostname or a comma-separated list. Omit
 
 The system installs these tools from =llm-agents.nix=:
 
-- OpenClaw: =openclaw=
 - Hermes Agent: =hermes=
 - Antigravity CLI: =agy=
 - Claude Code without the proxy: =claude=

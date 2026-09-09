@@ -159,9 +159,7 @@ Both setups install:
 - RTK
 - Skillshare
 
-Both setups now install =ast-outline= and =ai-quotas=. The headless fleet also
-installs OpenClaw. The desktop setup adds general interactive AI clients such as
-=llm= and =shell-gpt=.
+Both setups now install =ast-outline= and =ai-quotas=. The desktop setup adds general interactive AI clients such as =llm= and =shell-gpt=.
 
 * Main differences
 
