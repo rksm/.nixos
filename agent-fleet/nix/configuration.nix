@@ -121,7 +121,6 @@ in
     fluxReconciler
     herdr
     agents.hermes-agent
-    agents.openclaw
     agents.rtk
     skillshare
     worktrunk
