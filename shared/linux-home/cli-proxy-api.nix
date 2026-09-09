@@ -1,4 +1,6 @@
 {
+  config,
+  machine,
   pkgs,
   user,
   lib,
@@ -6,6 +8,8 @@
 }:
 
 let
+  authDir = "/home/${user}/configs/ai/cli-proxy-api/auths/${machine}";
+
   claudeCode = pkgs.llm-agents.claude-code;
   cliProxyApi = pkgs.cliproxyapi;
   cliProxyKey = "sk-local-cli-proxy-api";
@@ -93,10 +97,26 @@ let
       '';
 in
 {
-  # Add another Claude, Codex, or xAI account:
+  # Every host reads the same synced config.yaml, and CLIProxyAPI does not expand
+  # variables in auth-dir, so config.yaml names ~/.cli-proxy-api/auths and this
+  # symlink points that at one directory per host under ~/configs. Each host then
+  # owns its credential files instead of overwriting the other hosts' copies.
+  #
+  # Give each host its own login per provider. A provider rotates the refresh
+  # token on every refresh and revokes the previous one, so two hosts holding
+  # copies of one grant lock each other out however the files are stored.
   # cli-proxy-api -config ~/.cli-proxy-api/config.yaml -claude-login
   # cli-proxy-api -config ~/.cli-proxy-api/config.yaml -codex-login
   # cli-proxy-api -config ~/.cli-proxy-api/config.yaml -xai-login
+  home.activation.cliProxyApiAuthDir = lib.hm.dag.entryBefore [ "writeBoundary" ] ''
+    run ${pkgs.coreutils}/bin/mkdir -p ${lib.escapeShellArg authDir}
+  '';
+
+  home.file.".cli-proxy-api/auths" = {
+    source = config.lib.file.mkOutOfStoreSymlink authDir;
+    force = true;
+  };
+
   systemd.user.services.cli-proxy-api = {
     Unit.Description = "CLIProxyAPI";
     Service = {

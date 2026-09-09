@@ -358,6 +358,42 @@ syncthing-ui host="":
 _syncthing-ui host:
     just _ssh {{ host }} sudo tailscale serve status
 
+# Open the CLI Proxy API control panel of one host in the browser.
+serve-cliproxyapi host="agent-1":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    port=18317
+    url="http://127.0.0.1:$port/management.html"
+    ip=$(just _host-ip {{ host }})
+    ssh \
+        -i "{{ ssh_key }}" \
+        -o IdentitiesOnly=yes \
+        -o ControlMaster=no \
+        -o ControlPath=none \
+        -o UserKnownHostsFile="{{ known_hosts }}" \
+        -o StrictHostKeyChecking=accept-new \
+        -o ExitOnForwardFailure=yes \
+        -N -L "$port:127.0.0.1:8317" \
+        "robert@$ip" &
+    tunnel=$!
+    trap 'kill "$tunnel" 2>/dev/null || true' EXIT
+    if ! curl -sf --retry 30 --retry-connrefused --retry-delay 1 -o /dev/null "$url"; then
+        echo "The control panel of {{ host }} did not answer on port $port." >&2
+        echo "Another tunnel may already use that port: ss -ltn | grep $port" >&2
+        exit 1
+    fi
+    echo "{{ host }} control panel: $url"
+    echo "Sign in with the remote-management password from config.yaml."
+    echo "Press Ctrl-C to close the tunnel."
+    if command -v xdg-open >/dev/null; then
+        xdg-open "$url" >/dev/null 2>&1 &
+    elif command -v open >/dev/null; then
+        open "$url" || true
+    else
+        echo "Found no browser opener. Open the address above yourself." >&2
+    fi
+    wait "$tunnel" || true
+
 # Copy local Codex and Claude OAuth credentials to the selected hosts.
 sync-auth host="":
     just _for-hosts _sync-auth "$@"

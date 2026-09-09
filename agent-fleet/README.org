@@ -181,6 +181,7 @@ Commands that take =HOST= accept one hostname or a comma-separated list. Omit
 | =just syncthing-id HOST=       | Print the Syncthing device ID for a host     |
 | =just sync-status HOST=        | Show Syncthing folder progress               |
 | =just syncthing-ui HOST=       | Print the tailnet-only Syncthing UI address  |
+| =just serve-cliproxyapi HOST=  | Open the CLI Proxy API control panel         |
 | =just tailscale-login HOST=    | Authorize a new host in the browser          |
 | =just tailscale-status HOST=   | Show the Tailscale connection state          |
 | =just build HOST=              | Build the host configuration locally         |
@@ -207,10 +208,27 @@ Codex comes from =codex-cli-nix=. Use =codex= through CLI Proxy API or
 available as =skillshare=.
 
 CLI Proxy API runs as a user service and reads the synchronized configuration
-from =~/configs/ai/cli-proxy-api/config.yaml=. Add accounts with:
+from =~/configs/ai/cli-proxy-api/config.yaml=. Its OAuth credentials live in one
+directory per host, =~/configs/ai/cli-proxy-api/auths/HOST=. Home Manager links
+=~/.cli-proxy-api/auths= to the directory of the current host. The shared
+=config.yaml= can name only one =auth-dir=, and CLI Proxy API does not expand
+variables in it.
+
+The control panel listens on the loopback address of its own host. Reach the
+panel of a server from your workstation with =just serve-cliproxyapi HOST=, which
+forwards the port over SSH and opens the page. =HOST= defaults to =agent-1=.
+
+Log in on each server:
 
 #+BEGIN_SRC sh
 cli-proxy-api -config ~/.cli-proxy-api/config.yaml -claude-login
 cli-proxy-api -config ~/.cli-proxy-api/config.yaml -codex-login
 cli-proxy-api -config ~/.cli-proxy-api/config.yaml -xai-login
 #+END_SRC
+
+The per-host directories stop two hosts from overwriting the same credential
+file, but they do not let two hosts share one account. Each provider rotates the
+refresh token on every refresh and revokes the previous one, so give every host
+its own login for every provider. When two hosts hold copies of one grant, the
+host that refreshes last keeps working and the others fail with =invalid_grant=
+and report =auth_unavailable=.
