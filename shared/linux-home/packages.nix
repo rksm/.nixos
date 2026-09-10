@@ -28,7 +28,7 @@ in {
     libreoffice
     # see https://github.com/NixOS/nixpkgs/issues/348845
     # calibre # temporarily disabled - onnxruntime CUDA build failure
-    secret-tool # Gnome keyring CLI
+    libsecret # GNOME keyring CLI
 
     # markdown
     pandoc

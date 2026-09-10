@@ -16,6 +16,7 @@ in
     ".gnupg".source = fromConfigs ".gnupg";
     ".npmrc".source = fromConfigs ".npmrc";
     ".style.yapf".source = fromConfigs ".style.yapf";
+    ".config/fm".source = fromConfigs "ai/fm";
     ".config/herdr".source = fromConfigs "herdr";
     ".config/skillshare/config.yaml".source =
       config.lib.file.mkOutOfStoreSymlink /home/${user}/projects/ai/skillshare/config.yaml;
