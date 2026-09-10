@@ -23,6 +23,11 @@
     force = true;
   };
 
+  home.file."projects/ai/skillshare/skills/fastmail/review-email" = {
+    source = "${pkgs.fastmail-cli}/share/fm/skills/review-email";
+    recursive = true;
+  };
+
   # Run by agent-1 for now
   # services.agent-files = {
   #   enable = true;
@@ -102,6 +107,7 @@
     llm-agents.ccusage
     llm-agents.rtk
     agent-browser
+    fastmail-cli
     herdr
     skillshare
     ast-outline

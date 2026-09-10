@@ -60,6 +60,7 @@
         nixpkgs.legacyPackages.${system}.callPackage ./packages/agent-browser/package.nix
           { };
       cliproxyapi = nixpkgs.legacyPackages.${system}.callPackage ./packages/cliproxyapi/package.nix { };
+      fastmail-cli = nixpkgs.legacyPackages.${system}.callPackage ./packages/fm/default.nix { };
       computer-use-linux =
         nixpkgs.legacyPackages.${system}.callPackage ./packages/computer-use-linux/package.nix
           { };
@@ -87,6 +88,7 @@
         worktrunk = worktrunk-nix.packages.${system}.default;
         inherit
           agent-browser
+          fastmail-cli
           cliproxyapi
           computer-use-linux
           computer-use-desktop
@@ -181,6 +183,7 @@
       packages.${system} = {
         inherit
           agent-browser
+          fastmail-cli
           cliproxyapi
           computer-use-linux
           computer-use-desktop
