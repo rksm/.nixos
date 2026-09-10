@@ -28,6 +28,11 @@
     recursive = true;
   };
 
+  home.file."projects/ai/skillshare/skills/slackcli" = {
+    source = "${pkgs.slackcli}/share/slackcli/skills/slackcli";
+    recursive = true;
+  };
+
   # Run by agent-1 for now
   # services.agent-files = {
   #   enable = true;
@@ -108,6 +113,7 @@
     llm-agents.rtk
     agent-browser
     fastmail-cli
+    slackcli
     herdr
     skillshare
     ast-outline
