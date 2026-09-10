@@ -12,6 +12,7 @@ let
     "npm:pi-agent-browser-native@${pkgs.agent-browser.piAgentBrowserNativeVersion}"
     "npm:@tintinweb/pi-subagents"
     "npm:pi-web-access"
+    "npm:pi-mcp-adapter"
   ];
   piNpmDir = "${config.home.homeDirectory}/.pi/npm";
   piAgentDir = "${config.home.homeDirectory}/.pi/agent";
