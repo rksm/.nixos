@@ -112,7 +112,6 @@
     # codex-cli
 
     llm-agents.antigravity-cli
-    llm-agents.hermes-agent
     llm-agents.ccusage
     llm-agents.rtk
     agent-browser
