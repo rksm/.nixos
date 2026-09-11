@@ -25,10 +25,13 @@ resource "hcloud_ssh_key" "fleet" {
   labels     = local.labels
 }
 
+# Only these ports are reachable on fleet servers; everything else is dropped.
+# 0.0.0.0/0 + ::/0 = open to the whole internet (Hetzner servers get IPv4 and IPv6).
 resource "hcloud_firewall" "fleet" {
   name   = "agent-fleet"
   labels = local.labels
 
+  # SSH access.
   rule {
     direction = "in"
     protocol  = "tcp"
@@ -39,6 +42,7 @@ resource "hcloud_firewall" "fleet" {
     ]
   }
 
+  # Syncthing sync protocol (TCP for reliability, UDP for speed + discovery).
   rule {
     direction = "in"
     protocol  = "tcp"
@@ -59,6 +63,8 @@ resource "hcloud_firewall" "fleet" {
     ]
   }
 
+  # Tailscale's default WireGuard port, so peers can connect directly
+  # instead of relaying through DERP.
   rule {
     direction = "in"
     protocol  = "udp"
@@ -81,6 +87,19 @@ resource "hcloud_server" "fleet" {
 
   ssh_keys     = [hcloud_ssh_key.fleet.id]
   firewall_ids = [hcloud_firewall.fleet.id]
+}
+
+resource "hcloud_volume" "agent_1_home" {
+  name              = "agent-1-home"
+  size              = 250
+  server_id         = hcloud_server.fleet["agent-1"].id
+  automount         = false
+  delete_protection = true
+  labels            = local.labels
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 output "server_ips" {

@@ -42,6 +42,32 @@ in
 
   services.tailscale.enable = true;
 
+  # Attaching a volume can change the kernel's disk enumeration order.
+  disko.devices.disk.main.device = lib.mkIf (
+    config.networking.hostName == "agent-1"
+  ) "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_125107444";
+
+  fileSystems."/home" = lib.mkIf (config.networking.hostName == "agent-1") {
+    device = "/dev/disk/by-id/scsi-0HC_Volume_106845129";
+    fsType = "ext4";
+    neededForBoot = true;
+  };
+
+  # Stop home writers if the volume mount disappears.
+  systemd.services = lib.mkIf (config.networking.hostName == "agent-1") {
+    syncthing = {
+      unitConfig.RequiresMountsFor = [ "/home" ];
+      bindsTo = [ "home.mount" ];
+      after = [ "home.mount" ];
+    };
+    "user@1000" = {
+      overrideStrategy = "asDropin";
+      unitConfig.RequiresMountsFor = [ "/home" ];
+      bindsTo = [ "home.mount" ];
+      after = [ "home.mount" ];
+    };
+  };
+
   services.openssh = {
     enable = true;
     settings = {

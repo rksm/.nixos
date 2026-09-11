@@ -9,6 +9,10 @@ The file =nix/fleet.json= is the fleet inventory. OpenTofu creates every server 
 
 The initial fleet contains one =cx43= server, =agent-1=, in =nbg1=.
 
+=agent-1= mounts its 250 GB Hetzner Cloud volume at =/home=. Both the volume
+and boot disk use stable device IDs. See the [[file:docs/agent-1-volume-migration.org][migration record]] for the
+cleanup history, backup location, and recovery constraints.
+
 * Enter the development shell
 
 Direnv loads =.env= and enters the Nix development shell:

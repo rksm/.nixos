@@ -1,0 +1,151 @@
+#+TITLE: agent-1 volume migration record
+#+DATE: [2026-09-11 Fri]
+
+* Result
+
+Migration completed on September 11, 2026. The new 250 GB Hetzner Cloud volume
+holds /home. After confirming the exact deletion target, the user approved
+removal of /home.pre-volume on September 11, 2026. Cleanup freed about 58 GiB
+on the boot disk. Normal services and synchronization have resumed.
+
+| Item                  | Value                                          |
+|-----------------------+------------------------------------------------|
+| Server                | agent-1, ID 162116185                           |
+| Volume                | agent-1-home, ID 106845129                       |
+| Location              | nbg1                                           |
+| Cloud volume size     | 250 GB                                         |
+| Filesystem            | ext4                                           |
+| Filesystem UUID       | 939a3292-5c57-4954-bed2-de0c366990a4              |
+| Volume used / free    | 59 GiB / 185 GiB                                |
+| Root used / free      | 45 GiB / 97 GiB                                |
+| Original home         | Deleted after explicit user confirmation       |
+| Offline copy          | 604,311 entries, 60,461,801,359 bytes            |
+
+* Approved scope
+
+The user revised the original plan before the outage:
+
+- Use a 250 GB volume.
+- Stop services as needed.
+- Exclude projects from the backup.
+- Back up only unmanaged state, rather than a full disk or Nix store.
+- Use a brief verification instead of a byte-by-byte comparison.
+
+The backup excludes server snapshots and projects. The original home tree
+was a rollback copy until the user approved its removal.
+
+* Work completed
+
+1. Created and attached the volume through OpenTofu. The plan added only the
+   volume. Enabled Hetzner deletion protection and Terraform prevent_destroy.
+2. Matched the new device to its cloud ID and size, then formatted it as ext4.
+3. Made an initial copy of home while the source remained available.
+4. Stopped Syncthing, user services, user sessions, and PostgreSQL. Both
+   PostgreSQL clusters reported a clean shutdown.
+5. Booted into Hetzner rescue. Confirmed the root filesystem was clean and
+   mounted it read-only without journal replay.
+6. Copied the final changes with rsync, preserving ownership, permissions,
+   timestamps, hard links, symlinks, ACLs, extended attributes, and sparse files.
+   Moved superseded initial-copy files into /home/.migration-precopy-extras.
+7. Unmounted and remounted the volume. Compared file sizes, modification times,
+   paths, links, permissions, ACLs, and extended attributes with rsync's dry
+   run. The comparison returned no differences. No full content hashes were
+   calculated.
+8. Renamed the original home tree to /home.pre-volume and restricted it to root.
+   Made the empty underlying /home mountpoint immutable. This prevents an old
+   boot generation from filling it with replacement home directories.
+9. Booted with user services and Syncthing disabled. Confirmed the volume UUID,
+   user permissions, and project access. Ran Syncthing with peer networking
+   blocked and checked its initial scan before reconnecting it.
+10. Pinned the boot disk by its stable ID after Linux reordered the disk names.
+    Installed GRUB onto the verified boot disk and completed a normal reboot.
+11. Confirmed the required mount and service dependencies. Resumed the user
+    services and the previously running PostgreSQL cluster. PostgreSQL accepted
+    connections and a query returned four database entries.
+12. Confirmed all four Syncthing folders were idle, with no pending files,
+    pending deletions, or folder errors. Peer changes from storm arrived after
+    reconnection. The benchmark browser-state deletions came from that peer.
+
+* Configuration
+
+[[file:../main.tf][OpenTofu]] owns the volume and its attachment. [[file:../nix/configuration.nix][NixOS]] defines the
+required early-boot /home mount for agent-1. Syncthing and the user manager
+require that mount and stop if the mount stops.
+
+The stable device paths are:
+
+- Volume: /dev/disk/by-id/scsi-0HC_Volume_106845129
+- Boot disk: /dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_125107444
+
+The kernel assigned different /dev/sda and /dev/sdb names across reboots.
+Do not use those names for formatting or bootloader installation. If the
+server or volume is replaced, update the matching stable ID in the configuration.
+
+The deployed build uses the server's existing package versions with only the
+storage changes applied. The local repository has newer package inputs, which
+were not deployed as part of this migration. The remote /etc/nixos configuration
+contains the storage changes and retains its existing flake.lock.
+
+The final system is:
+
+=/nix/store/bax488z2gx9jizw1xgvfmhifv80xllsf-nixos-system-agent-1-26.05.20260611.a037402=
+
+The old system has a garbage-collection root at
+/nix/var/nix/gcroots/agent-1-before-volume. The rescue boot flag is disabled.
+No temporary service masks remain in the active boot configuration.
+
+* Limited backup
+
+The backup is on storm at:
+
+=/var/backups/agent-fleet/agent-1-2026-09-11/=
+
+The unmanaged subdirectory contains about 2 GB of selected state: SSH keys,
+runtime secrets, /var/lib state, root configuration, agent state and credentials,
+Syncthing state, and user application state. Projects, synchronized configs,
+Nix store contents, symlinks, and selected caches were excluded. The backup
+command and its log record the exact paths and exclusions.
+
+The parent directory has mode 0700 and belongs to root. The backup completed
+without transfer errors. No full restore drill or content-hash comparison was
+performed, as requested. Migration logs and the OpenTofu state are also retained
+in that directory.
+
+* Cleanup and recovery
+
+On September 11, 2026, the user confirmed deletion of /home.pre-volume and all
+its contents. Before deletion, the cleanup checked both filesystem UUIDs. It confirmed the
+directory type and rejected symlinks, mountpoints, and nested mounts. Only that tree was deleted. The independent state
+backup on storm remains untouched.
+
+After cleanup, the root disk has 97 GiB free, up from 39 GiB. The active /home
+still uses volume UUID 939a3292-5c57-4954-bed2-de0c366990a4. The original home
+rollback copy no longer exists.
+
+For recovery, stop writers, preserve the latest volume data, copy and verify
+that data onto the recovery destination, and then change the mount.
+
+The underlying empty /home directory has the immutable attribute. In rescue,
+with the volume unmounted, remove that attribute before replacing the mountpoint
+for a rollback. Keep the volume intact throughout recovery. A saved old boot
+generation alone does not restore current home data.
+
+The new volume is not covered by a Hetzner server snapshot. This migration did
+not add a scheduled backup policy. Syncthing remains synchronization rather
+than an independent backup. The metadata checks passed, but they do not prove
+byte-for-byte equality or guarantee against every possible storage failure.
+
+* Validation
+
+- OpenTofu apply: added only the new volume.
+- Final OpenTofu plan: no changes.
+- NixOS build and repository checks: passed.
+- Offline metadata comparison after remount: no differences.
+- Maintenance boot and normal reboot: passed.
+- Required mount and service dependencies: confirmed on the running system.
+- System and user services: no failed units.
+- PostgreSQL: accepting connections and answering a query.
+- Syncthing: all four folders idle without pending changes or errors.
+
+The independent state backup remains available for recovery. No exhaustive
+content comparison or detached-volume failure test was performed.
