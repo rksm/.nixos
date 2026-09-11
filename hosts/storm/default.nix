@@ -31,21 +31,20 @@
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   audio-video-image-editing.enable = true;
+  firewall.enable = false;
   gaming.enable = true;
-  networking.wireless.enable = lib.mkForce false;
-  mullvad.enable = true;
-  nvidia.enable = true;
   hardware.nvidia.open = true;
+  mount_k8s.enable = false;
+  mount_nas_nfs.enable = false;
+  mullvad.enable = true;
+  networking.wireless.enable = lib.mkForce false;
+  nvidia.enable = true;
   postgres.enable = false;
   printing.enable = true;
   setup_docker.enable = true;
   ssh-password-auth.enable = false;
   tailscale.enable = true;
   virt-manager.enable = true;
-
-  firewall.enable = false;
-  mount_k8s.enable = false;
-  mount_nas_nfs.enable = false;
 
   syncthing = {
     enable = true;
