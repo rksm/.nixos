@@ -40,6 +40,8 @@ in
     trustedInterfaces = [ "tailscale0" ];
   };
 
+  services.resolved.enable = true;
+  security.polkit.enable = true;
   services.tailscale.enable = true;
 
   # Attaching a volume can change the kernel's disk enumeration order.
