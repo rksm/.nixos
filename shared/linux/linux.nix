@@ -70,12 +70,89 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
 
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
+    # Mix the default microphone and output monitor into one input for apps.
+    # Keep a physical microphone as the system default and select System + Mic
+    # in the app. Capturing a call's output also sends other voices back to it.
+    extraConfig.pipewire."90-system-mic" = {
+      "context.objects" = [
+        {
+          factory = "adapter";
+          args = {
+            "factory.name" = "support.null-audio-sink";
+            "node.name" = "system-mic-mix";
+            "node.description" = "System + Mic Mix";
+            # The mixer accepts both streams but stays hidden from app device lists.
+            "media.class" = "Audio/Sink/Internal";
+            "audio.position" = [ "FL" "FR" ];
+            "node.virtual" = true;
+            "node.link-group" = "system-mic-mix";
+          };
+        }
+      ];
+      # Passive links let the audio devices suspend when the mix is unused.
+      "context.modules" = [
+        {
+          name = "libpipewire-module-loopback";
+          args = {
+            "node.description" = "System + Mic: Microphone";
+            "capture.props" = {
+              # With no target, WirePlumber follows the default microphone.
+              "node.name" = "system-mic-microphone";
+              # Exclude the combined source when choosing a microphone.
+              "node.link-group" = "system-mic-source";
+              "node.passive" = true;
+            };
+            "playback.props" = {
+              "target.object" = "system-mic-mix";
+              # Never send the microphone to speakers if the mixer is missing.
+              "node.dont-fallback" = true;
+              "node.passive" = true;
+            };
+          };
+        }
+        {
+          name = "libpipewire-module-loopback";
+          args = {
+            "node.description" = "System + Mic: System Audio";
+            "capture.props" = {
+              "node.name" = "system-mic-system";
+              # Follow the default output and capture its monitor ports.
+              "stream.capture.sink" = true;
+              # Sharing the mixer's link group prevents it from capturing itself.
+              "node.link-group" = "system-mic-mix";
+              "node.passive" = true;
+            };
+            "playback.props" = {
+              "target.object" = "system-mic-mix";
+              "node.dont-fallback" = true;
+              "node.passive" = true;
+            };
+          };
+        }
+        # Expose the mixed monitor as an input that apps can select.
+        {
+          name = "libpipewire-module-loopback";
+          args = {
+            "node.description" = "System + Mic";
+            "capture.props" = {
+              "target.object" = "system-mic-mix";
+              "stream.capture.sink" = true;
+              "node.dont-fallback" = true;
+              "node.passive" = true;
+            };
+            "playback.props" = {
+              "node.name" = "system-mic";
+              "media.class" = "Audio/Source";
+              "audio.position" = [ "FL" "FR" ];
+              "node.link-group" = "system-mic-source";
+              # Prefer physical microphones when choosing the system default.
+              "priority.session" = 0;
+            };
+          };
+        }
+      ];
+    };
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
