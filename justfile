@@ -22,6 +22,43 @@ switch-debug:
 agent-files-deploy host="":
     nix develop ..#agent-fleet -c just deploy {{ host }}
 
+# Open a host's CLI Proxy API control panel through SSH.
+[positional-arguments]
+serve-cliproxyapi host:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    host=$1
+    port=18317
+    url="http://127.0.0.1:$port/management.html"
+    ssh \
+        -o ControlMaster=no \
+        -o ControlPath=none \
+        -o ExitOnForwardFailure=yes \
+        -N -L "127.0.0.1:$port:127.0.0.1:8317" \
+        -- "$host" &
+    tunnel=$!
+    trap 'kill "$tunnel" 2>/dev/null || true' EXIT
+    if ! curl -sf --retry 30 --retry-connrefused --retry-delay 1 -o /dev/null "$url"; then
+        echo "The control panel of $host did not answer on port $port." >&2
+        echo "Another tunnel may already use that port." >&2
+        exit 1
+    fi
+    if ! kill -0 "$tunnel" 2>/dev/null; then
+        wait "$tunnel"
+        exit 1
+    fi
+    echo "$host control panel: $url"
+    echo "Sign in with the remote-management password from config.yaml."
+    echo "Press Ctrl-C to close the tunnel."
+    if command -v xdg-open >/dev/null; then
+        xdg-open "$url" >/dev/null 2>&1 &
+    elif command -v open >/dev/null; then
+        open "$url" || true
+    else
+        echo "Found no browser opener. Open the address above yourself." >&2
+    fi
+    wait "$tunnel"
+
 build-abort-on-warn:
     just switch build --option abort-on-warn --show-trace
 
