@@ -15,10 +15,19 @@ let
     "npm:pi-mcp-adapter"
   ];
   piNpmDir = "${config.home.homeDirectory}/.pi/npm";
-  piAgentDir = "${config.home.homeDirectory}/.pi/agent";
+  piAgentDir =
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      "${config.home.homeDirectory}/configs/ai/pi"
+    else
+      "${config.home.homeDirectory}/.pi/agent";
   piWebSearchConfig = "${piAgentDir}/web-search.json";
-  braveSearchKey = "/etc/nixos/shared/secrets/brave-search.key";
-  openrouterKey = "/etc/nixos/shared/secrets/openrouter.key";
+  secretsDir =
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      "${config.home.homeDirectory}/nixos/shared/secrets"
+    else
+      "/etc/nixos/shared/secrets";
+  braveSearchKey = "${secretsDir}/brave-search.key";
+  openrouterKey = "${secretsDir}/openrouter.key";
   pi = pkgs.symlinkJoin {
     name = "pi-coding-agent";
     paths = [ pkgs.llm-agents.pi ];
@@ -44,7 +53,14 @@ in
 {
   home.packages = [ pi ];
 
-  home.file.".pi/agent/AGENTS.md" = {
+  home.file.".pi/agent" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+    source = config.lib.file.mkOutOfStoreSymlink piAgentDir;
+  };
+  home.file.".pi/web-search.json" = lib.mkIf pkgs.stdenv.hostPlatform.isDarwin {
+    source = config.lib.file.mkOutOfStoreSymlink piWebSearchConfig;
+  };
+
+  home.file."${lib.removePrefix "${config.home.homeDirectory}/" piAgentDir}/AGENTS.md" = {
     source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/configs/ai/codex/AGENTS.md";
     force = true;
   };

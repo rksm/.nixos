@@ -13,7 +13,7 @@
     ./freestyle.nix
     ./computer-use.nix
     ./packages.nix
-    ./pi.nix
+    ../home/pi.nix
   ];
 
   home.username = "${user}";

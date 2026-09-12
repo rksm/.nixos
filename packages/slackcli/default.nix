@@ -6,13 +6,28 @@
   autoPatchelfHook,
 }:
 
+let
+  source =
+    {
+      x86_64-linux = {
+        platform = "linux";
+        hash = "sha256-f1NuoRgT/lBhOm+Ai3jRiLaM3L54CJLFxTKwXeIvp9A=";
+      };
+      aarch64-darwin = {
+        platform = "macos-arm64";
+        hash = "sha256-CmYRqyQzEjd9jNXI0AiBwcyY9DwXB8ItzBU+fGDrAhs=";
+      };
+    }
+    .${stdenvNoCC.hostPlatform.system};
+
+in
 stdenvNoCC.mkDerivation rec {
   pname = "slackcli";
   version = "0.12.0";
 
   src = fetchurl {
-    url = "https://github.com/shaharia-lab/slackcli/releases/download/v${version}/slackcli-linux";
-    hash = "sha256-f1NuoRgT/lBhOm+Ai3jRiLaM3L54CJLFxTKwXeIvp9A=";
+    url = "https://github.com/shaharia-lab/slackcli/releases/download/v${version}/slackcli-${source.platform}";
+    inherit (source) hash;
   };
   skillSource = fetchFromGitHub {
     owner = "shaharia-lab";
@@ -21,7 +36,7 @@ stdenvNoCC.mkDerivation rec {
     hash = "sha256-EXnYrmEdK/8PRK0JRizHc7Y8qtwlPrX0LgXBuWr6TDI=";
   };
 
-  nativeBuildInputs = [ autoPatchelfHook ];
+  nativeBuildInputs = lib.optionals stdenvNoCC.hostPlatform.isLinux [ autoPatchelfHook ];
   dontUnpack = true;
   dontBuild = true;
   # Preserve the JavaScript payload embedded in the Bun executable.
@@ -47,7 +62,10 @@ stdenvNoCC.mkDerivation rec {
     description = "CLI for reading, searching, and sending Slack messages";
     homepage = "https://github.com/shaharia-lab/slackcli";
     license = lib.licenses.mit;
-    platforms = [ "x86_64-linux" ];
+    platforms = [
+      "x86_64-linux"
+      "aarch64-darwin"
+    ];
     mainProgram = "slackcli";
   };
 }

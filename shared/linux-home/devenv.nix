@@ -7,7 +7,10 @@
 }:
 
 {
-  imports = [ ./command-line.nix ];
+  imports = [
+    ./command-line.nix
+    ../home/agent-tools.nix
+  ];
 
   home.file.".config/herdr-mirror".source =
     config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/herdr/herdr-mirror;
@@ -16,26 +19,6 @@
 
   home.file.".config/ai-quotas/config.yaml".source =
     config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/ai/ai-quotas/config.yaml;
-
-  # Skillshare needs real source directories. Codex needs real SKILL.md files.
-  # These three directories belong to their packages and refresh on activation.
-  home.activation.copyPackagedSkills = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-    skills_dir="${config.home.homeDirectory}/projects/ai/skillshare/skills"
-    run mkdir -p "$skills_dir/fastmail"
-    run ${pkgs.rsync}/bin/rsync -rLpt --chmod=Du+w --delete \
-      "${pkgs.agent-browser}/skills/agent-browser/" "$skills_dir/agent-browser/"
-    run ${pkgs.rsync}/bin/rsync -rLpt --chmod=Du+w --delete \
-      "${pkgs.fastmail-cli}/share/fm/skills/review-email/" "$skills_dir/fastmail/review-email/"
-    run ${pkgs.rsync}/bin/rsync -rLpt --chmod=Du+w --delete \
-      "${pkgs.slackcli}/share/slackcli/skills/slackcli/" "$skills_dir/slackcli/"
-    run ${pkgs.gnused}/bin/sed -i '1a\
-    # Managed by /etc/nixos/shared/linux-home/devenv.nix.\
-    # Do not edit this copy. Home Manager overwrites it on activation.\
-    # Change the package definition under /etc/nixos/packages instead.' \
-      "$skills_dir/agent-browser/SKILL.md" \
-      "$skills_dir/fastmail/review-email/SKILL.md" \
-      "$skills_dir/slackcli/SKILL.md"
-  '';
 
   # Run by agent-1 for now
   # services.agent-files = {
@@ -114,9 +97,6 @@
     llm-agents.antigravity-cli
     llm-agents.ccusage
     llm-agents.rtk
-    agent-browser
-    fastmail-cli
-    slackcli
     herdr
     skillshare
     ast-outline

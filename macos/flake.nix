@@ -6,8 +6,8 @@
     substituters = [
       "https://nix-community.cachix.org"
       "https://cache.nixos.org/"
+      "https://cache.numtide.com"
     ];
-    # extra-substituters = [ "https://cache.numtide.com" ];
     # extra-trusted-public-keys = [ "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=" ];
   };
 
@@ -75,6 +75,9 @@
                 llm-agents = llm-agents.packages.${machine.system};
                 flux-reconciler = flux-reconciler.packages.${machine.system}.default;
                 worktrunk = worktrunk-nix.packages.${machine.system}.default;
+                agent-browser = final.callPackage ../packages/agent-browser/package.nix { };
+                fastmail-cli = final.callPackage ../packages/fm/default.nix { };
+                slackcli = final.callPackage ../packages/slackcli/default.nix { };
               };
             in
             {
@@ -110,10 +113,8 @@
     {
       inherit darwinConfigurations;
 
-      devShells.aarch64-darwin.default = {
-        packages = [
-          nixpkgs-darwin.pkgs.hello
-        ];
-      };
+      devShells.aarch64-darwin.default =
+        let pkgs = nixpkgs-darwin.legacyPackages.aarch64-darwin;
+        in pkgs.mkShell { packages = with pkgs; [ just nixfmt shellcheck vale ]; };
     };
 }

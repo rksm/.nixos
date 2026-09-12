@@ -5,13 +5,28 @@
   fetchFromGitHub,
 }:
 
+let
+  source =
+    {
+      x86_64-linux = {
+        platform = "linux_amd64";
+        hash = "sha256-xJIRXuBe5la3UWKbobFxDj8ZqNzfO8wmAKDzibWpMsI=";
+      };
+      aarch64-darwin = {
+        platform = "darwin_arm64";
+        hash = "sha256-BeytOugEVLwuxPu0jGGLgyVrRIwqo5LoMTe5+zphayA=";
+      };
+    }
+    .${stdenvNoCC.hostPlatform.system};
+
+in
 stdenvNoCC.mkDerivation rec {
   pname = "fastmail-cli";
   version = "0.3.0";
 
   src = fetchurl {
-    url = "https://github.com/cboone/fm/releases/download/v${version}/fm_${version}_linux_amd64.tar.gz";
-    hash = "sha256-xJIRXuBe5la3UWKbobFxDj8ZqNzfO8wmAKDzibWpMsI=";
+    url = "https://github.com/cboone/fm/releases/download/v${version}/fm_${version}_${source.platform}.tar.gz";
+    inherit (source) hash;
   };
   skillSource = fetchFromGitHub {
     owner = "cboone";
@@ -38,7 +53,10 @@ stdenvNoCC.mkDerivation rec {
     description = "Fastmail CLI using JMAP";
     homepage = "https://github.com/cboone/fm";
     license = lib.licenses.mit;
-    platforms = [ "x86_64-linux" ];
+    platforms = [
+      "x86_64-linux"
+      "aarch64-darwin"
+    ];
     mainProgram = "fm";
   };
 }

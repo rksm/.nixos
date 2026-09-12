@@ -4,6 +4,9 @@
   imports = [
     ../../../herdr-skill.nix
     ../../../../shared/home/agent-files.nix
+    ../../../../shared/home/pi.nix
+    ../../../moshi.nix
+    ../../../../shared/home/agent-tools.nix
     ./devenv.nix
     ./devops.nix
     ./rust.nix
@@ -15,6 +18,7 @@
 
   home.file.".config/karabiner".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/mac/karabiner;
   home.file.".config/herdr/config.toml".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/herdr/config.toml;
+  home.file.".config/fm".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/ai/fm;
   home.file.".wezterm.lua".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/.wezterm.lua;
   home.file.".gnupg".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/.gnupg;
   home.file.".authinfo.gpg".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/.authinfo.gpg;

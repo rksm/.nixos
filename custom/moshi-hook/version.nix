@@ -2,6 +2,11 @@
   version = "0.2.85";
 
   sources = {
+    aarch64-darwin = {
+      asset = "moshi-hook_Darwin_arm64.tar.gz";
+      hash = "sha256-s7oSfujlfQqIKADoAgaXEexMx7RosuOBVQNhfKQqOaU=";
+    };
+
     x86_64-linux = {
       asset = "moshi-hook_Linux_x86_64.tar.gz";
       hash = "sha256-UHHGeBy3ehWGAKuUQ3rxVE6BkyCChxktwzPA1Xuk1bY=";

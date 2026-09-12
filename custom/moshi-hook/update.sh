@@ -62,7 +62,9 @@ readonly x86_64_asset="moshi-hook_Linux_x86_64.tar.gz"
 readonly aarch64_asset="moshi-hook_Linux_arm64.tar.gz"
 x86_64_hash="$(nix hash convert --hash-algo sha256 --to sri "$(checksum_for "$x86_64_asset")")"
 aarch64_hash="$(nix hash convert --hash-algo sha256 --to sri "$(checksum_for "$aarch64_asset")")"
-readonly x86_64_hash aarch64_hash
+readonly darwin_asset="moshi-hook_Darwin_arm64.tar.gz"
+darwin_hash="$(nix hash convert --hash-algo sha256 --to sri "$(checksum_for "$darwin_asset")")"
+readonly x86_64_hash aarch64_hash darwin_hash
 
 current_version="$(awk -F\" '/^  version = / { print $2 }' "$version_file")"
 [[ "$current_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] \
@@ -72,6 +74,8 @@ if [[ "$current_version" == "$latest_version" ]]; then
     || fail "stored x86_64 hash differs from the current release"
   grep -Fq "hash = \"${aarch64_hash}\";" "$version_file" \
     || fail "stored aarch64 hash differs from the current release"
+  grep -Fq "hash = \"${darwin_hash}\";" "$version_file" \
+    || fail "stored Darwin hash differs from the current release"
   echo "moshi-hook is already at $latest_version"
   exit 0
 fi
@@ -87,6 +91,11 @@ restore_version_file=true
   printf '  version = "%s";\n' "$latest_version"
   printf '\n'
   printf '  sources = {\n'
+  printf '    aarch64-darwin = {\n'
+  printf '      asset = "%s";\n' "$darwin_asset"
+  printf '      hash = "%s";\n' "$darwin_hash"
+  printf '    };\n'
+  printf '\n'
   printf '    x86_64-linux = {\n'
   printf '      asset = "%s";\n' "$x86_64_asset"
   printf '      hash = "%s";\n' "$x86_64_hash"
