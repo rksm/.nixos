@@ -191,9 +191,11 @@ _sync host:
     agent_files_env="/etc/nixos/shared/secrets/agent-files-r2.env"
     netrc_file="/etc/nixos/shared/secrets/hyper-video-cachix-netrc.key"
     syncthing_password="/etc/nixos/shared/secrets/syncthing-password.key"
+    brave_search_key="/etc/nixos/shared/secrets/brave-search.key"
     test -f "$agent_files_env"
     test -f "$netrc_file"
     test -f "$syncthing_password"
+    test -s "$brave_search_key"
     ip=$(just _host-ip {{ host }})
     repository_root=$(git rev-parse --show-toplevel)
     staging=$(mktemp -d)
@@ -204,11 +206,13 @@ _sync host:
         flake.nix \
         flake.lock \
         packages/cliproxyapi/package.nix \
+        packages/agent-browser/package.nix \
         agent-fleet/nix/ \
         agent-fleet/ssh/id_ed25519.pub \
         shared/home/agent-files.nix \
         shared/linux-home/command-line.nix \
         shared/linux-home/cli-proxy-api.nix \
+        shared/linux-home/pi.nix \
         shared/linux/moshi.nix \
         shared/linux/nix.nix \
         shared/linux/syncthing.nix \
@@ -245,6 +249,7 @@ _sync host:
         --rsync-path="sudo rsync" \
         -e "${ssh[*]}" \
         "$agent_files_env" \
+        "$brave_search_key" \
         "robert@$ip:/etc/nixos/shared/secrets/"
 
 # Activate the current root flake on the selected hosts.

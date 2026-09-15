@@ -16,7 +16,7 @@ let
   ];
   piNpmDir = "${config.home.homeDirectory}/.pi/npm";
   piAgentDir = "${config.home.homeDirectory}/.pi/agent";
-  piWebSearchConfig = "${config.home.homeDirectory}/.pi/web-search.json";
+  piWebSearchConfig = "${piAgentDir}/web-search.json";
   braveSearchKey = "/etc/nixos/shared/secrets/brave-search.key";
   pi = pkgs.symlinkJoin {
     name = "pi-coding-agent";
@@ -25,6 +25,7 @@ let
     postBuild = ''
       wrapProgram $out/bin/pi \
         --set NPM_CONFIG_PREFIX "${piNpmDir}" \
+        --set-default PI_CODING_AGENT_DIR "${piAgentDir}" \
         --prefix PATH : ${
           lib.makeBinPath [
             pkgs.agent-browser
@@ -79,10 +80,14 @@ in
       ${pkgs.coreutils}/bin/mv "$pi_settings_new" "$pi_settings"
 
       pi_web_search_new="$(${pkgs.coreutils}/bin/mktemp "${piWebSearchConfig}.XXXXXX")"
-      if [[ -f "$pi_web_search" ]]; then
+      pi_web_search_source="$pi_web_search"
+      if [[ ! -f "$pi_web_search_source" ]]; then
+        pi_web_search_source="${config.home.homeDirectory}/.pi/web-search.json"
+      fi
+      if [[ -f "$pi_web_search_source" ]]; then
         ${pkgs.jq}/bin/jq --rawfile braveApiKey "$brave_search_key" \
           '.braveApiKey = ($braveApiKey | gsub("\\s+$"; ""))' \
-          "$pi_web_search" > "$pi_web_search_new"
+          "$pi_web_search_source" > "$pi_web_search_new"
       else
         ${pkgs.jq}/bin/jq -n --rawfile braveApiKey "$brave_search_key" \
           '{ braveApiKey: ($braveApiKey | gsub("\\s+$"; "")) }' \

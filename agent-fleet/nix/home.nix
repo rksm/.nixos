@@ -4,6 +4,7 @@
     ../../shared/home/agent-files.nix
     ../../shared/linux-home/command-line.nix
     ../../shared/linux-home/cli-proxy-api.nix
+    ../../shared/linux-home/pi.nix
   ];
 
   services.agent-files = {
