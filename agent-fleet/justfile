@@ -192,10 +192,12 @@ _sync host:
     netrc_file="/etc/nixos/shared/secrets/hyper-video-cachix-netrc.key"
     syncthing_password="/etc/nixos/shared/secrets/syncthing-password.key"
     brave_search_key="/etc/nixos/shared/secrets/brave-search.key"
+    openrouter_key="/etc/nixos/shared/secrets/openrouter.key"
     test -f "$agent_files_env"
     test -f "$netrc_file"
     test -f "$syncthing_password"
     test -s "$brave_search_key"
+    test -s "$openrouter_key"
     ip=$(just _host-ip {{ host }})
     repository_root=$(git rev-parse --show-toplevel)
     staging=$(mktemp -d)
@@ -250,6 +252,7 @@ _sync host:
         -e "${ssh[*]}" \
         "$agent_files_env" \
         "$brave_search_key" \
+        "$openrouter_key" \
         "robert@$ip:/etc/nixos/shared/secrets/"
 
 # Activate the current root flake on the selected hosts.

@@ -18,6 +18,7 @@ let
   piAgentDir = "${config.home.homeDirectory}/.pi/agent";
   piWebSearchConfig = "${piAgentDir}/web-search.json";
   braveSearchKey = "/etc/nixos/shared/secrets/brave-search.key";
+  openrouterKey = "/etc/nixos/shared/secrets/openrouter.key";
   pi = pkgs.symlinkJoin {
     name = "pi-coding-agent";
     paths = [ pkgs.llm-agents.pi ];
@@ -47,6 +48,27 @@ in
     source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/configs/ai/codex/AGENTS.md";
     force = true;
   };
+
+  home.activation.configurePiAuth = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    if [[ -v DRY_RUN ]]; then
+      echo "Would configure Pi to read the shared OpenRouter key"
+    else
+      ${pkgs.coreutils}/bin/mkdir -p "${piAgentDir}"
+      pi_auth="${piAgentDir}/auth.json"
+      pi_auth_source="$pi_auth"
+      if [[ ! -e "$pi_auth_source" ]]; then
+        pi_auth_source=/dev/null
+      fi
+      pi_auth_new="$(${pkgs.coreutils}/bin/mktemp "${piAgentDir}/auth.json.XXXXXX")"
+      ${pkgs.jq}/bin/jq -s \
+        --arg key ${lib.escapeShellArg "!${pkgs.coreutils}/bin/cat ${lib.escapeShellArg openrouterKey}"} \
+        '(if length == 0 then {} else .[0] end) |
+         .openrouter = {type: "api_key", key: $key}' \
+        "$pi_auth_source" > "$pi_auth_new"
+      ${pkgs.coreutils}/bin/chmod 600 "$pi_auth_new"
+      ${pkgs.coreutils}/bin/mv "$pi_auth_new" "$pi_auth"
+    fi
+  '';
 
   home.activation.configurePi = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     pi_settings="${piAgentDir}/settings.json"
