@@ -3,6 +3,7 @@
   rustPlatform,
   fetchFromGitHub,
   makeWrapper,
+  coreutils,
   dbus,
   glib,
   gnome-screenshot,
@@ -15,15 +16,15 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "computer-use-linux";
-  version = "0.5.0";
+  version = "0.6.0";
 
   src = fetchFromGitHub {
     owner = "agent-sh";
     repo = "computer-use-linux";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-D4UF1gdPcfBmgVdVquQXo8i5WGutquXgXa41Du8Pq0Q=";
+    hash = "sha256-8d89kuW9mAEAGVWQ1RXYtvyuSXXAMqqvFcqify3dn5k=";
   };
-  cargoHash = "sha256-+Eum9F6jBsLSlqSr8E8QL1dnlCyjPe8ekPhKZqc5/+A=";
+  cargoHash = "sha256-SIIsLNboLIc1MrInDRaxEhzRDIHyoig+yCupL2aEGes=";
 
   patches = [ ./bound-app-discovery.patch ];
 
@@ -33,6 +34,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
   checkFlags = [ "--test-threads=1" ];
 
   postPatch = ''
+    # Notification tests need executable paths that exist in the Nix sandbox.
+    substituteInPlace src/server.rs \
+      --replace-fail '/bin/true' '${coreutils}/bin/true' \
+      --replace-fail '/bin/false' '${coreutils}/bin/false'
     # Keep test socket paths below AF_UNIX's limit inside the Nix build directory.
     substituteInPlace src/ydotool.rs \
       --replace-fail 'computer-use-linux-ydotool-{label}-{}-{}' 'cu-{label}-{}-{}'
