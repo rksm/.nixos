@@ -90,7 +90,7 @@
           };
         }
       ];
-      # Passive links let the audio devices suspend when the mix is unused.
+      # Mixer inputs must stay active; passive playback links can remain suspended.
       "context.modules" = [
         {
           name = "libpipewire-module-loopback";
@@ -107,7 +107,6 @@
               "target.object" = "system-mic-mix";
               # Never send the microphone to speakers if the mixer is missing.
               "node.dont-fallback" = true;
-              "node.passive" = true;
             };
           };
         }
@@ -126,7 +125,6 @@
             "playback.props" = {
               "target.object" = "system-mic-mix";
               "node.dont-fallback" = true;
-              "node.passive" = true;
             };
           };
         }
