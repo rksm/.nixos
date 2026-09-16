@@ -17,9 +17,9 @@ switch cmd="switch" *args="":
 switch-debug:
     just switch --print-build-logs --verbose
 
-# Deploy to the agent-files fleet hosts. Omit HOST for all hosts in agent-fleet/nix/fleet.json.
+# Deploy to the agent-fleet fleet hosts. Omit HOST for all hosts in agent-fleet/nix/fleet.json.
 [working-directory: './agent-fleet']
-agent-files-deploy host="":
+agent-fleet-deploy host="":
     nix develop ..#agent-fleet -c just deploy {{ host }}
 
 # Open a host's CLI Proxy API control panel through SSH.
