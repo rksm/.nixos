@@ -55,6 +55,12 @@
     let
       system = "x86_64-linux";
       user = "robert";
+      # The upstream module still uses the old NixOS driver option name.
+      tuxedoModuleSource = nixpkgs.legacyPackages.${system}.applyPatches {
+        name = "tuxedo-nixos";
+        src = tuxedo-nixos;
+        patches = [ ./patches/tuxedo-drivers-option.patch ];
+      };
       fleet = builtins.fromJSON (builtins.readFile ./agent-fleet/nix/fleet.json);
       agent-browser =
         nixpkgs.legacyPackages.${system}.callPackage ./packages/agent-browser/package.nix
@@ -144,7 +150,7 @@
             homeModule = ./hosts/${machine}/home.nix;
             modules = [
               ./hosts/${machine}
-              tuxedo-nixos.nixosModules.default
+              (import "${tuxedoModuleSource}/nix/module.nix")
             ];
           };
         }) desktopMachines

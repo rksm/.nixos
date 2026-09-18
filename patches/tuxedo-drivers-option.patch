@@ -1,0 +1,12 @@
+diff --git a/nix/module.nix b/nix/module.nix
+--- a/nix/module.nix
++++ b/nix/module.nix
+@@ -32,7 +32,7 @@
+   };
+ 
+   config = mkIf cfg.enable {
+-    hardware.tuxedo-keyboard.enable = true;
++    hardware.tuxedo-drivers.enable = true;
+     boot.kernelModules = [
+       # Tuxedo Control Center has a requirement on the minimum version
+       # of "tuxedo_io" kernel module.
