@@ -14,6 +14,7 @@ in
     gnomeExtensions.unite
     gnomeExtensions.hide-top-bar
     gnomeExtensions.appindicator
+    gnomeExtensions.grand-theft-focus # make emacs focus when emacsclient is called
 
     # workaround for https://github.com/velitasali/gnome-shell-extension-awesome-tiles/issues/58
     # gnomeExtensions.awesome-tiles
@@ -139,6 +140,7 @@ in
           "unite@hardpixel.eu"
           "hidetopbar@mathieu.bidon.ca"
           "appindicatorsupport@rgcjonas.gmail.com"
+          "grand-theft-focus@zalckos.github.com"
           "freestyle-focus-bridge@freestyle-voice.dev"
         ];
       };
