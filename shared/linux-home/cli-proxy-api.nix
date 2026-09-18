@@ -75,7 +75,9 @@ let
           --add-flag "-c" \
           --add-flag ${lib.escapeShellArg ''model_providers.cli_proxy_api.env_key="CLI_PROXY_API_KEY"''} \
           --add-flag "-c" \
-          --add-flag ${lib.escapeShellArg ''model_providers.cli_proxy_api.wire_api="responses"''}
+          --add-flag ${lib.escapeShellArg ''model_providers.cli_proxy_api.wire_api="responses"''} \
+          --add-flag "-c" \
+          --add-flag "features.apps=false"
 
         ln -s ${lib.getExe codexCli} "$out/bin/codex-plain"
       '';
