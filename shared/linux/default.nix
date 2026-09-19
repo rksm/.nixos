@@ -29,8 +29,12 @@
 
   environment.variables.EDITOR = "emacs -Q -nw";
 
-  more-nix-substituters = [ "https://cache.flox.dev" ];
+  more-nix-substituters = [
+    "https://cache.flox.dev"
+    "https://cache.numtide.com" # for numtide/llm-agents
+  ];
   more-nix-trusted-public-keys = [
     "flox-cache-public-1:7F4OyH7ZCnFhcze3fJdfyXYLQw/aV7GEed86nQ7IsOs="
+    "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
   ];
 }
