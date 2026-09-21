@@ -8,17 +8,17 @@
 
 stdenvNoCC.mkDerivation rec {
   pname = "slackcli";
-  version = "0.11.0";
+  version = "0.12.0";
 
   src = fetchurl {
     url = "https://github.com/shaharia-lab/slackcli/releases/download/v${version}/slackcli-linux";
-    hash = "sha256-dcuaSVAlhnA3bw359GDvNaOOvak+BKQ2VicpBcpcnuU=";
+    hash = "sha256-f1NuoRgT/lBhOm+Ai3jRiLaM3L54CJLFxTKwXeIvp9A=";
   };
   skillSource = fetchFromGitHub {
     owner = "shaharia-lab";
     repo = "slackcli";
     tag = "v${version}";
-    hash = "sha256-NIB464nj6DQsXno2FeIFQbNtP1nzozHt6lY2WBnM14k=";
+    hash = "sha256-EXnYrmEdK/8PRK0JRizHc7Y8qtwlPrX0LgXBuWr6TDI=";
   };
 
   nativeBuildInputs = [ autoPatchelfHook ];
