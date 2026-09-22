@@ -295,17 +295,16 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1789888172,
-        "narHash": "sha256-Hjliw/OVxwvf/MulodvaHb+dQb8vLsaAzWw272I72fk=",
+        "lastModified": 1790067756,
+        "narHash": "sha256-yfGnMP4GDX/uJdxDAT3UiucZDeUnCq9ObCB8bpAaR5s=",
         "owner": "rksm",
         "repo": "herdr",
-        "rev": "44d727fb5d13630ac8de794d28822a0a82a13f26",
+        "rev": "b5a9d6774b45a0798b695c01341cbfdce235b13a",
         "type": "github"
       },
       "original": {
         "owner": "rksm",
         "repo": "herdr",
-        "rev": "44d727fb5d13630ac8de794d28822a0a82a13f26",
         "type": "github"
       }
     },
@@ -614,11 +613,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1789972437,
-        "narHash": "sha256-1kT80QZFRcNI0Mto7HvxCq2s3C3j9gFTPnRY/c2FdxQ=",
+        "lastModified": 1790058349,
+        "narHash": "sha256-/f6FvivR3BujAV+7tvqd9JhmzxOOM+wAxhyp5taZTKA=",
         "owner": "hypervideo",
         "repo": "skillshare-nix",
-        "rev": "aa26091bc84f2e7d9f75cf351e67783af0201b42",
+        "rev": "7319064faf36a369ac2f4c0408fb175caddeeccb",
         "type": "github"
       },
       "original": {
@@ -765,11 +764,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1790055176,
-        "narHash": "sha256-5Ov7T9wGmJheW8HUnceObgInZ6aNA69BeOOjKgOrX1E=",
+        "lastModified": 1790065775,
+        "narHash": "sha256-3VUGrvjbUX6np2G8WmFA50yFTWXEb0bnNZLJxLz3kyg=",
         "owner": "max-sixty",
         "repo": "worktrunk",
-        "rev": "9e570007a3cd9df9462d68a222ebaa5a88707285",
+        "rev": "22bd6beba449823da4641e366d3572e7ebb22192",
         "type": "github"
       },
       "original": {
