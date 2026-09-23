@@ -11,7 +11,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "agent-browser";
   # `just update-agent-browser` pins the browser recommended by this extension.
   version = "0.38.1";
-  passthru.piAgentBrowserNativeVersion = "0.7.0";
+  passthru.piAgentBrowserNativeVersion = "0.7.1";
 
   src = fetchurl {
     url = "https://registry.npmjs.org/agent-browser/-/agent-browser-${finalAttrs.version}.tgz";
