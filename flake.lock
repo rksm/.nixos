@@ -295,11 +295,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1790233860,
-        "narHash": "sha256-77ni9vZX1sYvgYFpvihpzOBddltIUOTO6Nvityqc5yM=",
+        "lastModified": 1790321820,
+        "narHash": "sha256-vaF7RUpz7h3E82G6pCiSvznpcNDivtcv5CbDz/00jrA=",
         "owner": "rksm",
         "repo": "herdr",
-        "rev": "ba6ee0e4860819ae93ef02b1b23999626310b93b",
+        "rev": "a968698664ce71e3cc08c2958a1f990f243fc547",
         "type": "github"
       },
       "original": {
@@ -613,11 +613,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1790231176,
-        "narHash": "sha256-uOSRGMqHw7bWOOmDplEX1X1RNXGKSsgYWBhkNjlHo4k=",
+        "lastModified": 1790317600,
+        "narHash": "sha256-JF1InZrdcrghH5w6Dm7XQfjWorTl0t20tPOKNR5gJQk=",
         "owner": "hypervideo",
         "repo": "skillshare-nix",
-        "rev": "e1644e3faf1ea7c3f2cfc75b7f00d7a36ac5900f",
+        "rev": "5d8cf1cc4d960503111d14b17dc6911cebf9b58f",
         "type": "github"
       },
       "original": {
@@ -764,11 +764,11 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1790311920,
-        "narHash": "sha256-9sqQoYdqXsWGy5LIrnm5BDXf/zdaX8tizaTdr6VcSaA=",
+        "lastModified": 1790321258,
+        "narHash": "sha256-2fOfw9Stm2I7fRjRVF6VTdE9wZkt/XHcQnNv/rKVGXg=",
         "owner": "max-sixty",
         "repo": "worktrunk",
-        "rev": "f637b38f8a12d491c9257f43e8022680d8fafadc",
+        "rev": "1f71c08dd99263f36b12a508fad000f0d09a0c4b",
         "type": "github"
       },
       "original": {
