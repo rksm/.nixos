@@ -1,0 +1,51 @@
+--- a/SKILL.md
++++ b/SKILL.md
+@@ -2,3 +2,3 @@
+ name: herdr
+-description: "Control Herdr, a terminal multiplexer for coding agents. Use only when the user explicitly mentions Herdr or asks to use Herdr to inspect or control panes, tabs, workspaces, commands, or another agent. Do not use merely because a task could benefit from a background terminal, delegation, or parallel work. Requires HERDR_ENV=1."
++description: "Control Herdr, a terminal multiplexer for coding agents. Use when the user explicitly requests Herdr or another skill requires it. Do not use merely because a task could benefit from a background terminal, delegation, or parallel work. Requires HERDR_ENV=1."
+ ---
+@@ -108,11 +108,13 @@
+ 
+-Default to a sibling pane in the current tab and the current working directory. Do not create a workspace, tab, worktree, or different cwd unless the user explicitly requests that topology or location.
+-
+-Honor a direction requested by the user. Otherwise inspect the caller pane:
+-
+-```bash
+-herdr pane layout --pane "$HERDR_PANE_ID"
+-```
+-
+-Split a wide pane to the right and a narrow or tall pane down. Avoid repeated same-direction splits that create unusably narrow columns or short rows. Keep the user's focus in the calling pane and explicitly preserve the caller's working directory:
++Default to a new tab in the current workspace and working directory. Honor a layout or working directory specified by the user or invoking skill. Create a workspace or worktree only when the user or invoking skill requests it.
++
++Keep the user's focus in the calling pane:
++
++```bash
++herdr tab create --workspace "$HERDR_WORKSPACE_ID" --cwd "$PWD" --label 'reviewer' --no-focus
++```
++
++Read the tab ID from `.result.tab.tab_id` and the pane ID from `.result.root_pane.pane_id`.
++
++For a requested split, use the specified direction. If no direction was specified, inspect the caller with `herdr pane layout --pane "$HERDR_PANE_ID"`. Split a wide pane right and a narrow or tall pane down:
+ 
+@@ -172,11 +174,11 @@
+ 
+-## Run an ordinary command in another pane
+-
+-Create a sibling pane with the same geometry rule, preserve the caller's working directory, and keep user focus unchanged:
+-
+-```bash
+-herdr pane split --current --direction right --cwd "$PWD" --no-focus
+-```
+-
+-Read the new pane ID from `.result.pane.pane_id`, then run and inspect the command:
++## Run an ordinary command in another tab
++
++Use the same tab default for ordinary commands. Preserve the caller's working directory and keep user focus unchanged:
++
++```bash
++herdr tab create --workspace "$HERDR_WORKSPACE_ID" --cwd "$PWD" --label 'tests' --no-focus
++```
++
++Read the new pane ID from `.result.root_pane.pane_id`, then run and inspect the command:
+ 
