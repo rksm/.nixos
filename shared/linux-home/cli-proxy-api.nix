@@ -8,6 +8,8 @@
 }:
 
 let
+  localProxy = config.services.cli-proxy-api.enableLocal;
+  proxyUrl = if localProxy then "http://127.0.0.1:8317" else "http://agent-1.taileff843.ts.net:8317";
   authDir = "/home/${user}/configs/ai/cli-proxy-api/auths/${machine}";
 
   claudeCode = pkgs.llm-agents.claude-code;
@@ -19,7 +21,7 @@ let
     ${pkgs.coreutils}/bin/printf '%s\n' ${lib.escapeShellArg cliProxyKey}
   '';
 
-  requireCliProxyApi = ''
+  requireCliProxyApi = lib.optionalString localProxy ''
     if ! ${pkgs.systemd}/bin/systemctl --user is-active --quiet cli-proxy-api.service; then
       echo "CLIProxyAPI is not running." >&2
       echo "Check it with: systemctl --user status cli-proxy-api.service" >&2
@@ -39,7 +41,7 @@ let
         makeWrapper ${lib.getExe claudeCode} "$out/bin/claude" \
           --run ${lib.escapeShellArg requireCliProxyApi} \
           --unset ANTHROPIC_API_KEY \
-          --set ANTHROPIC_BASE_URL "http://127.0.0.1:8317" \
+          --set ANTHROPIC_BASE_URL "${proxyUrl}" \
           --set ANTHROPIC_AUTH_TOKEN ${lib.escapeShellArg cliProxyKey}
 
         makeWrapper "$out/bin/claude" "$out/bin/claude-gpt" \
@@ -71,7 +73,7 @@ let
           --add-flag "-c" \
           --add-flag ${lib.escapeShellArg ''model_providers.cli_proxy_api.name="CLIProxyAPI"''} \
           --add-flag "-c" \
-          --add-flag ${lib.escapeShellArg ''model_providers.cli_proxy_api.base_url="http://127.0.0.1:8317/v1"''} \
+          --add-flag ${lib.escapeShellArg ''model_providers.cli_proxy_api.base_url="${proxyUrl}/v1"''} \
           --add-flag "-c" \
           --add-flag ${lib.escapeShellArg ''model_providers.cli_proxy_api.env_key="CLI_PROXY_API_KEY"''} \
           --add-flag "-c" \
@@ -93,47 +95,62 @@ let
         makeWrapper ${lib.getExe grokCli} "$out/bin/grok" \
           --run ${lib.escapeShellArg requireCliProxyApi} \
           --set GROK_AUTH_PROVIDER_COMMAND ${lib.escapeShellArg grokAuthProvider} \
-          --set GROK_MODELS_BASE_URL "http://127.0.0.1:8317/v1"
+          --set GROK_MODELS_BASE_URL "${proxyUrl}/v1"
 
         ln -s ${lib.getExe grokCli} "$out/bin/grok-plain"
       '';
 in
 {
-  # Every host reads the same synced config.yaml, and CLIProxyAPI does not expand
-  # variables in auth-dir, so config.yaml names ~/.cli-proxy-api/auths and this
-  # symlink points that at one directory per host under ~/configs. Each host then
-  # owns its credential files instead of overwriting the other hosts' copies.
-  #
-  # Give each host its own login per provider. A provider rotates the refresh
-  # token on every refresh and revokes the previous one, so two hosts holding
-  # copies of one grant lock each other out however the files are stored.
-  # cli-proxy-api -config ~/.cli-proxy-api/config.yaml -claude-login
-  # cli-proxy-api -config ~/.cli-proxy-api/config.yaml -codex-login
-  # cli-proxy-api -config ~/.cli-proxy-api/config.yaml -xai-login
-  home.activation.cliProxyApiAuthDir = lib.hm.dag.entryBefore [ "writeBoundary" ] ''
-    run ${pkgs.coreutils}/bin/mkdir -p ${lib.escapeShellArg authDir}
-  '';
-
-  home.file.".cli-proxy-api/auths" = {
-    source = config.lib.file.mkOutOfStoreSymlink authDir;
-    force = true;
+  options.services.cli-proxy-api.enableLocal = lib.mkOption {
+    type = lib.types.bool;
+    default = machine == "agent-1";
+    description = "Run CLI Proxy API locally and connect agents to it instead of agent-1.";
   };
 
-  systemd.user.services.cli-proxy-api = {
-    Unit.Description = "CLIProxyAPI";
-    Service = {
-      Type = "simple";
-      ExecStart = "${lib.getExe cliProxyApi} -config /home/${user}/.cli-proxy-api/config.yaml";
-      Restart = "on-failure";
-      RestartSec = 5;
+  config = {
+    # Every host reads the same synced config.yaml, and CLIProxyAPI does not expand
+    # variables in auth-dir, so config.yaml names ~/.cli-proxy-api/auths and this
+    # symlink points that at one directory per host under ~/configs. Each host then
+    # owns its credential files instead of overwriting the other hosts' copies.
+    #
+    # Give each host its own login per provider. A provider rotates the refresh
+    # token on every refresh and revokes the previous one, so two hosts holding
+    # copies of one grant lock each other out however the files are stored.
+    # cli-proxy-api -config ~/.cli-proxy-api/config.yaml -claude-login
+    # cli-proxy-api -config ~/.cli-proxy-api/config.yaml -codex-login
+    # cli-proxy-api -config ~/.cli-proxy-api/config.yaml -xai-login
+    home.activation.cliProxyApiAuthDir = lib.mkIf localProxy (
+      lib.hm.dag.entryBefore [ "writeBoundary" ] ''
+        run ${pkgs.coreutils}/bin/mkdir -p ${lib.escapeShellArg authDir}
+      ''
+    );
+
+    home.file.".cli-proxy-api/config.yaml" = lib.mkIf localProxy {
+      source = config.lib.file.mkOutOfStoreSymlink "/home/${user}/configs/ai/cli-proxy-api/config.yaml";
+      force = true;
     };
-    Install.WantedBy = [ "default.target" ];
-  };
 
-  home.packages = [
-    cliProxyApi
-    grokCommands
-    codexCommands
-    claudeCommands
-  ];
+    home.file.".cli-proxy-api/auths" = lib.mkIf localProxy {
+      source = config.lib.file.mkOutOfStoreSymlink authDir;
+      force = true;
+    };
+
+    systemd.user.services.cli-proxy-api = lib.mkIf localProxy {
+      Unit.Description = "CLIProxyAPI";
+      Service = {
+        Type = "simple";
+        ExecStart = "${lib.getExe cliProxyApi} -config /home/${user}/.cli-proxy-api/config.yaml";
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
+      Install.WantedBy = [ "default.target" ];
+    };
+
+    home.packages = [
+      grokCommands
+      codexCommands
+      claudeCommands
+    ]
+    ++ lib.optional localProxy cliProxyApi;
+  };
 }

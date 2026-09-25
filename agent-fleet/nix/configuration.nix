@@ -55,8 +55,29 @@ in
     neededForBoot = true;
   };
 
-  # Stop home writers if the volume mount disappears.
   systemd.services = lib.mkIf (config.networking.hostName == "agent-1") {
+    tailscale-serve-cli-proxy-api =
+      lib.mkIf config.home-manager.users.robert.services.cli-proxy-api.enableLocal
+        {
+          description = "Expose CLI Proxy API to the tailnet";
+          after = [
+            "network-online.target"
+            "tailscaled.service"
+          ];
+          requires = [ "tailscaled.service" ];
+          wants = [ "network-online.target" ];
+          wantedBy = [ "multi-user.target" ];
+          serviceConfig = {
+            Type = "oneshot";
+            RemainAfterExit = true;
+            Restart = "on-failure";
+            RestartSec = "5s";
+            ExecStart = "${pkgs.tailscale}/bin/tailscale serve --bg --yes --tcp=8317 tcp://127.0.0.1:8317";
+            ExecStop = "${pkgs.tailscale}/bin/tailscale serve --tcp=8317 off";
+          };
+        };
+
+    # Stop home writers if the volume mount disappears.
     syncthing = {
       unitConfig.RequiresMountsFor = [ "/home" ];
       bindsTo = [ "home.mount" ];

@@ -198,7 +198,8 @@ The system installs these tools from =llm-agents.nix=:
 
 - Hermes Agent: =hermes=
 - Antigravity CLI: =agy=
-- Claude Code without the proxy: =claude=
+- Claude Code through CLI Proxy API: =claude= and =claude-gpt=
+- Claude Code without the proxy: =claude-plain=
 - Grok Build through CLI Proxy API: =grok=
 - Grok Build without the proxy: =grok-plain=
 - Herdr: =herdr=
@@ -206,22 +207,48 @@ The system installs these tools from =llm-agents.nix=:
 - Claude usage: =ccusage=
 - RTK: =rtk=
 
-Codex comes from =codex-cli-nix=. Use =codex= through CLI Proxy API or
+Codex comes from =llm-agents.nix=. Use =codex= through CLI Proxy API or
 =codex-plain= without the proxy. Skillshare comes from =skillshare-nix= and is
 available as =skillshare=.
 
-CLI Proxy API runs as a user service and reads the synchronized configuration
-from =~/configs/ai/cli-proxy-api/config.yaml=. Its OAuth credentials live in one
-directory per host, =~/configs/ai/cli-proxy-api/auths/HOST=. Home Manager links
-=~/.cli-proxy-api/auths= to the directory of the current host. The shared
-=config.yaml= can name only one =auth-dir=, and CLI Proxy API does not expand
-variables in it.
+CLI Proxy API runs only on =agent-1= by default. Claude, Codex, and Grok on
+Storm and Tuxedo connect to =http://agent-1.taileff843.ts.net:8317= over
+Tailscale. Agents on =agent-1= use its loopback address. The remote wrappers do
+not require a local proxy service. The =*-plain= commands bypass the proxy.
 
-The control panel listens on the loopback address of its own host. Reach the
-panel of a server from your workstation with =just serve-cliproxyapi HOST=, which
-forwards the port over SSH and opens the page. =HOST= defaults to =agent-1=.
+Tailscale Serve forwards TCP port =8317= to =127.0.0.1:8317= on =agent-1=.
+This includes the API and control panel. The port is available only on the
+tailnet. The public firewall stays closed. The Syncthing HTTPS endpoint stays
+on port =443=. Clients need a Tailscale connection and access to port =8317=.
 
-Log in on each server:
+To use a local proxy on Storm or Tuxedo, add this flag inside the configuration
+in =hosts/storm/home.nix= or =hosts/tuxedo/home.nix=:
+
+#+BEGIN_SRC nix
+services.cli-proxy-api.enableLocal = true;
+#+END_SRC
+
+Rebuild that host with =just switch=. The flag installs and starts the local
+proxy and points all three agents at it. Remove the flag or set it to =false=
+to return to =agent-1=. This fallback is manual.
+
+Apply the server configuration first with =just agent-fleet-deploy agent-1=
+from the repository root, then rebuild Storm and Tuxedo. To check both modes
+without deploying, run this from the repository root:
+
+#+BEGIN_SRC sh
+nix eval --impure --json --file scripts/check-cli-proxy-api.nix
+#+END_SRC
+
+Each enabled proxy reads =~/configs/ai/cli-proxy-api/config.yaml=. Its OAuth
+credentials live in =~/configs/ai/cli-proxy-api/auths/HOST=. Home Manager links
+=~/.cli-proxy-api/auths= to that directory. Disabling the local proxy preserves
+the stored credentials.
+
+Open the control panel with =just serve-cliproxyapi agent-1= from the repository
+root. This forwards the port over SSH and opens the page.
+
+Log in on =agent-1=, and on any host where you enable the local fallback:
 
 #+BEGIN_SRC sh
 cli-proxy-api -config ~/.cli-proxy-api/config.yaml -claude-login
