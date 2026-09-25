@@ -14,6 +14,11 @@ switch cmd="switch" *args="":
         bash -o pipefail -c 'sudo nixos-rebuild {{ cmd }} --impure {{ args }} |& nom'
     fi
 
+# Build locally, copy to HOST, and switch there with sudo.
+[positional-arguments]
+switch-remote host:
+    nixos-rebuild switch --flake ".#$1" --impure --target-host "$1" --sudo
+
 switch-debug:
     just switch --print-build-logs --verbose
 
