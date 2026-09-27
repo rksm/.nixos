@@ -115,6 +115,11 @@
             nixosConfig = self.nixosConfigurations.${machine}.config;
           };
           home-manager.users.${user} = import homeModule;
+
+          systemd.services."home-manager-${user}" = {
+            wants = [ "network-online.target" ];
+            after = [ "network-online.target" ];
+          };
         }
         {
           nixpkgs.overlays = [
