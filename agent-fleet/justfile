@@ -214,7 +214,7 @@ _sync host:
         shared/home/agent-files.nix \
         shared/linux-home/command-line.nix \
         shared/linux-home/cli-proxy-api.nix \
-        shared/linux-home/pi.nix \
+        shared/home/pi.nix \
         shared/linux/moshi.nix \
         shared/linux/nix.nix \
         shared/linux/syncthing.nix \
