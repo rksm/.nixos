@@ -3,7 +3,7 @@
 {
 
   home.sessionVariables = {
-    EDITOR = "emacsclient -n";
+    EDITOR = "emacsclient";
   };
 
   programs.emacs = {

@@ -42,7 +42,7 @@ in
 {
 
   home.sessionVariables = {
-    EDITOR = "emacsclient -n";
+    EDITOR = "emacsclient";
   };
 
   home.sessionPath = [

@@ -3,7 +3,7 @@
 {
 
   home.sessionVariables = {
-    EDITOR = "emacsclient -n";
+    EDITOR = "emacsclient";
     GEMINI_API_KEY = builtins.readFile ../secrets/GEMINI_API_KEY.key;
   };
 
