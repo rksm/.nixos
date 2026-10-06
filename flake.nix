@@ -68,6 +68,7 @@
       cliproxyapi = nixpkgs.legacyPackages.${system}.callPackage ./packages/cliproxyapi/package.nix { };
       fastmail-cli = nixpkgs.legacyPackages.${system}.callPackage ./packages/fm/default.nix { };
       slackcli = nixpkgs.legacyPackages.${system}.callPackage ./packages/slackcli/default.nix { };
+      linear-cli = nixpkgs.legacyPackages.${system}.callPackage ./packages/linear-cli/package.nix { };
       computer-use-linux =
         nixpkgs.legacyPackages.${system}.callPackage ./packages/computer-use-linux/package.nix
           { };
@@ -97,6 +98,7 @@
           agent-browser
           fastmail-cli
           slackcli
+          linear-cli
           cliproxyapi
           computer-use-linux
           computer-use-desktop
@@ -198,6 +200,7 @@
           agent-browser
           fastmail-cli
           slackcli
+          linear-cli
           cliproxyapi
           computer-use-linux
           computer-use-desktop

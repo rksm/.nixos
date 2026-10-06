@@ -73,6 +73,9 @@ update-moshi:
 update-agent-browser:
     nix shell --inputs-from . nixpkgs#python3 -c python3 packages/agent-browser/update.py
 
+update-linear-cli:
+    nix shell --inputs-from . nixpkgs#curl nixpkgs#jq nixpkgs#gnused -c packages/linear-cli/update.sh
+
 update-computer-use:
     nix develop .#computer-use -c nix-update --flake --use-github-releases computer-use-linux
     just check-computer-use
@@ -105,6 +108,8 @@ update-ai:
     set -e
 
     root="$PWD"
+    just update-linear-cli
+    updated_files="$root/packages/linear-cli/package.nix"
     if [ "$(uname)" = "Darwin" ]; then
         cd macos
         set -- \
@@ -126,7 +131,7 @@ update-ai:
     fi
 
     nix flake update "$@"
-    updated_files="flake.lock"
+    updated_files="$updated_files flake.lock"
     if [ "$(uname)" != "Darwin" ]; then
         just update-agent-browser
         just update-computer-use
