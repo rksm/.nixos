@@ -37,6 +37,7 @@
   mount_k8s.enable = false;
   mount_nas_nfs.enable = false;
   mullvad.enable = true;
+  networking.networkmanager.plugins = [ pkgs.networkmanager-openvpn ];
   networking.wireless.enable = lib.mkForce false;
   nvidia.enable = true;
   postgres.enable = false;
