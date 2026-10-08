@@ -17,15 +17,15 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "computer-use-linux";
-  version = "0.7.11";
+  version = "0.7.12";
 
   src = fetchFromGitHub {
     owner = "agent-sh";
     repo = "computer-use-linux";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-V3ACI0qnz2uhfv1T7NZKg79dg6hCFdJm8Qnz/pSnQlU=";
+    hash = "sha256-/bHPodtYFV3sLXrPfxysmK4ByN3z6pOSJ7Ve5eIauU0=";
   };
-  cargoHash = "sha256-PvRTFC/xk3soz170KtTi7R759ZoSvkvc16iPpjxH6CM=";
+  cargoHash = "sha256-V7okBebkBz3smQ5wn+zR+uNqkd72FZI8Se58OF2WW38=";
 
   patches = [ ./bound-app-discovery.patch ];
 
@@ -34,6 +34,10 @@ rustPlatform.buildRustPackage (finalAttrs: {
   env.LD_LIBRARY_PATH = lib.makeLibraryPath [ libxkbcommon ];
   # Executable fixtures and process-wide environment changes need serial tests.
   checkFlags = [ "--test-threads=1" ];
+
+  preCheck = ''
+    export XDG_CACHE_HOME="$TMPDIR/.cache"
+  '';
 
   postPatch = ''
     # Notification tests need executable paths that exist in the Nix sandbox.
@@ -47,7 +51,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       --replace-fail 'computer-use-linux-ydotool-{label}-{}-{}' 'cu-{label}-{}-{}'
     substituteInPlace src/server.rs \
       --replace-fail 'cul-pointer-safety-{}-{}' 'cu-p-{}-{}'
-    substituteInPlace src/windowing/backends/kwin.rs \
+    substituteInPlace src/windowing/backends/kwin.rs src/gnome_extension.rs \
       --replace-fail '"--session", "--nofork"' '"--config-file=${dbus}/share/dbus-1/session.conf", "--nofork"'
   '';
 
