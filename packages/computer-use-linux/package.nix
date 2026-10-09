@@ -17,15 +17,15 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "computer-use-linux";
-  version = "0.7.12";
+  version = "0.7.13";
 
   src = fetchFromGitHub {
     owner = "agent-sh";
     repo = "computer-use-linux";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-/bHPodtYFV3sLXrPfxysmK4ByN3z6pOSJ7Ve5eIauU0=";
+    hash = "sha256-+xT6rQn38XcjCsRnMsZlZ9rcLf+yEPwTATooe+Aw18s=";
   };
-  cargoHash = "sha256-V7okBebkBz3smQ5wn+zR+uNqkd72FZI8Se58OF2WW38=";
+  cargoHash = "sha256-dhbZKZYovSLrWoy73UXFE/d7NLHwwBuLxTfouDQa6zY=";
 
   patches = [ ./bound-app-discovery.patch ];
 
@@ -47,8 +47,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
     substituteInPlace src/diagnostics.rs \
       --replace-fail '/bin/sleep' '${coreutils}/bin/sleep'
     # Keep test socket paths below AF_UNIX's limit inside the Nix build directory.
-    substituteInPlace src/ydotool.rs \
-      --replace-fail 'computer-use-linux-ydotool-{label}-{}-{}' 'cu-{label}-{}-{}'
     substituteInPlace src/server.rs \
       --replace-fail 'cul-pointer-safety-{}-{}' 'cu-p-{}-{}'
     substituteInPlace src/windowing/backends/kwin.rs src/gnome_extension.rs \
