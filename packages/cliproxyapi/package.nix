@@ -9,13 +9,13 @@
 
 buildGoModule (finalAttrs: {
   pname = "cliproxyapi";
-  version = "8.0.22-unstable-2026-10-09";
+  version = "8.0.23-unstable-2026-10-11";
 
   src = fetchFromGitHub {
     owner = "router-for-me";
     repo = "CLIProxyAPI";
-    rev = "9a7db8e36daea095bfdd4deff7dd60cad6a6d13a";
-    hash = "sha256-41B28ZeFl2H2DP1HIR17vcPOvunp48p3rW7zDijVJiw=";
+    rev = "15d2148bc24b4331ed8858f692e822cbb8026950";
+    hash = "sha256-Yt10mKOMrAZ14BTnVotqTC81zNmoPh6I3eRIja8QHbA=";
   };
 
   vendorHash = "sha256-r3yWkdMcM40G9jV7MxW/qNv3E9WrHavFilW24quEf+8=";

@@ -9,6 +9,7 @@
   gnome-screenshot,
   libxkbcommon,
   procps,
+  python3,
   wmctrl,
   xdotool,
   xprop,
@@ -17,25 +18,29 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "computer-use-linux";
-  version = "0.7.13";
+  version = "0.7.15";
 
   src = fetchFromGitHub {
     owner = "agent-sh";
     repo = "computer-use-linux";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-+xT6rQn38XcjCsRnMsZlZ9rcLf+yEPwTATooe+Aw18s=";
+    hash = "sha256-2lNPRg8xig7aSBVoYp/Vsezrd4gdd68YZp2R/KbvdhY=";
   };
-  cargoHash = "sha256-dhbZKZYovSLrWoy73UXFE/d7NLHwwBuLxTfouDQa6zY=";
+  cargoHash = "sha256-r8vPKCPYT3QxtlmBkH0buM4QrC+Zn3mCUNHvRf5IMc0=";
 
   patches = [ ./bound-app-discovery.patch ];
 
   nativeBuildInputs = [ makeWrapper ];
-  nativeCheckInputs = [ dbus ];
+  nativeCheckInputs = [
+    dbus
+    python3
+  ];
   env.LD_LIBRARY_PATH = lib.makeLibraryPath [ libxkbcommon ];
   # Executable fixtures and process-wide environment changes need serial tests.
   checkFlags = [ "--test-threads=1" ];
 
   preCheck = ''
+    export HOME="$TMPDIR"
     export XDG_CACHE_HOME="$TMPDIR/.cache"
   '';
 
