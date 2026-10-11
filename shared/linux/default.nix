@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 {
   imports = [
     ./linux.nix
@@ -27,7 +27,13 @@
     ./computer-use.nix
   ];
 
-  environment.variables.EDITOR = "emacs -Q -nw";
+  environment.variables.EDITOR = toString (pkgs.writeShellScript "editor" ''
+    # Over SSH, a running Emacs server would open the file on the desktop, not in this terminal.
+    if [ -n "$SSH_CONNECTION" ]; then
+      exec emacs -Q -nw "$@"
+    fi
+    exec emacsclient -q --alternate-editor="emacs -Q -nw" "$@"
+  '');
 
   more-nix-substituters = [
     "https://cache.flox.dev"
