@@ -103,6 +103,12 @@ pair-moshi:
 macos-switch:
     sudo just switch
 
+update-with-agent:
+    codex --yolo \
+      -m gpt-6.1-sol \
+      -c 'model_reasoning_effort="xhigh"' \
+      exec 'I want you to run `just update-ai && just agent-fleet-deploy`. If you run into any issues, fix them and continue. Repeat until the update and deployments are successful. Should the host `tuxedo` be online, please also run `just switch-remote tuxedo` afterwards. Finally, give me a summary of what was updated and deployed, and any issues you encountered and how you resolved them. Include token usage and approximate cost of the run.'
+
 update-ai:
     #!/usr/bin/env sh
     set -e
