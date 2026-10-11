@@ -65,6 +65,10 @@ in
     force = true;
   };
 
+  # Interactive question tool for the grilling skill. Pi ships it only as an example.
+  home.file."${lib.removePrefix "${config.home.homeDirectory}/" piAgentDir}/extensions/questionnaire.ts".source =
+    "${pkgs.llm-agents.pi}/libexec/pi/examples/extensions/questionnaire.ts";
+
   home.activation.configurePiAuth = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [[ -v DRY_RUN ]]; then
       echo "Would configure Pi to read the shared OpenRouter key"
