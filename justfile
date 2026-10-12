@@ -76,6 +76,16 @@ update-agent-browser:
 update-linear-cli:
     nix shell --inputs-from . nixpkgs#curl nixpkgs#jq nixpkgs#gnused -c packages/linear-cli/update.sh
 
+# Pin Worktrunk to its newest release if that release has the locked commit.
+update-worktrunk:
+    #!/usr/bin/env sh
+    set -e
+    flake_dir=.
+    if [ "$(uname)" = "Darwin" ]; then
+        flake_dir=macos
+    fi
+    nix shell --inputs-from . nixpkgs#python3 -c python3 scripts/update_worktrunk.py "$flake_dir"
+
 update-computer-use:
     nix develop .#computer-use -c nix-update --flake --use-github-releases computer-use-linux
     just check-computer-use
@@ -115,6 +125,7 @@ update-ai:
 
     root="$PWD"
     just update-linear-cli
+    just update-worktrunk
     updated_files="$root/packages/linear-cli/package.nix"
     if [ "$(uname)" = "Darwin" ]; then
         cd macos
@@ -122,8 +133,7 @@ update-ai:
           ast-outline \
           herdr-nix \
           llm-agents \
-          skillshare-nix \
-          worktrunk-nix
+          skillshare-nix
         commit_message="macos: update ai"
     else
         set -- \
@@ -131,13 +141,12 @@ update-ai:
           ast-outline \
           herdr-nix \
           llm-agents \
-          skillshare-nix \
-          worktrunk-nix
+          skillshare-nix
         commit_message="linux: update ai"
     fi
 
     nix flake update "$@"
-    updated_files="$updated_files flake.lock"
+    updated_files="$updated_files flake.nix flake.lock"
     if [ "$(uname)" != "Darwin" ]; then
         just update-agent-browser
         just update-computer-use

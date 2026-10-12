@@ -26,7 +26,9 @@
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
     flux-reconciler.url = "github:rksm/flux-reconciler";
-    worktrunk-nix.url = "github:max-sixty/worktrunk";
+    # A release tag, or a main commit until a release contains it.
+    # `just update-worktrunk` moves it forward.
+    worktrunk-nix.url = "github:max-sixty/worktrunk/397136ea31a6840901f17d5e68c6450b1a99299e";
     ai-quotas = {
       url = "github:rksm/ai-quotas";
       inputs.nixpkgs.follows = "nixpkgs";

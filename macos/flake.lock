@@ -711,6 +711,7 @@
       "original": {
         "owner": "max-sixty",
         "repo": "worktrunk",
+        "rev": "e8b264c011afd825c834991b1ffe2d689515da8d",
         "type": "github"
       }
     }
