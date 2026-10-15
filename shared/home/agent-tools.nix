@@ -7,6 +7,7 @@
 {
   home.packages = with pkgs; [
     agent-browser
+    cf
     fastmail-cli
     linear-cli
     slackcli
@@ -19,6 +20,8 @@
     run ${pkgs.rsync}/bin/rsync -rLpt --chmod=Du+w --delete \
       "${pkgs.agent-browser}/skills/agent-browser/" "$skills_dir/agent-browser/"
     run ${pkgs.rsync}/bin/rsync -rLpt --chmod=Du+w --delete \
+      "${pkgs.cf}/share/cf/skills/cf-cli/" "$skills_dir/cf-cli/"
+    run ${pkgs.rsync}/bin/rsync -rLpt --chmod=Du+w --delete \
       "${pkgs.fastmail-cli}/share/fm/skills/review-email/" "$skills_dir/fastmail/review-email/"
     run ${pkgs.rsync}/bin/rsync -rLpt --chmod=Du+w --delete \
       "${pkgs.linear-cli}/share/linear-cli/skills/linear-cli/" "$skills_dir/linear-cli/"
@@ -29,6 +32,7 @@
     # Do not edit this copy. Home Manager overwrites it on activation.\
     # Change the package definition under packages/ instead.' \
       "$skills_dir/agent-browser/SKILL.md" \
+      "$skills_dir/cf-cli/SKILL.md" \
       "$skills_dir/fastmail/review-email/SKILL.md" \
       "$skills_dir/linear-cli/SKILL.md" \
       "$skills_dir/slackcli/SKILL.md"

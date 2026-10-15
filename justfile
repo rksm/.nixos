@@ -76,6 +76,9 @@ update-agent-browser:
 update-linear-cli:
     nix shell --inputs-from . nixpkgs#curl nixpkgs#jq nixpkgs#gnused -c packages/linear-cli/update.sh
 
+update-cf:
+    nix shell --inputs-from . nixpkgs#curl nixpkgs#jq nixpkgs#gnused nixpkgs#nodejs nixpkgs#prefetch-npm-deps -c packages/cf/update.sh
+
 # Pin Worktrunk to its newest release if that release has the locked commit.
 update-worktrunk:
     #!/usr/bin/env sh
@@ -125,8 +128,9 @@ update-ai:
 
     root="$PWD"
     just update-linear-cli
+    just update-cf
     just update-worktrunk
-    updated_files="$root/packages/linear-cli/package.nix"
+    updated_files="$root/packages/linear-cli/package.nix $root/packages/cf/package.nix $root/packages/cf/package-lock.json"
     if [ "$(uname)" = "Darwin" ]; then
         cd macos
         set -- \

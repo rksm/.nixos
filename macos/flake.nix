@@ -81,6 +81,7 @@
                 fastmail-cli = final.callPackage ../packages/fm/default.nix { };
                 slackcli = final.callPackage ../packages/slackcli/default.nix { };
                 linear-cli = final.callPackage ../packages/linear-cli/package.nix { };
+                cf = final.callPackage ../packages/cf/package.nix { };
               };
             in
             {
