@@ -71,6 +71,7 @@
       fastmail-cli = nixpkgs.legacyPackages.${system}.callPackage ./packages/fm/default.nix { };
       slackcli = nixpkgs.legacyPackages.${system}.callPackage ./packages/slackcli/default.nix { };
       linear-cli = nixpkgs.legacyPackages.${system}.callPackage ./packages/linear-cli/package.nix { };
+      cf = nixpkgs.legacyPackages.${system}.callPackage ./packages/cf/package.nix { };
       computer-use-linux =
         nixpkgs.legacyPackages.${system}.callPackage ./packages/computer-use-linux/package.nix
           { };
@@ -101,6 +102,7 @@
           fastmail-cli
           slackcli
           linear-cli
+          cf
           cliproxyapi
           computer-use-linux
           computer-use-desktop
@@ -203,6 +205,7 @@
           fastmail-cli
           slackcli
           linear-cli
+          cf
           cliproxyapi
           computer-use-linux
           computer-use-desktop
