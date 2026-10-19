@@ -18,15 +18,15 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "computer-use-linux";
-  version = "0.7.19";
+  version = "0.7.20";
 
   src = fetchFromGitHub {
     owner = "agent-sh";
     repo = "computer-use-linux";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-Q4nhAe1Yfqz0y+tjm3ZnM/VjUog7Jx+zOIcyWLPr71w=";
+    hash = "sha256-w48iak2GqwYJdesm+OVGPGumFpfILE7UAOeAj4JRNGg=";
   };
-  cargoHash = "sha256-qVB1gv858E4aetfqpGmgyHRmowmJjWPpfXr3k0lBg3c=";
+  cargoHash = "sha256-5jiVhdIc5ogcDGn3xjL7A27+Lup9nR8i1zzoYdIMFuc=";
 
   patches = [ ./bound-app-discovery.patch ];
 
@@ -48,6 +48,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     # Test helpers need executable paths that exist in the Nix sandbox.
     substituteInPlace src/server.rs \
       --replace-fail '/bin/cat' '${coreutils}/bin/cat' \
+      --replace-fail '/bin/cp' '${coreutils}/bin/cp' \
       --replace-fail '/bin/true' '${coreutils}/bin/true' \
       --replace-fail '/bin/false' '${coreutils}/bin/false'
     substituteInPlace src/diagnostics.rs \
