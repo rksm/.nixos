@@ -151,6 +151,31 @@
         }
       ];
     };
+
+    # Expose the default output's monitor as an input, so apps can record
+    # system audio without a microphone.
+    extraConfig.pipewire."90-system-loopback" = {
+      "context.modules" = [
+        {
+          name = "libpipewire-module-loopback";
+          args = {
+            "node.description" = "System loopback";
+            "capture.props" = {
+              # Follow the default output and capture its monitor ports.
+              "stream.capture.sink" = true;
+              "node.passive" = true;
+            };
+            "playback.props" = {
+              "node.name" = "system-loopback";
+              "media.class" = "Audio/Source";
+              "audio.position" = [ "FL" "FR" ];
+              # Prefer physical microphones when choosing the system default.
+              "priority.session" = 0;
+            };
+          };
+        }
+      ];
+    };
   };
 
   # Enable touchpad support (enabled default in most desktopManager).
