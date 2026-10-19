@@ -28,6 +28,24 @@
     '';
   };
 
+  # Prefer the RØDE microphone. WirePlumber ranks microphones by
+  # priority.session. It picks the highest one when no default mic is chosen.
+  # It also picks it for the mic inside System + Mic while System + Mic itself
+  # is the default. ALSA ranks the webcams (C920: 2109, Cam Link: 2108) above
+  # the RØDE (2100), so raise the RØDE above them. A mic chosen in GNOME
+  # Settings still wins while it is plugged in. Rules apply when WirePlumber
+  # creates the node, so run `systemctl --user restart wireplumber` after a switch.
+  # List microphones by priority:
+  #   pw-dump | jq -r '.[] | select(.info.props."media.class" == "Audio/Source") | "\(.info.props."priority.session")\t\(.info.props."node.description")"' | sort -rn
+  services.pipewire.wireplumber.extraConfig."90-mic-priority" = {
+    "monitor.alsa.rules" = [
+      {
+        matches = [ { "node.name" = "alsa_input.usb-R__DE_R__DE_NT-USB__C3654107-00.mono-fallback"; } ];
+        actions.update-props."priority.session" = 2200;
+      }
+    ];
+  };
+
   # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
   audio-video-image-editing.enable = true;
