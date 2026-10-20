@@ -9,9 +9,12 @@
     agent-browser
     cf
     fastmail-cli
+    firefox-cli
     linear-cli
     slackcli
   ];
+  # Firefox starts firefox-cli as its native messaging host.
+  mozilla.firefoxNativeMessagingHosts = [ pkgs.firefox-cli ];
   # Skillshare needs real source directories. Codex needs real SKILL.md files.
   # These directories belong to their packages and refresh on activation.
   home.activation.copyPackagedSkills = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
@@ -24,6 +27,8 @@
     run ${pkgs.rsync}/bin/rsync -rLpt --chmod=Du+w --delete \
       "${pkgs.fastmail-cli}/share/fm/skills/review-email/" "$skills_dir/fastmail/review-email/"
     run ${pkgs.rsync}/bin/rsync -rLpt --chmod=Du+w --delete \
+      "${pkgs.firefox-cli}/share/firefox-cli/skills/firefox-cli/" "$skills_dir/firefox-cli/"
+    run ${pkgs.rsync}/bin/rsync -rLpt --chmod=Du+w --delete \
       "${pkgs.linear-cli}/share/linear-cli/skills/linear-cli/" "$skills_dir/linear-cli/"
     run ${pkgs.rsync}/bin/rsync -rLpt --chmod=Du+w --delete \
       "${pkgs.slackcli}/share/slackcli/skills/slackcli/" "$skills_dir/slackcli/"
@@ -34,6 +39,7 @@
       "$skills_dir/agent-browser/SKILL.md" \
       "$skills_dir/cf-cli/SKILL.md" \
       "$skills_dir/fastmail/review-email/SKILL.md" \
+      "$skills_dir/firefox-cli/SKILL.md" \
       "$skills_dir/linear-cli/SKILL.md" \
       "$skills_dir/slackcli/SKILL.md"
   '';

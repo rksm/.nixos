@@ -162,7 +162,9 @@ update-ai:
         just update-computer-use
         # Pin the newest commit of the CLIProxyAPI dev branch.
         nix run --inputs-from . nixpkgs#nix-update -- --flake --version=branch=dev cliproxyapi
-        updated_files="$updated_files packages/agent-browser/package.nix packages/cliproxyapi/package.nix packages/computer-use-linux/package.nix"
+        # Pin the newest firefox-cli release, which has a signed extension.
+        nix run --inputs-from . nixpkgs#nix-update -- --flake --use-github-releases --subpackage node_modules firefox-cli
+        updated_files="$updated_files packages/agent-browser/package.nix packages/cliproxyapi/package.nix packages/computer-use-linux/package.nix packages/firefox-cli/package.nix"
     fi
     if ! git diff --quiet HEAD -- $updated_files; then
         git add $updated_files

@@ -76,6 +76,13 @@ in
             install_url = "https://addons.mozilla.org/firefox/downloads/latest/multi-account-containers/latest.xpi";
             installation_mode = "force_installed";
           };
+
+          # firefox-cli, signed for the release that packages/firefox-cli pins.
+          # Later updates come through the extension's own update URL.
+          "ff-cli-bridge@respawn.pro" = {
+            install_url = "https://github.com/respawn-llc/firefox-cli/releases/download/v${pkgs.firefox-cli.version}/firefox-cli-${pkgs.firefox-cli.version}.xpi";
+            installation_mode = "force_installed";
+          };
         };
 
         /* ---- PREFERENCES ---- */
