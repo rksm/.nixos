@@ -12,11 +12,11 @@
 
 buildNpmPackage (finalAttrs: {
   pname = "cf";
-  version = "1.0.0-beta.18";
+  version = "1.0.0-beta.19";
 
   src = fetchurl {
     url = "https://registry.npmjs.org/cf/-/cf-${finalAttrs.version}.tgz";
-    hash = "sha256-90HOzNeviKk4mOViPzYXg0EvNQ0wYdXrs0Y4cMjbzvY=";
+    hash = "sha256-Pby0mT8BVPa1tdm+vDxctVZO7CFFEiAI5NU+DKdPj70=";
   };
 
   # Cloudflare publishes the agent skill for cf in a separate repository.
@@ -35,7 +35,7 @@ buildNpmPackage (finalAttrs: {
     ${lib.getExe jq} 'del(.devDependencies)' package.json > package.json.new
     mv package.json.new package.json
   '';
-  npmDepsHash = "sha256-1zIPeRM2emlCmoGS2ABRQV6lmIqu6LMVrrFWurP0SR0=";
+  npmDepsHash = "sha256-R0VhxnQe2aQE2krvLClQTg1xZNMODaVykLbDt81mQ2Y=";
 
   dontNpmBuild = true;
   # workerd's install script runs its binary before autoPatchelf can fix it.

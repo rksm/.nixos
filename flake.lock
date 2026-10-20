@@ -295,11 +295,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1792134674,
-        "narHash": "sha256-tc5v9CgxhwHGQNKi3DFal5iwl0xrJdki/ddw0nsmsmw=",
+        "lastModified": 1792494662,
+        "narHash": "sha256-ZWDvlTKizV0p0W9yoPVM3sVfMoIo60t/DKlMgf7+8Bs=",
         "owner": "rksm",
         "repo": "herdr",
-        "rev": "0d55eaeb0a9c519dd4baabc675841698391bded6",
+        "rev": "732206f4b61ef6b12396bb50ed239a1fc0403593",
         "type": "github"
       },
       "original": {
@@ -338,11 +338,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1792470345,
-        "narHash": "sha256-byyN8cKfWMZx13fA4b8CVu/I7Pf9PNrH/J2F4hHIXO8=",
+        "lastModified": 1792490949,
+        "narHash": "sha256-vGjr+2nzejufjFvsqgGhvEEO6yN+fRj6ukKUItAULZ8=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "1f9147308bba305a5ca2a6030ba285cb4603cd3f",
+        "rev": "06419f6a482c5a4d38d703f4b88b128740d3124e",
         "type": "github"
       },
       "original": {

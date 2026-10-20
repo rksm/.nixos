@@ -14,8 +14,8 @@ buildGoModule (finalAttrs: {
   src = fetchFromGitHub {
     owner = "router-for-me";
     repo = "CLIProxyAPI";
-    rev = "e198f3cd4c52cb15af590f2f9b105f74d27d1443";
-    hash = "sha256-EyOWRr38fHB1NNJQpOez3jxGm6ltEpFWD5RYr2Re5JI=";
+    rev = "9cd0de36eef26574beef42099e427e3a8e60a198";
+    hash = "sha256-Bjgclk58Y3/tjpM9F46Qaj1bjfHcFSLxDmildTEioYg=";
   };
 
   vendorHash = "sha256-r3yWkdMcM40G9jV7MxW/qNv3E9WrHavFilW24quEf+8=";
