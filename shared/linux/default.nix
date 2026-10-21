@@ -24,6 +24,7 @@
     ./nix.nix
     ./vibetyper.nix
     ./freestyle.nix
+    ./hex.nix
     ./computer-use.nix
   ];
 
