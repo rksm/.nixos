@@ -18,15 +18,15 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "computer-use-linux";
-  version = "0.7.20";
+  version = "0.7.22";
 
   src = fetchFromGitHub {
     owner = "agent-sh";
     repo = "computer-use-linux";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-w48iak2GqwYJdesm+OVGPGumFpfILE7UAOeAj4JRNGg=";
+    hash = "sha256-hXUmV2r7CpsJxRSGWT/iuh2gWDMlXksFNKwI45GkAGU=";
   };
-  cargoHash = "sha256-5jiVhdIc5ogcDGn3xjL7A27+Lup9nR8i1zzoYdIMFuc=";
+  cargoHash = "sha256-p9k7Y1+BVtXizZgo3KEwiTt5uobGNt1vAkvpxJwadg0=";
 
   patches = [ ./bound-app-discovery.patch ];
 
@@ -56,7 +56,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
     # Keep test socket paths below AF_UNIX's limit inside the Nix build directory.
     substituteInPlace src/server.rs \
       --replace-fail 'cul-pointer-safety-{}-{}' 'cu-p-{}-{}'
-    substituteInPlace src/windowing/backends/kwin.rs src/gnome_extension.rs \
+    substituteInPlace src/windowing/backends/kwin.rs src/gnome_extension.rs src/atspi_tree.rs \
       --replace-fail '"--session", "--nofork"' '"--config-file=${dbus}/share/dbus-1/session.conf", "--nofork"'
   '';
 
