@@ -150,6 +150,7 @@ update-ai:
           ai-quotas \
           ast-outline \
           herdr-nix \
+          hex \
           llm-agents \
           skillshare-nix
         commit_message="linux: update ai"
