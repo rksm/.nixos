@@ -314,15 +314,15 @@
         "nixpkgs": "nixpkgs_4"
       },
       "locked": {
-        "lastModified": 1792610715,
-        "narHash": "sha256-Mody3Y7wrMWGIyu67z+9yCq/yDLxPRhFSkTWn+MnsuM=",
-        "owner": "anomalyco",
+        "lastModified": 1792661260,
+        "narHash": "sha256-g/QpVJzZfELum+EUOu1tcnY3OrsDFYBddm1ui0Dx+Hc=",
+        "owner": "rksm",
         "repo": "hex",
-        "rev": "33b3d5a016c5c5faf2095685c4b35ccb35bcd5a2",
+        "rev": "17c6c86a3e992f82bcb8ce777811688505f3e59d",
         "type": "github"
       },
       "original": {
-        "owner": "anomalyco",
+        "owner": "rksm",
         "repo": "hex",
         "type": "github"
       }

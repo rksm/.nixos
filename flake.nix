@@ -25,7 +25,9 @@
     ast-outline.url = "github:aeroxy/ast-outline";
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
-    hex.url = "github:anomalyco/hex";
+    # My fork with the GNOME Wayland delivery changes, checked out at
+    # ~/projects/ai/hex. Push there, then `nix flake update hex`.
+    hex.url = "github:rksm/hex";
     flux-reconciler.url = "github:rksm/flux-reconciler";
     # A release tag, or a main commit until a release contains it.
     # `just update-worktrunk` moves it forward.
