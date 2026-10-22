@@ -5,20 +5,34 @@
   lib,
   buildGoModule,
   fetchFromGitHub,
+  fetchurl,
+  go,
 }:
 
-buildGoModule (finalAttrs: {
+let
+  # Upstream go.mod requires a newer Go patch release than nixpkgs ships.
+  # lessismore: pinned Go toolchain must be bumped by hand. Revisit when
+  # nixpkgs go reaches the version in upstream go.mod, then drop this override.
+  go_1_26_10 = go.overrideAttrs (finalAttrs: _: {
+    version = "1.26.10";
+    src = fetchurl {
+      url = "https://go.dev/dl/go${finalAttrs.version}.src.tar.gz";
+      hash = "sha256-/WPog7ovK/ypPBZGsx6+9j4rHk0rMXyXidl2po2B828=";
+    };
+  });
+in
+(buildGoModule.override { go = go_1_26_10; }) (finalAttrs: {
   pname = "cliproxyapi";
-  version = "8.0.36-unstable-2026-10-21";
+  version = "8.0.38-unstable-2026-10-22";
 
   src = fetchFromGitHub {
     owner = "router-for-me";
     repo = "CLIProxyAPI";
-    rev = "ce07d189b3de2a39d37fd68ae093b102ce3aabee";
-    hash = "sha256-OWMQZpM/0r3cL15CnRbkQ0vsGA1z4uwI8AjsXONhDJ4=";
+    rev = "9e79552fb79461b3ee475c0b30ef33408392db5a";
+    hash = "sha256-NDEa88PuW2Q4eGDMYN22deOsgDvyKwiBCGF7hTudZww=";
   };
 
-  vendorHash = "sha256-r3yWkdMcM40G9jV7MxW/qNv3E9WrHavFilW24quEf+8=";
+  vendorHash = "sha256-yMO0DdE0pjtFxWaQXV17enV8u0KA5fIUbE8Gui/RvWU=";
 
   subPackages = [ "cmd/server" ];
 
