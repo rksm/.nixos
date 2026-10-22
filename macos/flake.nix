@@ -34,7 +34,7 @@
     flux-reconciler.url = "github:rksm/flux-reconciler";
     # A release tag, or a main commit until a release contains it.
     # `just update-worktrunk` moves it forward.
-    worktrunk-nix.url = "github:max-sixty/worktrunk/e8b264c011afd825c834991b1ffe2d689515da8d";
+    worktrunk-nix.url = "github:max-sixty/worktrunk/v0.81.0";
   };
 
   outputs =
