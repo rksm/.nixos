@@ -11,6 +11,7 @@
     fastmail-cli
     firefox-cli
     linear-cli
+    ramp-cli
     slackcli
   ];
   # Firefox starts firefox-cli as its native messaging host.

@@ -75,6 +75,7 @@
       slackcli = nixpkgs.legacyPackages.${system}.callPackage ./packages/slackcli/default.nix { };
       linear-cli = nixpkgs.legacyPackages.${system}.callPackage ./packages/linear-cli/package.nix { };
       cf = nixpkgs.legacyPackages.${system}.callPackage ./packages/cf/package.nix { };
+      ramp-cli = nixpkgs.legacyPackages.${system}.callPackage ./packages/ramp-cli/package.nix { };
       firefox-cli = nixpkgs.legacyPackages.${system}.callPackage ./packages/firefox-cli/package.nix { };
       computer-use-linux =
         nixpkgs.legacyPackages.${system}.callPackage ./packages/computer-use-linux/package.nix
@@ -107,6 +108,7 @@
           slackcli
           linear-cli
           cf
+          ramp-cli
           cliproxyapi
           computer-use-linux
           computer-use-desktop
@@ -211,6 +213,7 @@
           slackcli
           linear-cli
           cf
+          ramp-cli
           cliproxyapi
           computer-use-linux
           computer-use-desktop

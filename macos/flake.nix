@@ -82,6 +82,7 @@
                 slackcli = final.callPackage ../packages/slackcli/default.nix { };
                 linear-cli = final.callPackage ../packages/linear-cli/package.nix { };
                 cf = final.callPackage ../packages/cf/package.nix { };
+                ramp-cli = final.callPackage ../packages/ramp-cli/package.nix { };
                 firefox-cli = final.callPackage ../packages/firefox-cli/package.nix { };
               };
             in
