@@ -14,13 +14,13 @@
 
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "firefox-cli";
-  version = "0.3.0";
+  version = "0.4.1";
 
   src = fetchFromGitHub {
     owner = "respawn-llc";
     repo = "firefox-cli";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-9D+C5u0qVTKJZ1PKlLikx6r5Yo0waE8Y5MAHnGrDRk4=";
+    hash = "sha256-VkQHoKoEdFjNDWRSXMutoAFddBKUUgMwQbmtwva/Wl4=";
   };
 
   node_modules = stdenvNoCC.mkDerivation {
@@ -59,7 +59,7 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     '';
     dontFixup = true;
 
-    outputHash = "sha256-VhqgCTbiOSKB3ZUGGCNtbSh+djHnTaM4BSdT+ZkYw6M=";
+    outputHash = "sha256-MGwgntq+y+DA3c+c17dF3ffwO/leIsSqysmKk5t4IS8=";
     outputHashMode = "recursive";
   };
 
