@@ -169,7 +169,8 @@ update-ai:
     fi
     if ! git diff --quiet HEAD -- $updated_files; then
         git add $updated_files
-        git commit -m "$commit_message"
+        # Commit only the updated files, so unrelated staged work stays staged.
+        git commit -m "$commit_message" -- $updated_files
         cd "$root"
         just switch
         ./scripts/herdr-install

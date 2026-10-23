@@ -12,15 +12,14 @@
     cargo-features-manager
   ];
 
-  home.file.".cargo/config.toml".text =
-    let registry_key = builtins.readFile ../secrets/crates.kra.hn.key; in ''
-      [target.x86_64-unknown-linux-gnu]
-      linker = "clang"
-      rustflags = ["-C", "link-arg=--ld-path=${pkgs.mold}/bin/mold"]
-
-      [registries]
-      krahn = { index = "sparse+https://crates.kra.hn/api/v1/crates/", token = "${registry_key}" }
-    '';
+  # home.file.".cargo/config.toml".text =
+  #   let registry_key = builtins.readFile ../secrets/crates.kra.hn.key; in ''
+  #     [target.x86_64-unknown-linux-gnu]
+  #     linker = "clang"
+  #     rustflags = ["-C", "link-arg=--ld-path=${pkgs.mold}/bin/mold"]
+  #     [registries]
+  #     krahn = { index = "sparse+https://crates.kra.hn/api/v1/crates/", token = "${registry_key}" }
+  #   '';
 
   # dprint mostly used for formatting toml files
   home.file.".local/share/dprint/dprint.json".text = ''
