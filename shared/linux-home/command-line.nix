@@ -3,6 +3,7 @@
   lib,
   pkgs,
   user,
+  machine,
   ...
 }:
 
@@ -28,7 +29,7 @@ in
       force = true;
     };
     ".codex/config.toml" = {
-      source = fromConfigs "ai/codex/config.toml";
+      source = fromConfigs "ai/codex/config.${machine}.toml";
       force = true;
     };
     "bin/start.sh" = {
@@ -39,7 +40,7 @@ in
 
   home.activation.linkClaudeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     $DRY_RUN_CMD mkdir -p "$HOME/.claude"
-    $DRY_RUN_CMD ln -sfn "../configs/ai/claude/settings.json" "/home/${user}/.claude/settings.json"
+    $DRY_RUN_CMD ln -sfn "../configs/ai/claude/settings.${machine}.json" "/home/${user}/.claude/settings.json"
     $DRY_RUN_CMD ln -sfn "../configs/ai/claude/CLAUDE.md" "/home/${user}/.claude/CLAUDE.md"
   '';
 

@@ -29,7 +29,7 @@
 
   home.file.".config/skillshare/config.yaml".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/projects/ai/skillshare/config.yaml;
   home.file.".config/skillshare/config.yaml".force = true;
-  home.file.".codex/config.toml".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/ai/codex/config.toml;
+  home.file.".codex/config.toml".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/ai/codex/config.airy.toml;
   home.file.".codex/config.toml".force = true;
   home.file.".codex/AGENTS.md".source = config.lib.file.mkOutOfStoreSymlink /Users/${user}/configs/ai/codex/AGENTS.md;
   home.file.".codex/AGENTS.md".force = true;
@@ -39,7 +39,7 @@
   home.activation.linkClaudeSettings =
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD mkdir -p "$HOME/.claude"
-      $DRY_RUN_CMD ln -sfn "../configs/ai/claude/settings.json" "/Users/${user}/.claude/settings.json"
+      $DRY_RUN_CMD ln -sfn "../configs/ai/claude/settings.airy.json" "/Users/${user}/.claude/settings.json"
       $DRY_RUN_CMD ln -sfn "../configs/ai/claude/CLAUDE.md" "/Users/${user}/.claude/CLAUDE.md"
     '';
 
