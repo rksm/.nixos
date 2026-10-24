@@ -7,7 +7,7 @@
     cargo-whatfeatures
     (cargo-feature.overrideAttrs (oldAttrs: { doCheck = false; }))
     cargo-release
-    kondo
+    kondor
     latest.cargo-clean-all
     cargo-generate
     dprint

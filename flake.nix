@@ -77,6 +77,7 @@
       cf = nixpkgs.legacyPackages.${system}.callPackage ./packages/cf/package.nix { };
       ramp-cli = nixpkgs.legacyPackages.${system}.callPackage ./packages/ramp-cli/package.nix { };
       firefox-cli = nixpkgs.legacyPackages.${system}.callPackage ./packages/firefox-cli/package.nix { };
+      kondor = nixpkgs.legacyPackages.${system}.callPackage ./packages/kondor/package.nix { };
       computer-use-linux =
         nixpkgs.legacyPackages.${system}.callPackage ./packages/computer-use-linux/package.nix
           { };
@@ -113,6 +114,7 @@
           computer-use-linux
           computer-use-desktop
           firefox-cli
+          kondor
           ;
       };
 
@@ -218,6 +220,7 @@
           computer-use-linux
           computer-use-desktop
           firefox-cli
+          kondor
           ;
       };
 

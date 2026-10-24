@@ -9,7 +9,7 @@
     cargo-whatfeatures
     cargo-feature
     cargo-release
-    kondo
+    kondor
     dprint
   ];
 

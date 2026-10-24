@@ -84,6 +84,7 @@
                 cf = final.callPackage ../packages/cf/package.nix { };
                 ramp-cli = final.callPackage ../packages/ramp-cli/package.nix { };
                 firefox-cli = final.callPackage ../packages/firefox-cli/package.nix { };
+                kondor = final.callPackage ../packages/kondor/package.nix { };
               };
             in
             {
