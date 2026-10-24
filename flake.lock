@@ -295,11 +295,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1792653284,
-        "narHash": "sha256-jvc7QLFkXjuv6KusKcXPDOpdbrCBk/YFc6hR6vXF8Os=",
+        "lastModified": 1792825703,
+        "narHash": "sha256-+ZleNn1Xc4KqGT1o+qbiz2BwwfN/c5Vfqvy5VVs3Rgs=",
         "owner": "rksm",
         "repo": "herdr",
-        "rev": "6480608965826bbfd1eaaa79a4af0406d64bbbfa",
+        "rev": "e204e610e97bfcc3afcc390470b327020d1abdc4",
         "type": "github"
       },
       "original": {
@@ -378,11 +378,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1792728351,
-        "narHash": "sha256-91rRFnBm9hpMIAFYi+ZvuLOupMtBMrnMVsd6CmH5ik8=",
+        "lastModified": 1792826869,
+        "narHash": "sha256-xKpatFe2GfEVhE2sXmXq2W/DyhSzh8OjjOuhznin9oE=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "4726c319ae0692a84f20819395411d9f8b88335a",
+        "rev": "a2b437b0311c44a1fd4d1be1bb32add89932aa9b",
         "type": "github"
       },
       "original": {
@@ -670,11 +670,11 @@
         "nixpkgs": "nixpkgs_7"
       },
       "locked": {
-        "lastModified": 1792650286,
-        "narHash": "sha256-C8S/jTwqmLBY/oSBvaVBA0MKJ6lums408BQHZjgs1u0=",
+        "lastModified": 1792822951,
+        "narHash": "sha256-YXcHBiMhm6gAY9o9KI+4EwgUfRMIU+jV5euOdaBqepY=",
         "owner": "hypervideo",
         "repo": "skillshare-nix",
-        "rev": "5b3d256b6bd767dc06648585cf06659554cbcfe3",
+        "rev": "9096462d3b64bd9c2cb77460060e94aec9a35454",
         "type": "github"
       },
       "original": {
