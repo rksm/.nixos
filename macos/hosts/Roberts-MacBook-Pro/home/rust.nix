@@ -9,6 +9,7 @@
     cargo-whatfeatures
     cargo-feature
     cargo-release
+    kondo
     dprint
   ];
 

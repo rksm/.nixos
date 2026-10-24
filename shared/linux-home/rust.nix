@@ -7,6 +7,7 @@
     cargo-whatfeatures
     (cargo-feature.overrideAttrs (oldAttrs: { doCheck = false; }))
     cargo-release
+    kondo
     cargo-generate
     dprint
     cargo-features-manager
