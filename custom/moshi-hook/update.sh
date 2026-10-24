@@ -46,11 +46,18 @@ formula_version="$(awk '$1 == "version" { gsub(/"/, "", $2); print $2 }' "$tempo
 [[ "$formula_version" == "$latest_version" ]] \
   || fail "Homebrew formula is at $formula_version, CDN is at $latest_version"
 
-checksum_for() {
+cdn_checksum_for() {
   local asset="$1"
   local checksum
   checksum="$(awk -v asset="$asset" '$2 == asset { print $1 }' "$temporary_dir/checksums.txt")"
   [[ "$checksum" =~ ^[0-9a-f]{64}$ ]] || fail "missing checksum for $asset"
+  printf '%s' "$checksum"
+}
+
+checksum_for() {
+  local asset="$1"
+  local checksum
+  checksum="$(cdn_checksum_for "$asset")"
   grep -Fq "hook/v${latest_version}/${asset}" "$temporary_dir/moshi-hook.rb" \
     || fail "Homebrew formula is missing $asset"
   grep -Fq "sha256 \"${checksum}\"" "$temporary_dir/moshi-hook.rb" \
@@ -63,7 +70,9 @@ readonly aarch64_asset="moshi-hook_Linux_arm64.tar.gz"
 x86_64_hash="$(nix hash convert --hash-algo sha256 --to sri "$(checksum_for "$x86_64_asset")")"
 aarch64_hash="$(nix hash convert --hash-algo sha256 --to sri "$(checksum_for "$aarch64_asset")")"
 readonly darwin_asset="moshi-hook_Darwin_arm64.tar.gz"
-darwin_hash="$(nix hash convert --hash-algo sha256 --to sri "$(checksum_for "$darwin_asset")")"
+# The Homebrew formula installs the macOS app bundle (moshi-hook-app_*), so it
+# no longer lists this plain tarball. Only checksums.txt vouches for it.
+darwin_hash="$(nix hash convert --hash-algo sha256 --to sri "$(cdn_checksum_for "$darwin_asset")")"
 readonly x86_64_hash aarch64_hash darwin_hash
 
 current_version="$(awk -F\" '/^  version = / { print $2 }' "$version_file")"
