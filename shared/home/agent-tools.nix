@@ -10,6 +10,8 @@
     cf
     fastmail-cli
     firefox-cli
+    # gog: Google Calendar and Gmail. The stable channel's version is far behind.
+    latest.gogcli
     linear-cli
     ramp-cli
     slackcli
