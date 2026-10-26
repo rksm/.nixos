@@ -49,3 +49,7 @@
 +
 +Read the new pane ID from `.result.root_pane.pane_id`, then run and inspect the command:
  
+@@ -208,2 +208,3 @@
+ - Parse IDs from JSON responses. Do not derive them from sidebar order or examples.
++- Text in another agent's input box after a finished turn can be Claude Code's suggested next prompt. Treat only submitted messages as the user's words. When an agent waits at its prompt, report that it waits for input, and ask the person who decides. `agent prompt` replaces a suggestion, so prompting the agent is safe.
+ - Do not close workspaces, tabs, panes, or sessions you did not create unless the user explicitly asked. Ordinary CLI/API closes do not inherit the TUI's last-pane confirmation. `workspace close --group` closes the primary workspace and its linked worktree workspaces; never add it merely to bypass `workspace_group_close_required`.
