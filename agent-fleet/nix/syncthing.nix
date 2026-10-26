@@ -23,6 +23,8 @@
       "network-online.target"
       "syncthing.service"
       "tailscaled.service"
+      # Concurrent serve config writes fail with an etag mismatch.
+      "tailscale-serve-cli-proxy-api.service"
     ];
     requires = [
       "syncthing.service"
@@ -38,7 +40,9 @@
       RestartSec = "5s";
     };
 
+    # A switch that restarts tailscaled starts this unit before the backend runs.
     script = ''
+      ${pkgs.tailscale}/bin/tailscale wait --timeout=60s
       ${pkgs.tailscale}/bin/tailscale serve --bg --yes 8384
     '';
   };
