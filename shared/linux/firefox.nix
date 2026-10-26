@@ -89,6 +89,10 @@ in
         # Check about:config for options.
         Preferences = {
           "browser.contentblocking.category" = { Value = "strict"; Status = "locked"; };
+          # Restore all windows, tabs and tab groups on every start. Restoring
+          # later with Ctrl+Shift+T merges the tabs into the new window and
+          # drops the tab groups.
+          "browser.startup.page" = { Value = 3; Status = "locked"; };
           "extensions.pocket.enabled" = lock-false;
           "extensions.screenshots.disabled" = lock-true;
           "browser.topsites.contile.enabled" = lock-false;
