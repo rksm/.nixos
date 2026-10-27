@@ -21,6 +21,7 @@ in
     (modulesPath + "/installer/scan/not-detected.nix")
     (modulesPath + "/profiles/qemu-guest.nix")
     ../../shared/linux/nix.nix
+    ./roberts-review-bot.nix
     ./syncthing.nix
   ];
 
@@ -150,6 +151,7 @@ in
     openssh
     (lib.lowPrio perf) # low priority so that we can to use trace from elsewhere
     pandoc
+    python3 # Herdr's Codex hook needs it to report sessions, so a Herdr restart can resume them
     ripgrep
     rsync
     socat

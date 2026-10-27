@@ -166,6 +166,23 @@ op whoami
 
 The helper calls =op signin --account my.1password.com=. The session expires after 30 minutes without activity. Run =op signout= to end it sooner.
 
+* Review bot
+
+=agent-1= runs [[https://github.com/hypervideo/roberts-review-bot][roberts-review-bot]] from the Syncthing copy of its repository at
+=~/projects/hyper/roberts-review-bot=. The module [[file:nix/roberts-review-bot.nix][nix/roberts-review-bot.nix]] defines three units:
+
+- =roberts-review-bot= is a user service that runs the bot. Each start installs its npm dependencies.
+- =herdr-roberts-review-bot= is a user service that runs the Herdr session =roberts-review-bot=, which holds the
+  reviews. A switch leaves it running, because a restart ends all running reviews.
+- =tailscale-funnel-roberts-review-bot= is a system service that publishes the webhook at
+  =https://agent-1.taileff843.ts.net:8443/api/github/webhooks=. The tailnet policy must allow Funnel for =agent-1=.
+
+=just deploy= copies the App's settings and private key, =shared/secrets/roberts-review-bot.env= and
+=shared/secrets/roberts-review-bot.pem=, to the server. The bot's own justfile restarts the units: =just restart= after
+a code change, and =just restart-herdr= after a Herdr update.
+
+Attach to the review session with =herdr --remote agent-1 --session roberts-review-bot=.
+
 * Common commands
 
 Commands that take =HOST= accept one hostname or a comma-separated list. Omit

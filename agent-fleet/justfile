@@ -193,11 +193,15 @@ _sync host:
     syncthing_password="/etc/nixos/shared/secrets/syncthing-password.key"
     brave_search_key="/etc/nixos/shared/secrets/brave-search.key"
     openrouter_key="/etc/nixos/shared/secrets/openrouter.key"
+    review_bot_env="/etc/nixos/shared/secrets/roberts-review-bot.env"
+    review_bot_key="/etc/nixos/shared/secrets/roberts-review-bot.pem"
     test -f "$agent_files_env"
     test -f "$netrc_file"
     test -f "$syncthing_password"
     test -s "$brave_search_key"
     test -s "$openrouter_key"
+    test -s "$review_bot_env"
+    test -s "$review_bot_key"
     ip=$(just _host-ip {{ host }})
     repository_root=$(git rev-parse --show-toplevel)
     staging=$(mktemp -d)
@@ -253,6 +257,8 @@ _sync host:
         "$agent_files_env" \
         "$brave_search_key" \
         "$openrouter_key" \
+        "$review_bot_env" \
+        "$review_bot_key" \
         "robert@$ip:/etc/nixos/shared/secrets/"
 
 # Activate the current root flake on the selected hosts.
