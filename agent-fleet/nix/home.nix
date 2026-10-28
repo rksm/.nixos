@@ -27,6 +27,8 @@
 
   home.packages = with pkgs; [
     emacs-nox
+    kondor
     kubectl
+    latest.cargo-clean-all
   ];
 }
