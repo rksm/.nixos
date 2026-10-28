@@ -1,5 +1,5 @@
 # Runs https://github.com/hypervideo/roberts-review-bot on agent-1. The bot runs from the Syncthing copy of its
-# repository, so an edit to review-prompt.md applies to the next review. A code change needs
+# repository, so an edit to review.yaml applies at its next use. A code change needs
 # `systemctl --user restart roberts-review-bot`.
 {
   config,
