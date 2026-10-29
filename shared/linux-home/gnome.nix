@@ -123,6 +123,10 @@ in
         switch-to-workspace-right = [ ]; # free ctrl+alt+right
         switch-to-workspace-up = [ ]; # free ctrl+alt+up
         switch-to-workspace-down = [ ]; # free ctrl+alt+down
+        move-to-workspace-left = [ ]; # free ctrl+alt+shift+left
+        move-to-workspace-right = [ ]; # free ctrl+alt+shift+right
+        move-to-workspace-up = [ ]; # free ctrl+alt+shift+up
+        move-to-workspace-down = [ ]; # free ctrl+alt+shift+down
         switch-input-source = [ ];
         switch-input-source-backward = [ ];
       };
