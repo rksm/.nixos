@@ -49,6 +49,8 @@ in
           X-SwitchMethod = "keep-old";
         };
         Service = {
+          # The reviews get their own Herdr config, synced through ~/configs/herdr like the main one.
+          Environment = [ "HERDR_CONFIG_PATH=/home/robert/.config/herdr/config.hyper-robbot.toml" ];
           # A login shell gives the panes the environment of an SSH session. Without it, each pane's shell sets up the
           # NixOS environment again, which replaces PATH and drops the bot's gh wrapper.
           ExecStart = "${pkgs.bash}/bin/bash -lc 'exec ${herdr}/bin/herdr --session roberts-review-bot server'";
