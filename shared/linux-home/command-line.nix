@@ -76,6 +76,9 @@ in
       ];
     };
 
+    # Git pushes over HTTPS with the gh token. GitHub rejects a push that
+    # changes .github/workflows/ unless the token has the workflow scope:
+    #   gh auth refresh -h github.com -s workflow
     gh = {
       enable = true;
       settings.git_protocol = "ssh";
