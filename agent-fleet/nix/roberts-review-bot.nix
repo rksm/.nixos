@@ -56,6 +56,10 @@ in
           ExecStart = "${pkgs.bash}/bin/bash -lc 'exec ${herdr}/bin/herdr --session roberts-review-bot server'";
           Restart = "on-failure";
           RestartSec = 5;
+          # When agent-1 runs out of memory, the kernel kills one process, often a rustc of a review's build. With the
+          # default policy, systemd then stops the whole unit and ends every running review. Only the killed process
+          # should end.
+          OOMPolicy = "continue";
         };
         Install.WantedBy = [ "default.target" ];
       };
