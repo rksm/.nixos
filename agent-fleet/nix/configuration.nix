@@ -44,6 +44,9 @@ in
   services.resolved.enable = true;
   security.polkit.enable = true;
   services.tailscale.enable = true;
+  # Without swap, the kernel's OOM killer can take 15+ minutes to act. Until then the server reloads program code from
+  # disk nonstop and stops answering SSH and Tailscale. earlyoom kills the largest process before that happens.
+  services.earlyoom.enable = true;
 
   # Attaching a volume can change the kernel's disk enumeration order.
   disko.devices.disk.main.device = lib.mkIf (
