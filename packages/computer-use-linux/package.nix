@@ -18,15 +18,15 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "computer-use-linux";
-  version = "0.7.31";
+  version = "0.7.32";
 
   src = fetchFromGitHub {
     owner = "agent-sh";
     repo = "computer-use-linux";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-I7OxwCNSHEj4rgpsQKtxGxPIqu9qS7VVdve59nGSEb0=";
+    hash = "sha256-wWCK7OX2KnKVeyxXaRPpSI+LpnpOvtik/dZfPCI7Vz4=";
   };
-  cargoHash = "sha256-u9up/X7eV1PvNonG9uUw4oV0z7ELAHeB00sd1gkzw9s=";
+  cargoHash = "sha256-x52oG45S01YpocrW5IKoESrEZGxA7mol7chPOOZMlV4=";
 
   patches = [ ./bound-app-discovery.patch ];
 
@@ -37,7 +37,11 @@ rustPlatform.buildRustPackage (finalAttrs: {
   ];
   env.LD_LIBRARY_PATH = lib.makeLibraryPath [ libxkbcommon ];
   # Executable fixtures and process-wide environment changes need serial tests.
-  checkFlags = [ "--test-threads=1" ];
+  checkFlags = [
+    "--test-threads=1"
+    # Runs a GNOME indicator fixture through /usr/bin/python3 with PyGObject.
+    "--skip=gnome_indicator_capture_regressions"
+  ];
 
   preCheck = ''
     export HOME="$TMPDIR"
