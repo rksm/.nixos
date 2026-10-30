@@ -60,6 +60,10 @@ in
           # default policy, systemd then stops the whole unit and ends every running review. Only the killed process
           # should end.
           OOMPolicy = "continue";
+          # Reviews build and test their code, and too many at once ran agent-1 out of memory. This limit keeps about
+          # 5 GB for the system, SSH, Tailscale, and other sessions. When the reviews reach it, the kernel kills a
+          # process in this unit only.
+          MemoryMax = "10G";
         };
         Install.WantedBy = [ "default.target" ];
       };
