@@ -18,15 +18,15 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "computer-use-linux";
-  version = "0.7.32";
+  version = "0.7.35";
 
   src = fetchFromGitHub {
     owner = "agent-sh";
     repo = "computer-use-linux";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-wWCK7OX2KnKVeyxXaRPpSI+LpnpOvtik/dZfPCI7Vz4=";
+    hash = "sha256-VoIV0hCNGLNcCK4/r+jlPrKRqN9CQHOTOXvm0VQ69Cw=";
   };
-  cargoHash = "sha256-x52oG45S01YpocrW5IKoESrEZGxA7mol7chPOOZMlV4=";
+  cargoHash = "sha256-iTSynzyiPK7FgrWuu5t+Sra8kNb8tG0l2NkGXAh7k3U=";
 
   patches = [ ./bound-app-discovery.patch ];
 
@@ -39,8 +39,11 @@ rustPlatform.buildRustPackage (finalAttrs: {
   # Executable fixtures and process-wide environment changes need serial tests.
   checkFlags = [
     "--test-threads=1"
-    # Runs a GNOME indicator fixture through /usr/bin/python3 with PyGObject.
+    # These fixtures run /usr/bin/python3 or set PATH=/usr/bin:/bin.
     "--skip=gnome_indicator_capture_regressions"
+    "--skip=gnome_fractional_pointer_reaches_full_eis_region"
+    "--skip=app_state_refuses_unfocused_target_before_capture"
+    "--skip=hyprland_background_mode_never_focuses_the_target"
   ];
 
   preCheck = ''
@@ -56,8 +59,7 @@ rustPlatform.buildRustPackage (finalAttrs: {
       --replace-fail '/bin/true' '${coreutils}/bin/true' \
       --replace-fail '/bin/false' '${coreutils}/bin/false'
     substituteInPlace src/diagnostics.rs \
-      --replace-fail '/bin/sleep' '${coreutils}/bin/sleep'
-    # Keep test socket paths below AF_UNIX's limit inside the Nix build directory.
+      --replace-fail '/bin/sleep' '${coreutils}/bin/sleep'    # Keep test socket paths below AF_UNIX's limit inside the Nix build directory.
     substituteInPlace src/server.rs \
       --replace-fail 'cul-pointer-safety-{}-{}' 'cu-p-{}-{}'
     substituteInPlace src/windowing/backends/kwin.rs src/gnome_extension.rs src/atspi_tree.rs \
