@@ -36,6 +36,9 @@
       url = "github:rksm/ai-quotas";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # A private repo, so fetch it over SSH with my GitHub key. It keeps its own
+    # nixpkgs: the executable contains the Bun that its tests ran with.
+    herdr-dashboard.url = "git+ssh://git@github.com/rksm/herdr-dashboard";
   };
 
   outputs =
@@ -126,7 +129,7 @@
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = {
-            inherit user machine;
+            inherit inputs user machine;
             nixosConfig = self.nixosConfigurations.${machine}.config;
           };
           home-manager.users.${user} = import homeModule;
