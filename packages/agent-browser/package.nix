@@ -23,12 +23,12 @@ in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "agent-browser";
   # `just update-agent-browser` pins the browser recommended by this extension.
-  version = "0.38.1";
-  passthru.piAgentBrowserNativeVersion = "0.9.6";
+  version = "0.41.1";
+  passthru.piAgentBrowserNativeVersion = "0.9.9";
 
   src = fetchurl {
     url = "https://registry.npmjs.org/agent-browser/-/agent-browser-${finalAttrs.version}.tgz";
-    hash = "sha256-iaffR2H/M15N1TZ+TPBM7Lm6TizBMKAiD3mNGIQU3Gw=";
+    hash = "sha256-YxbQ9tM9+N1UXrZdoZ829fUnIDX+/biqq9HYFbw7F50=";
   };
 
   nativeBuildInputs = [

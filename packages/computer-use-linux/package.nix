@@ -18,15 +18,15 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "computer-use-linux";
-  version = "0.7.35";
+  version = "0.7.36";
 
   src = fetchFromGitHub {
     owner = "agent-sh";
     repo = "computer-use-linux";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-VoIV0hCNGLNcCK4/r+jlPrKRqN9CQHOTOXvm0VQ69Cw=";
+    hash = "sha256-kjHCB65GgHIdpasdKZGI8r2iz3BqhF7Lk1U6dTBQexc=";
   };
-  cargoHash = "sha256-iTSynzyiPK7FgrWuu5t+Sra8kNb8tG0l2NkGXAh7k3U=";
+  cargoHash = "sha256-nYY314GH96mFBlfuNJrvWgY/y4gCcR2rFj4xABISKd0=";
 
   patches = [ ./bound-app-discovery.patch ];
 
