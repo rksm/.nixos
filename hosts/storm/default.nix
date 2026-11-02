@@ -86,4 +86,31 @@
     enable-khoone = true;
   };
 
+  # Serves the Herdr dashboard to the tailnet at https://storm.taileff843.ts.net.
+  # The dashboard takes these requests only from robert's login; see
+  # services.herdr-dashboard.tailnet in home.nix.
+  systemd.services.tailscale-serve-herdr-dashboard = {
+    description = "Expose the Herdr dashboard to the tailnet";
+    after = [
+      "network-online.target"
+      "tailscaled.service"
+    ];
+    requires = [ "tailscaled.service" ];
+    wants = [ "network-online.target" ];
+    wantedBy = [ "multi-user.target" ];
+
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      Restart = "on-failure";
+      RestartSec = "5s";
+    };
+
+    # A switch that restarts tailscaled starts this unit before the backend runs.
+    script = ''
+      ${pkgs.tailscale}/bin/tailscale wait --timeout=60s
+      ${pkgs.tailscale}/bin/tailscale serve --bg --yes 4780
+    '';
+    preStop = "${pkgs.tailscale}/bin/tailscale serve --https=443 off";
+  };
 }

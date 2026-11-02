@@ -9,6 +9,11 @@
   services.herdr-dashboard = {
     enable = true;
     session = "storm";
+    # tailscale-serve-herdr-dashboard in default.nix forwards this name.
+    tailnet = {
+      host = "storm.taileff843.ts.net";
+      user = "robert@hyper.video";
+    };
   };
 
   # `just switch` evaluates as root, and root cannot fetch this private input
