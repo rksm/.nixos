@@ -23,8 +23,8 @@ buildNpmPackage (finalAttrs: {
   skillSource = fetchFromGitHub {
     owner = "cloudflare";
     repo = "skills";
-    rev = "82a2f1a282c73c979145060cd8e6d8811e9426e8";
-    hash = "sha256-iTT+dzjtnK6fcOLcQrHMTqjIk0VeZKNHC9tHB+DYz9I=";
+    rev = "5611bbb34c1343d4dd8f68b86a0300bfbd753b05";
+    hash = "sha256-CiJElxcIcnIGQjbkExTy/Ssf81Fmyq4bVr5X1X3X3lc=";
   };
 
   # The npm tarball ships no lockfile. Its devDependencies only built the
