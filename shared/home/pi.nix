@@ -69,6 +69,10 @@ in
   home.file."${lib.removePrefix "${config.home.homeDirectory}/" piAgentDir}/extensions/questionnaire.ts".source =
     "${pkgs.llm-agents.pi}/libexec/pi/examples/extensions/questionnaire.ts";
 
+  # Herdr reports Pi as blocked only when another extension says so.
+  home.file."${lib.removePrefix "${config.home.homeDirectory}/" piAgentDir}/extensions/herdr-blocked.ts".source =
+    ./pi-extensions/herdr-blocked.ts;
+
   home.activation.configurePiAuth = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [[ -v DRY_RUN ]]; then
       echo "Would configure Pi to read the shared OpenRouter key"
