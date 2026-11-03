@@ -1,6 +1,6 @@
 # Brings the WezTerm tab with a Herdr session's client to the front. The
 # Herdr dashboard runs it as its focus-hook (config.yaml), after f focused an
-# agent from a browser on this machine.
+# agent.
 #
 # The dashboard names the agent's session in HERDR_DASHBOARD_SESSION, and for
 # a saved machine its SSH target in HERDR_DASHBOARD_SSH_TARGET.
@@ -51,9 +51,10 @@ while read -r id tty; do
     break
   fi
 done < <(wezterm cli list --format json | jq -r '.[] | "\(.pane_id) \(.tty_name)"')
+# No tab shows the session, such as one that Robert follows from another
+# machine: there is nothing to bring forward.
 if [ -z "$pane" ]; then
-  echo "no WezTerm tab shows the Herdr session $session" >&2
-  exit 1
+  exit 0
 fi
 
 wezterm cli activate-pane --pane-id "$pane"
