@@ -9,13 +9,13 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "kondor";
-  version = "0.1.0-unstable-2026-11-01";
+  version = "0.1.0-unstable-2026-11-02";
 
   src = fetchFromGitHub {
     owner = "gblach";
     repo = "kondor";
-    rev = "adfc5a0de3b10f8faac78b11a6ef6e0105d46e2b";
-    hash = "sha256-HzfJmQO82lZM4hNHsKLmxeulEOX8re4kbd5a6hliiI8=";
+    rev = "e7355fd686614fff8359e8e62b30e103c417a838";
+    hash = "sha256-Plx6Udl+r8rX1gXlUPSkwJ5ypj/aB+OmL/pNPs0gwDI=";
   };
 
   cargoHash = "sha256-nQ1Otkb8JYv9S/agqo1BTehVEJdu1oj0TV4UJ6MmsYA=";
