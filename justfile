@@ -10,8 +10,9 @@ switch cmd="switch" *args="":
         # impure b/c hosts/Roberts-MacBook-Pro/packages.nix access abs path
         cd macos && sudo just switch {{ cmd }} {{ args }}
     else
-        # nixos-rebuild switch --flake . --use-remote-sudo
-        bash -o pipefail -c 'sudo nixos-rebuild {{ cmd }} --impure {{ args }} |& nom'
+        # Evaluate and build as robert, who can fetch private inputs over SSH.
+        # --sudo uses sudo only to activate.
+        bash -o pipefail -c 'nixos-rebuild {{ cmd }} --impure --sudo {{ args }} |& nom'
     fi
 
 # Build locally, copy to HOST, and switch there with sudo.
