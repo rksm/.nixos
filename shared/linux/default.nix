@@ -28,7 +28,9 @@
     ./computer-use.nix
   ];
 
-  environment.variables.EDITOR = toString (pkgs.writeShellScript "editor" ''
+  # A session variable goes through PAM, so systemd user services that start at
+  # boot, before the desktop session, get it too, such as the Herdr dashboard.
+  environment.sessionVariables.EDITOR = toString (pkgs.writeShellScript "editor" ''
     # Over SSH, a running Emacs server would open the file on the desktop, not in this terminal.
     if [ -n "$SSH_CONNECTION" ]; then
       exec emacs -Q -nw "$@"
