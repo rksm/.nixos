@@ -18,15 +18,15 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "computer-use-linux";
-  version = "0.7.36";
+  version = "0.7.46";
 
   src = fetchFromGitHub {
     owner = "agent-sh";
     repo = "computer-use-linux";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-kjHCB65GgHIdpasdKZGI8r2iz3BqhF7Lk1U6dTBQexc=";
+    hash = "sha256-m6jg21QnX9ET0IHjdSuZtQopWZbslrM/ZBemytU1p2k=";
   };
-  cargoHash = "sha256-nYY314GH96mFBlfuNJrvWgY/y4gCcR2rFj4xABISKd0=";
+  cargoHash = "sha256-i+B5SOWge0WYVsqgnPmvkHCXbWFBks8NniiLJLwCGis=";
 
   patches = [ ./bound-app-discovery.patch ];
 
@@ -59,10 +59,15 @@ rustPlatform.buildRustPackage (finalAttrs: {
       --replace-fail '/bin/true' '${coreutils}/bin/true' \
       --replace-fail '/bin/false' '${coreutils}/bin/false'
     substituteInPlace src/diagnostics.rs \
-      --replace-fail '/bin/sleep' '${coreutils}/bin/sleep'    # Keep test socket paths below AF_UNIX's limit inside the Nix build directory.
+      --replace-fail '/bin/sleep' '${coreutils}/bin/sleep'
+    # The pointer test child clears TMPDIR, so its ydotool probe socket lands in
+    # the harness directory. Keep that path below AF_UNIX's limit under /build.
     substituteInPlace src/server.rs \
-      --replace-fail 'cul-pointer-safety-{}-{}' 'cu-p-{}-{}'
-    substituteInPlace src/windowing/backends/kwin.rs src/gnome_extension.rs src/atspi_tree.rs \
+      --replace-fail '"{prefix}-{}-{}"' '"cu-p-{}-{}"'
+    # These tests clear PATH before they start their private bus.
+    substituteInPlace src/gnome_extension.rs tests/window_targeting_setup.rs \
+      --replace-fail 'Command::new("dbus-daemon")' 'Command::new("${dbus}/bin/dbus-daemon")'
+    substituteInPlace src/windowing/backends/kwin.rs src/atspi_tree.rs \
       --replace-fail '"--session", "--nofork"' '"--config-file=${dbus}/share/dbus-1/session.conf", "--nofork"'
   '';
 
