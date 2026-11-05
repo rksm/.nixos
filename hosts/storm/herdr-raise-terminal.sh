@@ -44,20 +44,32 @@ shows_session() {
   return 1
 }
 
+# The dashboard starts at boot, before GNOME gives systemd its WAYLAND_DISPLAY.
+# wezterm cli finds the GUI by that display. Without it, it would start a
+# windowless mux server of its own. The user manager has it once GNOME runs.
+if [ -z "${WAYLAND_DISPLAY:-}" ]; then
+  # Before GNOME runs, there is none, and wezterm below says why it fails.
+  WAYLAND_DISPLAY=$(systemctl --user show-environment | grep '^WAYLAND_DISPLAY=' | cut -d= -f2- || true)
+  export WAYLAND_DISPLAY
+fi
+# --no-auto-start: fail, so the dashboard shows the error, instead of starting
+# a mux server.
+panes=$(wezterm cli --no-auto-start list --format json)
+
 pane=
 while read -r id tty; do
   if shows_session "$tty"; then
     pane=$id
     break
   fi
-done < <(wezterm cli list --format json | jq -r '.[] | "\(.pane_id) \(.tty_name)"')
+done < <(jq -r '.[] | "\(.pane_id) \(.tty_name)"' <<<"$panes")
 # No tab shows the session, such as one that Robert follows from another
 # machine: there is nothing to bring forward.
 if [ -z "$pane" ]; then
   exit 0
 fi
 
-wezterm cli activate-pane --pane-id "$pane"
+wezterm cli --no-auto-start activate-pane --pane-id "$pane"
 
 # lessismore: raises the first WezTerm window, as `wezterm cli list` names
 # no GNOME window. Revisit when Robert keeps more than one WezTerm window.
