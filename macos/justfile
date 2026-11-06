@@ -8,4 +8,13 @@ switch cmd="switch" *args="":
     # impure b/c hosts/Roberts-MacBook-Pro/packages.nix access abs path
     echo "building for darwin on $(hostname)"
     [ -f /etc/nix/nix.custom.conf ] && sudo rm /etc/nix/nix.custom.conf
-    nix run nix-darwin -- {{ cmd }} {{ args }} --impure --flake ".#$(hostname)"
+    if [ "{{ cmd }}" = "switch" ]; then
+        # Fetch private inputs with the user's SSH setup, then activate as root.
+        darwin_system=$(nix build --impure --no-link --print-out-paths {{ args }} ".#darwinConfigurations.$(hostname).system")
+        sudo nix-env -p /nix/var/nix/profiles/system --set "$darwin_system"
+        sudo "$darwin_system/activate"
+    elif [ "{{ cmd }}" = "build" ] || [ "{{ cmd }}" = "changelog" ] || [ "{{ cmd }}" = "edit" ]; then
+        nix run nix-darwin -- {{ cmd }} {{ args }} --impure --flake ".#$(hostname)"
+    else
+        sudo nix run nix-darwin -- {{ cmd }} {{ args }} --impure --flake ".#$(hostname)"
+    fi

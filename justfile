@@ -8,7 +8,7 @@ switch cmd="switch" *args="":
     set -e
     if [ "$(uname)" = "Darwin" ]; then
         # impure b/c hosts/Roberts-MacBook-Pro/packages.nix access abs path
-        cd macos && sudo just switch {{ cmd }} {{ args }}
+        cd macos && just switch {{ cmd }} {{ args }}
     else
         # Evaluate and build as robert, who can fetch private inputs over SSH.
         # --sudo uses sudo only to activate.
@@ -21,7 +21,7 @@ switch-remote host:
     nixos-rebuild switch --flake ".#$1" --impure --target-host "$1" --sudo
 
 switch-debug:
-    just switch --print-build-logs --verbose
+    just switch switch --print-build-logs --verbose
 
 # Deploy to the agent-fleet fleet hosts. Omit HOST for all hosts in agent-fleet/nix/fleet.json.
 [working-directory: './agent-fleet']
@@ -118,7 +118,7 @@ pair-moshi:
 
 [working-directory: './macos']
 macos-switch:
-    sudo just switch
+    just switch
 
 update-with-agent: update-with-claude
 
