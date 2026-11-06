@@ -19,7 +19,6 @@
       uuidgen
       helm-org-ql
       ebib
-      helm-google
       helm-wikipedia
     ];
   };

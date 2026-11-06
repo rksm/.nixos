@@ -31,6 +31,7 @@
     ast-outline.url = "github:aeroxy/ast-outline";
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
+    herdr-dashboard.url = "git+ssh://git@github.com/rksm/herdr-dashboard";
     flux-reconciler.url = "github:rksm/flux-reconciler";
     # A release tag, or a main commit until a release contains it.
     # `just update-worktrunk` moves it forward.
@@ -72,7 +73,9 @@
             let
               overlays-nixpkgs = final: prev: {
                 inherit (inputs.attic.packages.${machine.system}) attic attic-client attic-server;
-                latest = import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
+                # Unstable no longer supports Intel Macs.
+                latest = if machine.system == "x86_64-darwin" then prev else
+                  import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
                 # lessismore: stable cargo-release needs Rust 1.97. Revisit when stable Rust reaches 1.97.
                 cargo-release = final.latest.cargo-release;
                 ast-outline = ast-outline.packages.${machine.system}.default;
@@ -101,11 +104,16 @@
                   {
                     home-manager.useGlobalPkgs = true;
                     home-manager.useUserPackages = true;
-                    home-manager.extraSpecialArgs = { inherit user; };
+                    home-manager.extraSpecialArgs = { inherit inputs user; };
+                    home-manager.sharedModules = [
+                      ./herdr-dashboard.nix
+                      { services.herdr-dashboard.session = machine.name; }
+                    ];
                     home-manager.users.${user} = import ./hosts/${machine.name}/home;
                   }
 
                   ({ ... }: {
+                    homebrew.casks = [ "google-chrome" ];
                     nixpkgs.overlays = [
                       overlays-nixpkgs
                       skillshare-nix.overlays.default

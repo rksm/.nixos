@@ -1,8 +1,6 @@
 { config, pkgs, lib, user, inputs, ... }:
 
 {
-  nixpkgs.overlays = [ inputs.nixpkgs-firefox-darwin.overlay ];
-
   imports = [
     ../../../../shared/home/agent-files.nix
     ./devenv.nix

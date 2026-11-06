@@ -1,5 +1,6 @@
 { lib, inputs, config, pkgs, options, user, ... }:
 {
+  system.primaryUser = user;
   imports = [
     ./packages.nix
     ./infra.nix
@@ -8,8 +9,6 @@
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
   system.stateVersion = 4;
-
-  nixpkgs.overlays = [ inputs.nixpkgs-firefox-darwin.overlay ];
 
   users.users.${user} = {
     description = "${user} account";
@@ -37,13 +36,9 @@
   '' + lib.optionalString (pkgs.system == "x86_64-darwin") ''
     extra-platforms = x86_64-darwin aarch64-darwin
   '';
-  nix.configureBuildUsers = true;
 
   # Add ability to used TouchID for sudo authentication
   # security.pam.enableSudoTouchIdAuth = true;
-
-  # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
 
   # # Fonts
   # fonts.enableFontDir = true;
