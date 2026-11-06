@@ -112,7 +112,10 @@
                     home-manager.users.${user} = import ./hosts/${machine.name}/home;
                   }
 
-                  ({ ... }: {
+                  ({ pkgs, ... }: {
+                    environment.systemPackages = [
+                      (pkgs.callPackage ./herdr-dashboard-app.nix { })
+                    ];
                     nixpkgs.overlays = [
                       overlays-nixpkgs
                       skillshare-nix.overlays.default

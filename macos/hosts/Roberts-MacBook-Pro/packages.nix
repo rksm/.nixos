@@ -63,21 +63,4 @@
     ];
   };
 
-  system.activationScripts.applications.text = pkgs.lib.mkForce (
-    ''
-        echo "setting up ~/Applications/Nix..."
-        if [[ -d ~/Applications/Nix ]]; then
-          rm -rf ~/Applications/Nix/*
-          rm -rf ~/Applications/Nix
-        fi
-        mkdir -p ~/Applications/Nix
-        chown ${user} ~/Applications/Nix
-        find ${config.system.build.applications}/Applications -maxdepth 1 -type l | while read f; do
-          src="$(/usr/bin/stat -f%Y $f)"
-          appname="$(basename $src)"
-          osascript -e "tell app \"Finder\" to make alias file at POSIX file \"/Users/${user}/Applications/Nix/\" to POSIX file \"$src\" with properties {name: \"$appname\"}" || true;
-      done
-    ''
-  );
-
 }
