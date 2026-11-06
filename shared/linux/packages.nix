@@ -35,7 +35,11 @@
     ripgrep
     fd
 
-    pkgs.latest.google-chrome
+    # The tab strip flag gives an installed web app tabs, such as the
+    # Herdr dashboard. See docs/keys.org in the herdr-dashboard repo.
+    (pkgs.latest.google-chrome.override {
+      commandLineArgs = "--enable-features=DesktopPWAsTabStrip";
+    })
 
     pulseaudio
     easyeffects
