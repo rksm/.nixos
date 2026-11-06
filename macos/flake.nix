@@ -73,6 +73,8 @@
               overlays-nixpkgs = final: prev: {
                 inherit (inputs.attic.packages.${machine.system}) attic attic-client attic-server;
                 latest = import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
+                # lessismore: stable cargo-release needs Rust 1.97. Revisit when stable Rust reaches 1.97.
+                cargo-release = final.latest.cargo-release;
                 ast-outline = ast-outline.packages.${machine.system}.default;
                 llm-agents = llm-agents.packages.${machine.system};
                 flux-reconciler = flux-reconciler.packages.${machine.system}.default;
