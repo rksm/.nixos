@@ -26,6 +26,12 @@
       runtimeInputs = [ pkgs.coreutils pkgs.gnugrep pkgs.jq pkgs.procps pkgs.systemd ];
       text = builtins.readFile ./herdr-raise-terminal.sh;
     })
+    # Opens the dashboard's Chrome app. The ID is that of Robert's install
+    # from Chrome's Install button. google-chrome-stable comes from PATH,
+    # with the flags of shared/linux/packages.nix.
+    (pkgs.writeShellScriptBin "herdr-dashboard-app" ''
+      exec google-chrome-stable --profile-directory=Default --app-id=cecmnpaehipjmeaddffmcbgdcehodjga "$@"
+    '')
   ];
 
   home.stateVersion = "24.05";
