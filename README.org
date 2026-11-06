@@ -1,1 +1,13 @@
 My nixos and darwin-nix config.
+
+* Herdr dashboard on macOS
+
+Run ~just switch~ on each Mac to install the local dashboard service and the ~herdr-dashboard-app~ command.
+
+Install the web app once in Chrome's Default profile (Robert on airy):
+
+1. Open ~chrome://flags/#enable-desktop-pwas-tab-strip~, set "Desktop PWA tab strips" to "Enabled", and relaunch Chrome.
+2. Open ~http://127.0.0.1:4780/~ and click "Install Herdr dashboard" in the address bar.
+3. Find "Herdr dashboard" in Spotlight, or run ~herdr-dashboard-app~.
+
+Chrome creates the macOS app and its Spotlight entry. Its installed PWA uses the dashboard manifest's tabbed mode. The launcher opens that PWA by app ID. An ~--app=URL~ shortcut has no tabs.
