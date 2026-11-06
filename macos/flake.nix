@@ -113,7 +113,6 @@
                   }
 
                   ({ ... }: {
-                    homebrew.casks = [ "google-chrome" ];
                     nixpkgs.overlays = [
                       overlays-nixpkgs
                       skillshare-nix.overlays.default
