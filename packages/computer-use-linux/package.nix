@@ -18,15 +18,15 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "computer-use-linux";
-  version = "0.7.46";
+  version = "0.7.47";
 
   src = fetchFromGitHub {
     owner = "agent-sh";
     repo = "computer-use-linux";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-m6jg21QnX9ET0IHjdSuZtQopWZbslrM/ZBemytU1p2k=";
+    hash = "sha256-kB/VgKXOgC3wqbRtsbhW7RpKMvjaFoeSEmq0DeQaibo=";
   };
-  cargoHash = "sha256-i+B5SOWge0WYVsqgnPmvkHCXbWFBks8NniiLJLwCGis=";
+  cargoHash = "sha256-sJqy0Jwf8ewnFBDMBP6fMnZMieDRCojgFqfnxgxHT4M=";
 
   patches = [ ./bound-app-discovery.patch ];
 
@@ -65,10 +65,8 @@ rustPlatform.buildRustPackage (finalAttrs: {
     substituteInPlace src/server.rs \
       --replace-fail '"{prefix}-{}-{}"' '"cu-p-{}-{}"'
     # These tests clear PATH before they start their private bus.
-    substituteInPlace src/gnome_extension.rs tests/window_targeting_setup.rs \
+    substituteInPlace src/test_sockets.rs \
       --replace-fail 'Command::new("dbus-daemon")' 'Command::new("${dbus}/bin/dbus-daemon")'
-    substituteInPlace src/windowing/backends/kwin.rs src/atspi_tree.rs \
-      --replace-fail '"--session", "--nofork"' '"--config-file=${dbus}/share/dbus-1/session.conf", "--nofork"'
   '';
 
   postInstall = ''
