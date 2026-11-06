@@ -36,9 +36,11 @@
     fd
 
     # The tab strip flag gives an installed web app tabs, such as the
-    # Herdr dashboard. See docs/keys.org in the herdr-dashboard repo.
+    # Herdr dashboard. allowScriptsToCloseWindows lets a page close its own
+    # tab after a navigation, for the dashboard's C-x k; every site gets it.
+    # See docs/keys.org in the herdr-dashboard repo.
     (pkgs.latest.google-chrome.override {
-      commandLineArgs = "--enable-features=DesktopPWAsTabStrip";
+      commandLineArgs = "--enable-features=DesktopPWAsTabStrip --blink-settings=allowScriptsToCloseWindows=true";
     })
 
     pulseaudio
