@@ -10,6 +10,7 @@
     cargo-feature
     cargo-release
     kondor
+    latest.cargo-clean-all
     dprint
   ];
 
