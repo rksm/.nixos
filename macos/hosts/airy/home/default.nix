@@ -7,6 +7,7 @@
     ../../../../shared/home/pi.nix
     ../../../moshi.nix
     ../../../../shared/home/agent-tools.nix
+    ../../../../shared/home/cli-proxy-api.nix
     ./devenv.nix
     ./devops.nix
     ./rust.nix

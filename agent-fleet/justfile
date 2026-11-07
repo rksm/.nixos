@@ -217,7 +217,7 @@ _sync host:
         agent-fleet/ssh/id_ed25519.pub \
         shared/home/agent-files.nix \
         shared/linux-home/command-line.nix \
-        shared/linux-home/cli-proxy-api.nix \
+        shared/home/cli-proxy-api.nix \
         shared/home/pi.nix \
         shared/linux/moshi.nix \
         shared/linux/nix.nix \

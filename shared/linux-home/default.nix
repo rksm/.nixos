@@ -5,7 +5,7 @@
     ../../macos/herdr-skill.nix
     ../home/agent-files.nix
     ./emacs.nix
-    ./cli-proxy-api.nix
+    ../home/cli-proxy-api.nix
     ./devenv.nix
     ./devops.nix
     ./rust.nix

@@ -104,7 +104,7 @@
                   {
                     home-manager.useGlobalPkgs = true;
                     home-manager.useUserPackages = true;
-                    home-manager.extraSpecialArgs = { inherit inputs user; };
+                    home-manager.extraSpecialArgs = { inherit inputs user; machine = machine.name; };
                     home-manager.sharedModules = [
                       ./herdr-dashboard.nix
                       { services.herdr-dashboard.session = machine.name; }

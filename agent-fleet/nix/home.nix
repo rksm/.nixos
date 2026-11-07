@@ -3,7 +3,7 @@
   imports = [
     ../../shared/home/agent-files.nix
     ../../shared/linux-home/command-line.nix
-    ../../shared/linux-home/cli-proxy-api.nix
+    ../../shared/home/cli-proxy-api.nix
     ../../shared/home/pi.nix
   ];
 

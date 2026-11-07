@@ -2,7 +2,6 @@
   config,
   machine,
   pkgs,
-  user,
   lib,
   ...
 }:
@@ -10,7 +9,7 @@
 let
   localProxy = config.services.cli-proxy-api.enableLocal;
   proxyUrl = if localProxy then "http://127.0.0.1:8317" else "http://agent-1.taileff843.ts.net:8317";
-  authDir = "/home/${user}/configs/ai/cli-proxy-api/auths/${machine}";
+  authDir = "${config.home.homeDirectory}/configs/ai/cli-proxy-api/auths/${machine}";
 
   claudeCode = pkgs.llm-agents.claude-code;
   cliProxyApi = pkgs.cliproxyapi;
@@ -104,7 +103,7 @@ in
   options.services.cli-proxy-api.enableLocal = lib.mkOption {
     type = lib.types.bool;
     default = machine == "agent-1";
-    description = "Run CLI Proxy API locally and connect agents to it instead of agent-1.";
+    description = "Run CLI Proxy API locally as a systemd user service (Linux only) and connect agents to it instead of agent-1.";
   };
 
   config = {
@@ -126,7 +125,7 @@ in
     );
 
     home.file.".cli-proxy-api/config.yaml" = lib.mkIf localProxy {
-      source = config.lib.file.mkOutOfStoreSymlink "/home/${user}/configs/ai/cli-proxy-api/config.yaml";
+      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/configs/ai/cli-proxy-api/config.yaml";
       force = true;
     };
 
@@ -139,7 +138,7 @@ in
       Unit.Description = "CLIProxyAPI";
       Service = {
         Type = "simple";
-        ExecStart = "${lib.getExe cliProxyApi} -config /home/${user}/.cli-proxy-api/config.yaml";
+        ExecStart = "${lib.getExe cliProxyApi} -config ${config.home.homeDirectory}/.cli-proxy-api/config.yaml";
         Restart = "on-failure";
         RestartSec = 5;
       };

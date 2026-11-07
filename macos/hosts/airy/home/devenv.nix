@@ -259,11 +259,9 @@ in
     cachix
     # devbox
 
-    llm-agents.claude-code
-    llm-agents.grok
+    # claude, codex, and grok come from shared/home/cli-proxy-api.nix
     llm-agents.rtk
     herdr
-    llm-agents.codex
     skillshare
     ast-outline
     worktrunk

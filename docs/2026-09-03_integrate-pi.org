@@ -428,7 +428,7 @@ on them.
 - [ ] Configure ~http://127.0.0.1:8317/v1~, ~openai-responses~, and an
   environment-backed local key.
 - [ ] Reuse the service-running check from
-  [[file:../shared/linux-home/cli-proxy-api.nix::13][cli-proxy-api.nix]].
+  [[file:../shared/home/cli-proxy-api.nix::requireCliProxyApi][cli-proxy-api.nix]].
 - [ ] Maintain a short static model list with correct context windows, output
   limits, inputs, reasoning flags, and costs. The proxy ~/v1/models~ response
   contains 41 IDs but not this metadata.
