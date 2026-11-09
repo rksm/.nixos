@@ -396,11 +396,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1793949034,
-        "narHash": "sha256-xws6ZOZuv6+BtqF9BZ9NRH5GdJ8zTa/ACN9lNeKC/+s=",
+        "lastModified": 1794201582,
+        "narHash": "sha256-ejT2Q+iCRP2/oL+58pb5/UGZ53cWVLqU5ob58EucyZk=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "baf924369e8d5ec02af1eab444db411d6fed1e5e",
+        "rev": "3327b7d82f31f2444533e935f06caf1a1b4da18c",
         "type": "github"
       },
       "original": {
@@ -705,11 +705,11 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1793859409,
-        "narHash": "sha256-wAE/Zrj4eSWnf5GlYSGD1OubUug81o8cHf2e3uht9GA=",
+        "lastModified": 1794032042,
+        "narHash": "sha256-fPIce7gYPmReH6UCTj0chHSW+I2z0nN5sqhugcnH0m8=",
         "owner": "hypervideo",
         "repo": "skillshare-nix",
-        "rev": "ccb76479e9a1230a0180ab07241ea4008402c965",
+        "rev": "5da9b7384064cbd36dfd6015b1749a6d917486b4",
         "type": "github"
       },
       "original": {
