@@ -66,6 +66,7 @@
     (pkgs.python312.withPackages (
       packages: with packages; [
         loguru
+        pyyaml
         requests
         pydantic
         polars

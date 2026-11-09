@@ -22,7 +22,15 @@ in {
     gnused
     gnutar
     rclone
-    killall
+    psmisc # killall, pstree, fuser
+    file
+    binutils # strings, readelf
+    sqlite
+    bc
+    openssl
+    imagemagick
+    xxd
+    shellcheck
     vlc
     drawio
     libreoffice
@@ -36,6 +44,7 @@ in {
     mermaid-cli
 
     texlive.combined.scheme-small # for pandoc pdf support: https://discourse.nixos.org/t/what-are-the-best-practices-regarding-pandoc-when-one-simply-wants-a-conversion-to-pdf/11889/2
+    poppler-utils # pdftotext, pdfinfo, pdftoppm
     normcap # ocr from screenshots
     pavucontrol
     flare-signal
