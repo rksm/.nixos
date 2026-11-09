@@ -705,11 +705,11 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1794032042,
-        "narHash": "sha256-fPIce7gYPmReH6UCTj0chHSW+I2z0nN5sqhugcnH0m8=",
+        "lastModified": 1794212408,
+        "narHash": "sha256-z79AJRBIrmxm2m3UVrikrRoHwsliCY/XrPpt05Apvcg=",
         "owner": "hypervideo",
         "repo": "skillshare-nix",
-        "rev": "5da9b7384064cbd36dfd6015b1749a6d917486b4",
+        "rev": "5f77c8580df28c633f15a36899080518fd4326b4",
         "type": "github"
       },
       "original": {
