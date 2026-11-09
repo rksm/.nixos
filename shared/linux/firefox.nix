@@ -77,6 +77,12 @@ in
             installation_mode = "force_installed";
           };
 
+          # German spell checking dictionary
+          "de-DE@dictionaries.addons.mozilla.org" = {
+            install_url = "https://addons.mozilla.org/firefox/downloads/latest/dictionary-german/latest.xpi";
+            installation_mode = "force_installed";
+          };
+
           # firefox-cli, signed for the release that packages/firefox-cli pins.
           # Later updates come through the extension's own update URL.
           "ff-cli-bridge@respawn.pro" = {
