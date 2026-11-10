@@ -98,12 +98,13 @@ in
 
   systemd.user.services.herdr = {
     Unit = {
-      Description = "Herdr default session";
+      Description = "Herdr ${machine} session";
       # A Home Manager switch must not stop the server and its running panes.
       X-SwitchMethod = "keep-old";
     };
     Service = {
       # Pane shells need the same login environment as interactive shells.
+      Environment = [ "HERDR_SESSION=${machine}" ];
       ExecStart = "${pkgs.bash}/bin/bash -lc 'exec ${pkgs.herdr}/bin/herdr server'";
       Restart = "on-failure";
       RestartSec = 5;
