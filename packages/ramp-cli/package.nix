@@ -12,22 +12,22 @@
 }:
 
 let
-  version = "0.2.94";
+  version = "0.2.97";
 
   # Nix system -> upstream asset suffix and SRI hash of the release tarball.
   assets = {
     x86_64-linux = {
       name = "linux-amd64";
-      hash = "sha256-4g0V7c5Mp4GQ4VbsVrTRyBVbhzr0Zfzl4GBp0kK2oJI=";
+      hash = "sha256-wu3EsAn3jABgikaTUSwuJ2Kako50MWp3x/9o0Nr1ABE=";
     };
     aarch64-linux = {
       name = "linux-arm64";
-      hash = "sha256-Z3j5AUPnew6j5llT39Za/WLubejip61kDBLPKDG9zA8=";
+      hash = "sha256-MQT9V+Rrg9pWTwqCSMxVRoP2yzqUhfMpqWxXm8I9PIs=";
     };
     # Upstream also ships darwin-amd64, but nixpkgs-unstable dropped x86_64-darwin.
     aarch64-darwin = {
       name = "darwin-arm64";
-      hash = "sha256-GrpZpoa8zelUjtCRvPW49awNBGZhWGJZluVZLnhWk2s=";
+      hash = "sha256-fCVc1kYApavlq44vABCHWBQlZY1BejRZrFcHLUoU8/4=";
     };
   };
 
