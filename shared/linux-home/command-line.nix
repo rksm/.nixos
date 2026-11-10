@@ -96,6 +96,21 @@ in
     };
   };
 
+  systemd.user.services.herdr = {
+    Unit = {
+      Description = "Herdr default session";
+      # A Home Manager switch must not stop the server and its running panes.
+      X-SwitchMethod = "keep-old";
+    };
+    Service = {
+      # Pane shells need the same login environment as interactive shells.
+      ExecStart = "${pkgs.bash}/bin/bash -lc 'exec ${pkgs.herdr}/bin/herdr server'";
+      Restart = "on-failure";
+      RestartSec = 5;
+    };
+    Install.WantedBy = [ "default.target" ];
+  };
+
   home.packages = with pkgs; [
     fzf
     oh-my-fish
