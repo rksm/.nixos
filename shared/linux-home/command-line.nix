@@ -105,6 +105,8 @@ in
     Service = {
       # Pane shells need the same login environment as interactive shells.
       Environment = [ "HERDR_SESSION=${machine}" ];
+      # A user unit cannot order itself after the system's tailscaled.service.
+      ExecStartPre = "${pkgs.tailscale}/bin/tailscale wait --timeout=60s";
       ExecStart = "${pkgs.bash}/bin/bash -lc 'exec ${pkgs.herdr}/bin/herdr server'";
       Restart = "on-failure";
       RestartSec = 5;
