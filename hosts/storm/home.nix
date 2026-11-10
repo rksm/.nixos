@@ -16,6 +16,11 @@
     };
   };
 
+  systemd.user.services.herdr-dashboard.Unit = {
+    Requires = [ "herdr.service" ];
+    After = [ "herdr.service" ];
+  };
+
   # The dashboard's focus-hook in its config.yaml: after f, it brings the
   # WezTerm tab with the Herdr client to the front. wezterm comes from PATH.
   home.packages = [
