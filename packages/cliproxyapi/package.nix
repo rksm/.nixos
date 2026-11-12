@@ -28,8 +28,8 @@ in
   src = fetchFromGitHub {
     owner = "router-for-me";
     repo = "CLIProxyAPI";
-    rev = "9a8ca1b577ef8573c5ccf108450b93ed57716cc4";
-    hash = "sha256-90nFfGtEEhsMIFSSZrpzOQzjy9oz+appqIaIZsGKFdg=";
+    rev = "07290e18da93fcbec494c6fe8743ff7c7e4e8ad3";
+    hash = "sha256-5DkJadRQUb+x31ijzt/uMG60iSBUpRmqg+zH/Ks8IHo=";
   };
 
   vendorHash = "sha256-02Qqrs9lQ0kE+Tnk/SWvlkLXGSh8RQPxRawFZogRYNc=";
