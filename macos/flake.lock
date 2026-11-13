@@ -7,11 +7,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1786985554,
-        "narHash": "sha256-rCRVJC2jSsd6B6OPcQoqW1i938Dbr2fJfzTA2Zr79CE=",
+        "lastModified": 1794330258,
+        "narHash": "sha256-5CECGEMGTxQN96g+DirU54tcP1VgrktjB6MFYpfXhIk=",
         "owner": "aeroxy",
         "repo": "ast-outline",
-        "rev": "4fca8c9b855e8e44629585c52f8629eaabadad5a",
+        "rev": "682cc25130ed440d9545639f12865e8c40d95c8f",
         "type": "github"
       },
       "original": {
@@ -299,11 +299,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1794057205,
-        "narHash": "sha256-bTxyy+yTMmlBN1l9Cs0JQnpE7mwtjbeNSFbn0GA/a+c=",
+        "lastModified": 1794568901,
+        "narHash": "sha256-kQlsFg4nqDpmcimC4MqpYoAKIoXEsT46ijAIryUrHEE=",
         "ref": "refs/heads/main",
-        "rev": "f3e61d274fd4c753832235f1e0fc6892035463ce",
-        "revCount": 263,
+        "rev": "683da4b3b22bdd722b932c785fc099aea8a03928",
+        "revCount": 314,
         "type": "git",
         "url": "ssh://git@github.com/rksm/herdr-dashboard"
       },
@@ -318,11 +318,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1794221126,
-        "narHash": "sha256-wDpmsLXtguXIwDLfp87jgtA0YK+KDpYhEULCsOSV4LU=",
+        "lastModified": 1794483185,
+        "narHash": "sha256-OGblYXIHVZRDiHyFJxbcwjdM46kIOGQB/PYvk70smfc=",
         "owner": "rksm",
         "repo": "herdr",
-        "rev": "9dac718fcc7f9192b91145420df9c21d549021e6",
+        "rev": "cb73a9c8d7437c124467470a187bd0f2d6e09edf",
         "type": "github"
       },
       "original": {
@@ -361,11 +361,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1794317113,
-        "narHash": "sha256-0YxNCB01/Shk1S1EumNva5CcT2XCrvpGm24/mTwQRBw=",
+        "lastModified": 1794551759,
+        "narHash": "sha256-kL6q4ItZT++IjrrDlcUOL9L0XNzTLb2+4xQgpHBzx/I=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "87add0847ae4744de25a41a9c77a9ef257bea01b",
+        "rev": "860075d959fc68c31fd405989daf85c1b1f0db38",
         "type": "github"
       },
       "original": {
@@ -634,11 +634,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1794291361,
-        "narHash": "sha256-CgTUBe6uT1mRGLvjAP2Qt3CI55JTfzOQORaKWczhvo0=",
+        "lastModified": 1794464212,
+        "narHash": "sha256-PjvtpfmGjxI7SEQbujT06PvGCtW8lpO4JlJZ0DAKGiM=",
         "owner": "hypervideo",
         "repo": "skillshare-nix",
-        "rev": "ab1dadf8f8592a590723a7e85a565d6b59699842",
+        "rev": "0dd0800e24442d6de0d18682a136f58272780992",
         "type": "github"
       },
       "original": {
