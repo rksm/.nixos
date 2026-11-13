@@ -19,6 +19,8 @@ in
     ".style.yapf".source = fromConfigs ".style.yapf";
     ".config/fm".source = fromConfigs "ai/fm";
     ".config/herdr".source = fromConfigs "herdr";
+    ".config/herdr-dashboard/config.yaml".source = fromConfigs "herdr-dashboard/config.linux.yaml";
+    ".config/herdr-dashboard/snippets".source = fromConfigs "herdr-dashboard/snippets";
     ".config/skillshare/config.yaml".source =
       config.lib.file.mkOutOfStoreSymlink /home/${user}/projects/ai/skillshare/config.yaml;
     ".config/vale".source = fromConfigs "vale";
