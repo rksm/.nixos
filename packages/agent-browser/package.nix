@@ -8,12 +8,19 @@
 }:
 
 let
-  platform =
-    {
-      x86_64-linux = "linux-x64";
-      aarch64-darwin = "darwin-arm64";
-    }
-    .${stdenvNoCC.hostPlatform.system};
+  # Upstream ships the binary for each system in its own npm package.
+  # `just update-agent-browser` updates these hashes.
+  natives = {
+    x86_64-linux = {
+      package = "cli-linux-x64-gnu";
+      hash = "sha256-qgCxTugpTt/rG8AbxkGM9LflDXWwRqmrSXwQOEIHOD8=";
+    };
+    aarch64-darwin = {
+      package = "cli-darwin-arm64";
+      hash = "sha256-yLlFfIUJVqQNxaSJVQX78/Ii4xsq0+7JzmtDvQSEL8I=";
+    };
+  };
+  native = natives.${stdenvNoCC.hostPlatform.system};
   browser =
     if stdenvNoCC.hostPlatform.isDarwin then
       "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
@@ -31,6 +38,11 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     hash = "sha256-5F07lcES2ghY+KfINtVdvAt4WPrEffFQnXQK3/ZeCrs=";
   };
 
+  nativeSrc = fetchurl {
+    url = "https://registry.npmjs.org/@agent-browser/${native.package}/-/${native.package}-${finalAttrs.version}.tgz";
+    inherit (native) hash;
+  };
+
   nativeBuildInputs = [
     makeWrapper
   ]
@@ -39,11 +51,9 @@ stdenvNoCC.mkDerivation (finalAttrs: {
 
   installPhase = ''
     runHook preInstall
-    tar -xzf "$src" \
-      package/bin/agent-browser-${platform} \
-      package/skill-data \
-      package/skills
-    install -Dm755 package/bin/agent-browser-${platform} $out/bin/agent-browser
+    tar -xzf "$src" package/skill-data package/skills
+    tar -xzf "$nativeSrc" package/bin/agent-browser
+    install -Dm755 package/bin/agent-browser $out/bin/agent-browser
     cp -r package/skill-data package/skills $out/
     runHook postInstall
   '';
@@ -58,9 +68,6 @@ stdenvNoCC.mkDerivation (finalAttrs: {
     homepage = "https://github.com/vercel-labs/agent-browser";
     license = lib.licenses.asl20;
     mainProgram = "agent-browser";
-    platforms = [
-      "x86_64-linux"
-      "aarch64-darwin"
-    ];
+    platforms = lib.attrNames natives;
   };
 })

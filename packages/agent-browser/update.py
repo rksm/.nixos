@@ -35,28 +35,37 @@ def update(package_file):
         raise ValueError("Pi extension must declare one stable agent-browser target version")
     browser_version = versions[0]
 
-    browser = json.loads(subprocess.check_output(
-        [
-            "nix", "store", "prefetch-file", "--json",
-            f"{registry}/agent-browser/-/agent-browser-{browser_version}.tgz",
-        ],
-        text=True,
-    ))
-    original = package_file.read_text()
-    updated = original
-    for attribute, value in (
-        ("version", browser_version),
-        ("passthru.piAgentBrowserNativeVersion", extension_version),
-        ("hash", browser["hash"]),
-    ):
+    def prefetch(url):
+        return json.loads(subprocess.check_output(
+            ["nix", "store", "prefetch-file", "--json", url], text=True
+        ))["hash"]
+
+    def replace(text, pattern, value):
         updated, count = re.subn(
-            rf'^(\s*{re.escape(attribute)} = )"[^"]+";',
-            lambda match: f'{match[1]}"{value}";',
-            updated,
-            flags=re.MULTILINE,
+            pattern, lambda match: f'{match[1]}"{value}";', text, flags=re.MULTILINE
         )
         if count != 1:
-            raise ValueError(f"Expected one {attribute} assignment in {package_file}")
+            raise ValueError(f"Expected one match of {pattern!r} in {package_file}")
+        return updated
+
+    original = package_file.read_text()
+    updated = original
+    updated = replace(updated, r'^(\s*version = )"[^"]+";', browser_version)
+    updated = replace(
+        updated, r'^(\s*passthru\.piAgentBrowserNativeVersion = )"[^"]+";', extension_version
+    )
+    # The hash after a URL or native package name belongs to that tarball.
+    updated = replace(
+        updated,
+        r'(agent-browser-\$\{finalAttrs\.version\}\.tgz";\n\s*hash = )"[^"]+";',
+        prefetch(f"{registry}/agent-browser/-/agent-browser-{browser_version}.tgz"),
+    )
+    for native in re.findall(r'^\s*package = "([^"]+)";$', original, re.MULTILINE):
+        updated = replace(
+            updated,
+            rf'(package = "{re.escape(native)}";\n\s*hash = )"[^"]+";',
+            prefetch(f"{registry}/@agent-browser/{native}/-/{native}-{browser_version}.tgz"),
+        )
 
     if updated != original:
         package_file.write_text(updated)
