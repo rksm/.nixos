@@ -146,6 +146,7 @@ update-ai:
         cd macos
         set -- \
           ast-outline \
+          herdr-dashboard \
           herdr-nix \
           llm-agents \
           skillshare-nix
@@ -154,6 +155,7 @@ update-ai:
         set -- \
           ai-quotas \
           ast-outline \
+          herdr-dashboard \
           herdr-nix \
           hex \
           llm-agents \
@@ -188,6 +190,15 @@ update-ai:
     skillshare sync --all
     # This also bootstraps missing host plugins.
     just --justfile "$HOME/projects/ai/lessismore/justfile" sync
+
+    # The switch keeps the old herdr server running. Restart it when it runs a
+    # different build than the installed one. This kills all panes, so it runs last.
+    if [ "$(uname)" != "Darwin" ]; then
+        running="$(readlink "/proc/$(systemctl --user show herdr.service -p MainPID --value)/exe" || true)"
+        if [ "$running" != "$(readlink -f "$(command -v herdr)")" ]; then
+            systemctl --user restart herdr.service
+        fi
+    fi
 
 # stuff
 #
