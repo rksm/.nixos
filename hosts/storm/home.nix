@@ -24,6 +24,10 @@
   # The dashboard's focus-hook in its config.yaml: after f, it brings the
   # WezTerm tab with the Herdr client to the front. wezterm comes from PATH.
   home.packages = [
+    # The dashboard's completion.copilot-command: GitHub's Copilot language
+    # server, for the suggestions in the prompt box. The service finds it on
+    # PATH. It uses the login that Emacs's copilot-login made.
+    pkgs.copilot-language-server
     (pkgs.writeShellApplication {
       name = "herdr-raise-terminal";
       runtimeInputs = [ pkgs.coreutils pkgs.gnugrep pkgs.jq pkgs.procps pkgs.systemd ];
