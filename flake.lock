@@ -294,11 +294,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1794681550,
-        "narHash": "sha256-Lt914sB/KWIeAxVpo4K6X8HO5PNA3t2vjrynM2Xsoms=",
+        "lastModified": 1794681893,
+        "narHash": "sha256-WWyAU+4KE6qToAoEXfXgYfKZ1i+byusBHT48p3g5A8I=",
         "ref": "refs/heads/main",
-        "rev": "3b3be61c6c59465359780a2f41eeff477fcc62c8",
-        "revCount": 352,
+        "rev": "b0ec7042dd40303b971ade5be7a5d90930ddf35d",
+        "revCount": 354,
         "type": "git",
         "url": "ssh://git@github.com/rksm/herdr-dashboard"
       },
