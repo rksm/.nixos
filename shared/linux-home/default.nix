@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ../../macos/herdr-skill.nix
     ../home/agent-files.nix
     ./emacs.nix
     ../home/cli-proxy-api.nix

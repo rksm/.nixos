@@ -10,6 +10,7 @@
     ./packages.nix
     ./ssh.nix
     ./moshi.nix
+    ./herdr.nix
     ./docker.nix
     ./network.nix
     ./tailscale.nix

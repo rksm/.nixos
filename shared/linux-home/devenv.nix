@@ -12,8 +12,6 @@
     ../home/agent-tools.nix
   ];
 
-  home.file.".config/herdr-mirror".source =
-    config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/herdr/herdr-mirror;
   home.file.".wezterm.lua".source =
     config.lib.file.mkOutOfStoreSymlink /home/${user}/configs/.wezterm.lua;
 
@@ -98,7 +96,6 @@
     llm-agents.antigravity-cli
     llm-agents.ccusage
     llm-agents.rtk
-    herdr
     skillshare
     ast-outline
     ai-quotas

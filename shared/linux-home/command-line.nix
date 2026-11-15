@@ -18,9 +18,6 @@ in
     ".npmrc".source = fromConfigs ".npmrc";
     ".style.yapf".source = fromConfigs ".style.yapf";
     ".config/fm".source = fromConfigs "ai/fm";
-    ".config/herdr".source = fromConfigs "herdr";
-    ".config/herdr-dashboard/config.yaml".source = fromConfigs "herdr-dashboard/config.linux.yaml";
-    ".config/herdr-dashboard/snippets".source = fromConfigs "herdr-dashboard/snippets";
     ".config/skillshare/config.yaml".source =
       config.lib.file.mkOutOfStoreSymlink /home/${user}/projects/ai/skillshare/config.yaml;
     ".config/vale".source = fromConfigs "vale";
@@ -96,24 +93,6 @@ in
       enableBashIntegration = true;
       enableFishIntegration = true;
     };
-  };
-
-  systemd.user.services.herdr = {
-    Unit = {
-      Description = "Herdr ${machine} session";
-      # A Home Manager switch must not stop the server and its running panes.
-      X-SwitchMethod = "keep-old";
-    };
-    Service = {
-      # Pane shells need the same login environment as interactive shells.
-      Environment = [ "HERDR_SESSION=${machine}" ];
-      # A user unit cannot order itself after the system's tailscaled.service.
-      ExecStartPre = "${pkgs.tailscale}/bin/tailscale wait --timeout=60s";
-      ExecStart = "${pkgs.bash}/bin/bash -lc 'exec ${pkgs.herdr}/bin/herdr server'";
-      Restart = "on-failure";
-      RestartSec = 5;
-    };
-    Install.WantedBy = [ "default.target" ];
   };
 
   home.packages = with pkgs; [
