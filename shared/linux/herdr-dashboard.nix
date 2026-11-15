@@ -1,6 +1,7 @@
 # The Herdr dashboard: the user service, its config, the programs it runs, the
-# Chrome app that opens it, and its address on the tailnet. It reads the Herdr
-# session that ./herdr.nix runs.
+# llama-server for its local suggestion models, the Chrome app that opens it,
+# and its address on the tailnet. It reads the Herdr session that ./herdr.nix
+# runs.
 {
   inputs,
   lib,
@@ -16,8 +17,61 @@ let
   chromeAppIds = {
     storm = "cecmnpaehipjmeaddffmcbgdcehodjga";
   };
+
+  # The machines that serve local models for the dashboard's ghost text. They
+  # need an NVIDIA GPU with about 9 GB free.
+  llamaMachines = [ "storm" ];
+
+  # The local models for the dashboard's ghost text, by the name that
+  # completion.copilot-model in its config.yaml uses. Both are fill-in-the-middle
+  # models, which the dashboard asks through llama-server's /infill. A replay
+  # of Robert's prompts picked them: ~/projects/ai/completion-eval/report.org.
+  copilotModels = {
+    "qwen2.5-coder-7b" = pkgs.fetchurl {
+      url = "https://huggingface.co/QuantFactory/Qwen2.5-Coder-7B-GGUF/resolve/16ba6b11abac189c8f28fa0ddfa5619c4243a0db/Qwen2.5-Coder-7B.Q5_K_M.gguf";
+      sha256 = "ac6fc5e4c07c7cc72d00fc4dce5316df8f1d2bbc5dca83c05f43a670b43b94c1";
+    };
+    "mellum2-12b" = pkgs.fetchurl {
+      url = "https://huggingface.co/mradermacher/Mellum2-12B-A2.5B-Base-GGUF/resolve/da61ee532d542e264a5e340d5669b96c30b2c3dd/Mellum2-12B-A2.5B-Base.Q4_K_M.gguf";
+      sha256 = "f30c7d928a39f5278b01f9c4a7d74ee2a88a24f887bb196a3033abe625a8381b";
+    };
+  };
 in
 {
+  # llama-server for the dashboard's local models, at http://127.0.0.1:8012 (the
+  # dashboard's completion.copilot-llama-server). It runs as a router: it loads
+  # a model on the first request that names it, and keeps one loaded at a time,
+  # so switching models in the dashboard's config needs no restart here. A
+  # model takes 6-8.5 GB of GPU memory from its first suggestion on.
+  services.llama-cpp = lib.mkIf (lib.elem machine llamaMachines) {
+    enable = true;
+    # nixos-26.05 has llama.cpp build 8864, which does not know Mellum2.
+    # Unstable has build 11429; cache.flox.dev has its CUDA build.
+    package = pkgs.ai.llama-cpp.override { cudaSupport = true; };
+    port = 8012;
+    modelsPreset = lib.mapAttrs (_: file: { model = "${file}"; }) copilotModels;
+    extraFlags = [
+      "--models-max"
+      "1"
+      "--n-gpu-layers"
+      "99"
+      "--flash-attn"
+      "on"
+      # The dashboard's document is up to 12,000 characters, which reached
+      # 5.8k tokens on dense text.
+      "--ctx-size"
+      "8192"
+      "--parallel"
+      "1"
+      # /infill keeps at most 3/4 of the batch for the text before the cursor.
+      "--batch-size"
+      "8192"
+      "--ubatch-size"
+      "1024"
+      "--no-webui"
+    ];
+  };
+
   # Serves the Herdr dashboard to the tailnet at https://${machine}.taileff843.ts.net.
   # The dashboard takes these requests only from robert's login; see
   # services.herdr-dashboard.tailnet below.
