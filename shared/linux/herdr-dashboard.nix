@@ -1,15 +1,24 @@
 # The Herdr dashboard: the user service, its config, the programs it runs, the
 # Chrome app that opens it, and its address on the tailnet. It reads the Herdr
-# session that shared/linux/herdr.nix runs.
+# session that ./herdr.nix runs.
 {
   inputs,
+  lib,
   pkgs,
   user,
+  machine,
   ...
 }:
 
+let
+  # The ID of the dashboard's Chrome app, from Chrome's Install button on that
+  # machine. A machine without one gets no herdr-dashboard-app.
+  chromeAppIds = {
+    storm = "cecmnpaehipjmeaddffmcbgdcehodjga";
+  };
+in
 {
-  # Serves the Herdr dashboard to the tailnet at https://storm.taileff843.ts.net.
+  # Serves the Herdr dashboard to the tailnet at https://${machine}.taileff843.ts.net.
   # The dashboard takes these requests only from robert's login; see
   # services.herdr-dashboard.tailnet below.
   systemd.services.tailscale-serve-herdr-dashboard = {
@@ -47,10 +56,10 @@
 
       services.herdr-dashboard = {
         enable = true;
-        session = "storm";
+        session = machine;
         # tailscale-serve-herdr-dashboard above forwards this name.
         tailnet = {
-          host = "storm.taileff843.ts.net";
+          host = "${machine}.taileff843.ts.net";
           user = "robert@hyper.video";
         };
       };
@@ -82,12 +91,13 @@
           ];
           text = builtins.readFile ./herdr-raise-terminal.sh;
         })
-        # Opens the dashboard's Chrome app. The ID is that of Robert's install
-        # from Chrome's Install button. google-chrome-stable comes from PATH,
-        # with the flags of shared/linux/packages.nix.
-        (pkgs.writeShellScriptBin "herdr-dashboard-app" ''
-          exec google-chrome-stable --profile-directory=Default --app-id=cecmnpaehipjmeaddffmcbgdcehodjga "$@"
-        '')
-      ];
+      ]
+      # Opens the dashboard's Chrome app. google-chrome-stable comes from PATH,
+      # with the flags of ./packages.nix.
+      ++ lib.optional (chromeAppIds ? ${machine}) (
+        pkgs.writeShellScriptBin "herdr-dashboard-app" ''
+          exec google-chrome-stable --profile-directory=Default --app-id=${chromeAppIds.${machine}} "$@"
+        ''
+      );
     };
 }

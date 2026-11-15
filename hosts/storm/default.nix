@@ -3,7 +3,6 @@
   imports = [
     ./hardware-configuration.nix
     ../../shared/linux
-    ./herdr-dashboard.nix
   ];
 
   system.stateVersion = "24.05";
