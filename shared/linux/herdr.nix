@@ -20,7 +20,6 @@
       home.packages = [ pkgs.herdr ];
 
       home.file.".config/herdr".source = fromConfigs "herdr";
-      home.file.".config/herdr-mirror".source = fromConfigs "herdr/herdr-mirror";
 
       systemd.user.services.herdr = {
         Unit = {
