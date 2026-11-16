@@ -21,6 +21,8 @@ in
     (modulesPath + "/installer/scan/not-detected.nix")
     (modulesPath + "/profiles/qemu-guest.nix")
     ../../shared/linux/nix.nix
+    # Links ~/.config/herdr, where the Herdr session of ./roberts-review-bot.nix has its config and its socket.
+    ../../shared/linux/herdr.nix
     ./roberts-review-bot.nix
     ./syncthing.nix
   ];

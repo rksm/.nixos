@@ -219,6 +219,9 @@ _sync host:
         shared/linux-home/command-line.nix \
         shared/home/cli-proxy-api.nix \
         shared/home/pi.nix \
+        shared/linux/herdr.nix \
+        macos/herdr-skill.nix \
+        macos/patches/herdr-skill-preferences.patch \
         shared/linux/moshi.nix \
         shared/linux/nix.nix \
         shared/linux/syncthing.nix \
