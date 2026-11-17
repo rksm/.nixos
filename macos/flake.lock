@@ -7,11 +7,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1794644504,
-        "narHash": "sha256-m88rsArIcs0+9/+Gr0JEleoBKUgCva3Ybi2rUDdrpqc=",
+        "lastModified": 1794852970,
+        "narHash": "sha256-b6MOxIQ7qDtDA0OMIKeym/fgvhN6SQWvsqGbmyrNg+k=",
         "owner": "aeroxy",
         "repo": "ast-outline",
-        "rev": "1b4be264dcd454b69fb1efc35d33a6098df513ad",
+        "rev": "0a276c8c24df01eb68ea863a873aa3d74994f10b",
         "type": "github"
       },
       "original": {
@@ -299,11 +299,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1794598160,
-        "narHash": "sha256-191q3VViTYI4KBisZ7DQ75rIOaCGNqW8X+y7d+ilXZM=",
+        "lastModified": 1794932281,
+        "narHash": "sha256-rynR+1UrNXqKur+vO3f1ROQ74fBXtlV0zYknNlr4hak=",
         "ref": "refs/heads/main",
-        "rev": "160fff7727ca3b39a190103834e8a1fee2212c55",
-        "revCount": 342,
+        "rev": "569995fc3bd648695cf5ba3ed6b85eca106754fc",
+        "revCount": 429,
         "type": "git",
         "url": "ssh://git@github.com/rksm/herdr-dashboard"
       },
@@ -361,11 +361,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1794634844,
-        "narHash": "sha256-8HlfWrlXejz26+kK2XQuNvhO6wpQ3g+JOONywNf8d1E=",
+        "lastModified": 1794922472,
+        "narHash": "sha256-1A3XeJeVx5X5W2yJsiWqeGJ0HG4EKzRygvT7ydX9JrI=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "ee05b5abb7c7f4af84a5ad5420f8a6e662774f2b",
+        "rev": "cc6255a8a195e622ee436fec4ff88a91cdf78044",
         "type": "github"
       },
       "original": {
@@ -634,11 +634,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1794636850,
-        "narHash": "sha256-CMwFi8d6jtaDX7NukjlIHWiuQOka3GiGyqBraiR43h8=",
+        "lastModified": 1794896194,
+        "narHash": "sha256-reH+GsJOE3eBoN0cmpvF1gWlTdcFc13T4FTGZc8qGdw=",
         "owner": "hypervideo",
         "repo": "skillshare-nix",
-        "rev": "68a557af44a02a8069143875c54040aa3476dcd2",
+        "rev": "60479b5d87f0b698ec4dc499bc3f7dc57f12782d",
         "type": "github"
       },
       "original": {
@@ -736,16 +736,16 @@
         "rust-overlay": "rust-overlay_2"
       },
       "locked": {
-        "lastModified": 1792530724,
-        "narHash": "sha256-Sgim8WgH5nGr1GhSZRtwkRu87b/S2W9gp7eHgtTGBAo=",
+        "lastModified": 1794684427,
+        "narHash": "sha256-Zrgjcw9n3UIbw5hMl/2XSwD3YdOhE7sY1OqlJstS/mk=",
         "owner": "max-sixty",
         "repo": "worktrunk",
-        "rev": "e42f0f6fef2fdbd98fc92e5cd6c3cbea55b65b38",
+        "rev": "66f0bf981ec2fad1feef8a1d816f20710d2bdb0d",
         "type": "github"
       },
       "original": {
         "owner": "max-sixty",
-        "ref": "v0.81.0",
+        "ref": "v0.82.0",
         "repo": "worktrunk",
         "type": "github"
       }
