@@ -14,7 +14,29 @@ let
   claudeCode = pkgs.llm-agents.claude-code;
   cliProxyApi = pkgs.cliproxyapi;
   cliProxyKey = "sk-local-cli-proxy-api";
-  codexCli = pkgs.llm-agents.codex;
+  # codex links aws-lc as libssl.so and libcrypto.so, the same names OpenSSL
+  # uses. Dev shells often put OpenSSL on LD_LIBRARY_PATH, which the loader
+  # searches before RUNPATH, so codex loaded OpenSSL and failed with
+  # "undefined symbol: EC_group_p384". Absolute paths skip that search.
+  codexCli =
+    pkgs.runCommand "codex-${pkgs.llm-agents.codex.version}"
+      {
+        nativeBuildInputs = [ pkgs.patchelf ];
+        meta.mainProgram = "codex";
+      }
+      ''
+        cp -r ${pkgs.llm-agents.codex} $out
+        chmod -R u+w $out
+        for bin in $out/libexec/codex/bin/*; do
+          for dir in $(patchelf --print-rpath $bin | tr : ' '); do
+            for lib in libssl.so libcrypto.so; do
+              if [ -e $dir/$lib ]; then
+                patchelf --replace-needed $lib $dir/$lib $bin
+              fi
+            done
+          done
+        done
+      '';
   grokCli = pkgs.llm-agents.grok;
   grokAuthProvider = pkgs.writeShellScript "grok-cli-proxy-auth" ''
     ${pkgs.coreutils}/bin/printf '%s\n' ${lib.escapeShellArg cliProxyKey}
