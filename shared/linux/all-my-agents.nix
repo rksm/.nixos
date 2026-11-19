@@ -1,18 +1,27 @@
 # all-my-agents: the dashboard that runs coding agents itself, without Herdr. It
 # runs as a user service next to the Herdr dashboard (./herdr-dashboard.nix),
-# with its own config and its own address on the tailnet. Its package also puts
-# `ama` on the PATH, which starts and drives the agents.
+# with its own config, its own address on the tailnet, and the Chrome app that
+# opens it. Its package also puts `ama` on the PATH, which starts and drives
+# the agents.
 #
 # The Copilot language server and the llama-server for the prompt box's
 # suggestions come from ./herdr-dashboard.nix. Move them here when that file
 # goes.
 {
   inputs,
+  lib,
   pkgs,
   user,
   machine,
   ...
 }:
+let
+  # The ID of the dashboard's Chrome app, from Chrome's Install button on that
+  # machine. A machine without one gets no all-my-agents-app.
+  chromeAppIds = {
+    storm = "aknnjneghhffoemkollojblhcnplmkdb";
+  };
+in
 {
   # The session of `ama agent start` in a shell, so that the new agent shows
   # in this machine's dashboard. Without it, the session is "default".
@@ -68,5 +77,13 @@
         fromConfigs "all-my-agents/config.linux.yaml";
       # The same snippets as the Herdr dashboard's.
       home.file.".config/all-my-agents/snippets".source = fromConfigs "herdr-dashboard/snippets";
+
+      # Opens the dashboard's Chrome app. google-chrome-stable comes from PATH,
+      # with the flags of ./packages.nix.
+      home.packages = lib.optional (chromeAppIds ? ${machine}) (
+        pkgs.writeShellScriptBin "all-my-agents-app" ''
+          exec google-chrome-stable --profile-directory=Default --app-id=${chromeAppIds.${machine}} "$@"
+        ''
+      );
     };
 }
