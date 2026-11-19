@@ -26,11 +26,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1795087229,
-        "narHash": "sha256-DT9/EtUnNmj+IawBaJmFUtg2bga5+06X/NOmzdLUeNQ=",
+        "lastModified": 1795106937,
+        "narHash": "sha256-CvAC2/MQdgAfWt8X85zkf3MPXiDnAzRAeO8UshfqMgQ=",
         "ref": "refs/heads/main",
-        "rev": "b02d5faf0d405649bff57db5498124f4b45fa2a1",
-        "revCount": 654,
+        "rev": "480096e49926a28b903236085bf98feede3dd04d",
+        "revCount": 743,
         "type": "git",
         "url": "ssh://git@github.com/rksm/all-my-agents"
       },
