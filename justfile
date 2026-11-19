@@ -154,6 +154,7 @@ update-ai:
     else
         set -- \
           ai-quotas \
+          all-my-agents \
           ast-outline \
           herdr-dashboard \
           herdr-nix \

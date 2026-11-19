@@ -9,6 +9,8 @@
 let
   agents = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system};
   aiQuotas = inputs.ai-quotas.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  # `ama`: a dashboard on another machine starts and drives this machine's agents with it, over SSH.
+  allMyAgents = inputs.all-my-agents.packages.${pkgs.stdenv.hostPlatform.system}.default;
   astOutline = inputs.ast-outline.packages.${pkgs.stdenv.hostPlatform.system}.default;
   fluxReconciler = inputs.flux-reconciler.packages.${pkgs.stdenv.hostPlatform.system}.default;
   herdr = inputs.herdr-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
@@ -122,6 +124,10 @@ in
 
   security.sudo.wheelNeedsPassword = false;
 
+  # The session of `ama agent start` in a shell here: the one that the
+  # dashboards follow on this machine. Without it, the session is "default".
+  environment.sessionVariables.AMA_SESSION = config.networking.hostName;
+
   environment.systemPackages = with pkgs; [
     btop
     curl
@@ -173,6 +179,7 @@ in
     google-chrome
 
     aiQuotas
+    allMyAgents
     agents.antigravity-cli
     agents.ccusage
     astOutline

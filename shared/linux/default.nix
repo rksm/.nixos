@@ -12,6 +12,7 @@
     ./moshi.nix
     ./herdr.nix
     ./herdr-dashboard.nix
+    ./all-my-agents.nix
     ./docker.nix
     ./network.nix
     ./tailscale.nix
