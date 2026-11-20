@@ -427,6 +427,27 @@
         "type": "github"
       }
     },
+    "mr-boxington": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794255730,
+        "narHash": "sha256-Smz5HWY8LWuwsE6dyJ1bjURF8kDmt9AevdIa0NM+awo=",
+        "owner": "jdx",
+        "repo": "mr-boxington",
+        "rev": "2299ea69519d142d85b5903cbd0e2690419b7bed",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jdx",
+        "ref": "v1.30.0",
+        "repo": "mr-boxington",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1793582901,
@@ -683,6 +704,7 @@
         "hex": "hex",
         "home-manager": "home-manager_2",
         "llm-agents": "llm-agents",
+        "mr-boxington": "mr-boxington",
         "nixpkgs": "nixpkgs_8",
         "nixpkgs-ai": "nixpkgs-ai",
         "nixpkgs-latest": "nixpkgs-latest",

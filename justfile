@@ -91,7 +91,10 @@ update-worktrunk:
     if [ "$(uname)" = "Darwin" ]; then
         flake_dir=macos
     fi
-    nix shell --inputs-from . nixpkgs#python3 -c python3 scripts/update_worktrunk.py "$flake_dir"
+    nix shell --inputs-from . nixpkgs#python3 -c python3 scripts/update_flake_release.py "$flake_dir" worktrunk-nix
+
+update-mbx:
+    nix shell --inputs-from . nixpkgs#python3 -c python3 scripts/update_flake_release.py . mr-boxington
 
 update-computer-use:
     nix develop .#computer-use -c nix-update --flake --use-github-releases computer-use-linux
@@ -152,6 +155,7 @@ update-ai:
           skillshare-nix
         commit_message="macos: update ai"
     else
+        just update-mbx
         set -- \
           ai-quotas \
           all-my-agents \

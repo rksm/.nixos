@@ -7,7 +7,7 @@ from pathlib import Path
 from unittest.mock import patch
 from urllib.error import URLError
 
-from update_worktrunk import update
+from update_flake_release import update
 
 PINNED = "397136ea31a6840901f17d5e68c6450b1a99299e"
 
@@ -21,14 +21,17 @@ class UpdateTest(unittest.TestCase):
         self.original = f'''{{
   inputs = {{
     worktrunk-nix.url = "github:max-sixty/worktrunk/{PINNED}";
+    mr-boxington.url = "github:jdx/mr-boxington/v1.29.0";
   }};
 }}
 '''
         self.flake_file.write_text(self.original)
         (self.flake_dir / "flake.lock").write_text(json.dumps({
+            "root": "root",
             "nodes": {
-                "root": {"inputs": {"worktrunk-nix": "worktrunk-nix"}},
-                "worktrunk-nix": {"locked": {"rev": PINNED}},
+                "root": {"inputs": {"worktrunk-nix": "worktrunk-nix", "mr-boxington": "mr-boxington"}},
+                "worktrunk-nix": {"locked": {"owner": "max-sixty", "repo": "worktrunk", "rev": PINNED}},
+                "mr-boxington": {"locked": {"owner": "jdx", "repo": "mr-boxington"}},
             },
         }))
 
@@ -36,12 +39,12 @@ class UpdateTest(unittest.TestCase):
         responses = [{"tag_name": tag}, {"status": status}]
         with (
             patch(
-                "update_worktrunk.urlopen",
+                "update_flake_release.urlopen",
                 side_effect=[io.BytesIO(json.dumps(body).encode()) for body in responses],
             ) as urlopen,
-            patch("update_worktrunk.subprocess.run", side_effect=nix_error) as nix,
+            patch("update_flake_release.subprocess.run", side_effect=nix_error) as nix,
         ):
-            update(self.flake_dir)
+            update(self.flake_dir, "worktrunk-nix")
         return urlopen, nix
 
     def test_keeps_pin_when_release_lacks_pinned_commit(self):
@@ -83,13 +86,23 @@ class UpdateTest(unittest.TestCase):
 
     def test_unreachable_api_leaves_pin_intact(self):
         with (
-            patch("update_worktrunk.urlopen", side_effect=URLError("offline")),
-            patch("update_worktrunk.subprocess.run") as nix,
+            patch("update_flake_release.urlopen", side_effect=URLError("offline")),
+            patch("update_flake_release.subprocess.run") as nix,
             self.assertRaises(URLError),
         ):
-            update(self.flake_dir)
+            update(self.flake_dir, "worktrunk-nix")
         self.assertEqual(self.flake_file.read_text(), self.original)
         nix.assert_not_called()
+
+    def test_updates_mbx_from_the_latest_release(self):
+        with (
+            patch("update_flake_release.urlopen", return_value=io.BytesIO(b'{"tag_name":"v1.30.0"}')) as fetch,
+            patch("update_flake_release.subprocess.run") as nix,
+        ):
+            update(self.flake_dir, "mr-boxington")
+        fetch.assert_called_once_with("https://api.github.com/repos/jdx/mr-boxington/releases/latest", timeout=30)
+        self.assertEqual(self.flake_file.read_text(), self.original.replace("v1.29.0", "v1.30.0"))
+        nix.assert_called_once_with(["nix", "flake", "update", "mr-boxington"], cwd=self.flake_dir, check=True)
 
 
 if __name__ == "__main__":

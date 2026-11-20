@@ -32,6 +32,8 @@
     # A release tag, or a main commit until a release contains it.
     # `just update-worktrunk` moves it forward.
     worktrunk-nix.url = "github:max-sixty/worktrunk/v0.82.0";
+    mr-boxington.url = "github:jdx/mr-boxington/v1.30.0";
+    mr-boxington.inputs.nixpkgs.follows = "nixpkgs";
     ai-quotas = {
       url = "github:rksm/ai-quotas";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -130,6 +132,9 @@
           home-manager.overwriteBackup = true;
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
+          home-manager.sharedModules =
+            nixpkgs.lib.optional (builtins.elem machine [ "storm" "agent-1" ])
+              ./shared/home/mr-boxington.nix;
           home-manager.extraSpecialArgs = {
             inherit inputs user machine;
             nixosConfig = self.nixosConfigurations.${machine}.config;
