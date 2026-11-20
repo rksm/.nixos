@@ -18,15 +18,15 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "computer-use-linux";
-  version = "0.7.56";
+  version = "0.7.59";
 
   src = fetchFromGitHub {
     owner = "agent-sh";
     repo = "computer-use-linux";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-OdBrQlNm0qORylA2Z9CTcOaJoJsSscgPvwc0VdEBeog=";
+    hash = "sha256-o7wSofaNOf8XOEcvlN3q3lelVZ7ggHMqmnj0KmsBWEk=";
   };
-  cargoHash = "sha256-s9bvLBUwlnWfVXmog7zSh57dSXCBRDcOTXL6+0Ab/98=";
+  cargoHash = "sha256-oE3YKIcH0dhuA10cp+WFA6rCZiJHi7Vrf8Hg4C8qE50=";
 
   patches = [ ./bound-app-discovery.patch ];
 
@@ -39,11 +39,16 @@ rustPlatform.buildRustPackage (finalAttrs: {
   # Executable fixtures and process-wide environment changes need serial tests.
   checkFlags = [
     "--test-threads=1"
-    # These fixtures run /usr/bin/python3 or set PATH=/usr/bin:/bin.
+    # These fixtures run /usr/bin/python3 or set PATH=/usr/bin:/bin. Most
+    # also need real display servers such as Xvfb, sway, GNOME, or KWin.
     "--skip=gnome_indicator_capture_regressions"
     "--skip=gnome_fractional_pointer_reaches_full_eis_region"
     "--skip=app_state_refuses_unfocused_target_before_capture"
     "--skip=hyprland_background_mode_never_focuses_the_target"
+    "--skip=x11_agent_master_types_and_clicks_without_moving_the_user_focus"
+    "--skip=sway_transient_seat_types_and_clicks_without_moving_seat0"
+    "--skip=background_text_and_keys_reach_"
+    "--skip=_pen_clicks_drags_and_scrolls_without_moving_the_user_pointer"
   ];
 
   preCheck = ''
