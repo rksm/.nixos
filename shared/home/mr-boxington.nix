@@ -1,7 +1,7 @@
 {
   config,
   inputs,
-  machine,
+  isFleetHost,
   pkgs,
   ...
 }:
@@ -45,6 +45,6 @@ in
 
   xdg.configFile."mbx/config.toml".text = ''
     [gc]
-    max_total_size = "${if machine == "agent-1" then "100GiB" else "500GiB"}"
+    max_total_size = "${if isFleetHost then "100GiB" else "500GiB"}"
   '';
 }

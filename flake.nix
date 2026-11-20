@@ -132,11 +132,10 @@
           home-manager.overwriteBackup = true;
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
-          home-manager.sharedModules =
-            nixpkgs.lib.optional (builtins.elem machine [ "storm" "agent-1" ])
-              ./shared/home/mr-boxington.nix;
+          home-manager.sharedModules = [ ./shared/home/mr-boxington.nix ];
           home-manager.extraSpecialArgs = {
             inherit inputs user machine;
+            isFleetHost = builtins.hasAttr machine fleet;
             nixosConfig = self.nixosConfigurations.${machine}.config;
           };
           home-manager.users.${user} = import homeModule;
