@@ -31,6 +31,9 @@
     ast-outline.url = "github:aeroxy/ast-outline";
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
+    # A private repo, so fetch it over SSH with my GitHub key. It keeps its own
+    # nixpkgs: the executable contains the Bun that its tests ran with.
+    all-my-agents.url = "git+ssh://git@github.com/rksm/all-my-agents";
     flux-reconciler.url = "github:rksm/flux-reconciler";
     # A release tag, or a main commit until a release contains it.
     # `just update-worktrunk` moves it forward.

@@ -3,6 +3,7 @@
 {
   imports = [
     ../../../herdr-skill.nix
+    ../../../all-my-agents.nix
     ../../../../shared/home/agent-files.nix
     ../../../../shared/home/pi.nix
     # The Macs' agents run in Herdr panes.
