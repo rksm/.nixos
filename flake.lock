@@ -26,11 +26,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1795254679,
-        "narHash": "sha256-YN/ZGfI8Ni01G72HNyteT0e/xjUDUPR1wxbvXVYvjw8=",
+        "lastModified": 1795355302,
+        "narHash": "sha256-+XyrLz9rlp7jeFFoyfbfd6Zt2mMmidvHYF2PA4pol4M=",
         "ref": "refs/heads/main",
-        "rev": "cb0737687e965a0eb0e8bdb91356de0c25a2c048",
-        "revCount": 820,
+        "rev": "aa33880f33f4c98b134e1d5b669feeec66c1e332",
+        "revCount": 884,
         "type": "git",
         "url": "ssh://git@github.com/rksm/all-my-agents"
       },
@@ -46,11 +46,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1795277558,
-        "narHash": "sha256-ZPWGfDa1PipKAKyXRoknDcyibRvu7dJlIPbl09O4vwo=",
+        "lastModified": 1795402928,
+        "narHash": "sha256-E7QKfKY0rcKv3CVoItj6kg+5FbYvoGJMLjJpQywX0Dk=",
         "owner": "aeroxy",
         "repo": "ast-outline",
-        "rev": "9f5233c6953dc3067e80a9e329fac8585209a508",
+        "rev": "dd5dbb86ee71e07b398759a112b51bba2b36bbd9",
         "type": "github"
       },
       "original": {
@@ -414,11 +414,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1795326465,
-        "narHash": "sha256-3DXXvRboug7ShQxMvkOrr2CK7hLi5pH4kGJUp+XRrC4=",
+        "lastModified": 1795395764,
+        "narHash": "sha256-OR+ahE/QRMHSS3mPB/XjbXfvaIN8IgqGfD+Jsnh4n3Q=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "1e9d20fbe18f1c10bc2eaa527d6f06cec0833dbc",
+        "rev": "6a434b94efa2b508f04f5cd3c2327a8a571b553b",
         "type": "github"
       },
       "original": {
