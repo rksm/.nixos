@@ -15,11 +15,7 @@ let
     "npm:pi-mcp-adapter"
   ];
   piNpmDir = "${config.home.homeDirectory}/.pi/npm";
-  piAgentDir =
-    if pkgs.stdenv.hostPlatform.isDarwin then
-      "${config.home.homeDirectory}/configs/ai/pi"
-    else
-      "${config.home.homeDirectory}/.pi/agent";
+  piAgentDir = import ./pi-agent-dir.nix { inherit config pkgs; };
   piWebSearchConfig = "${piAgentDir}/web-search.json";
   secretsDir =
     if pkgs.stdenv.hostPlatform.isDarwin then
@@ -68,10 +64,6 @@ in
   # Interactive question tool for the grilling skill. Pi ships it only as an example.
   home.file."${lib.removePrefix "${config.home.homeDirectory}/" piAgentDir}/extensions/questionnaire.ts".source =
     "${pkgs.llm-agents.pi}/libexec/pi/examples/extensions/questionnaire.ts";
-
-  # Herdr reports Pi as blocked only when another extension says so.
-  home.file."${lib.removePrefix "${config.home.homeDirectory}/" piAgentDir}/extensions/herdr-blocked.ts".source =
-    ./pi-extensions/herdr-blocked.ts;
 
   home.activation.configurePiAuth = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [[ -v DRY_RUN ]]; then
@@ -147,7 +139,6 @@ in
       done
 
       PI_CODING_AGENT_DIR="${piAgentDir}" ${moshiHook}/bin/moshi-hook install --target pi
-      PI_CODING_AGENT_DIR="${piAgentDir}" ${pkgs.herdr}/bin/herdr integration install pi
       PI_CODING_AGENT_DIR="${piAgentDir}" ${pkgs.llm-agents.rtk}/bin/rtk init --agent pi --global
     fi
   '';

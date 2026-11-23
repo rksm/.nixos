@@ -11,7 +11,6 @@
     ./ssh.nix
     ./moshi.nix
     ./herdr.nix
-    ./herdr-dashboard.nix
     ./all-my-agents.nix
     ./docker.nix
     ./network.nix
@@ -32,7 +31,7 @@
   ];
 
   # A session variable goes through PAM, so systemd user services that start at
-  # boot, before the desktop session, get it too, such as the Herdr dashboard.
+  # boot, before the desktop session, get it too, such as all-my-agents.
   environment.sessionVariables.EDITOR = toString (pkgs.writeShellScript "editor" ''
     # Over SSH, a running Emacs server would open the file on the desktop, not in this terminal.
     if [ -n "$SSH_CONNECTION" ]; then

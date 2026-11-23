@@ -35,10 +35,10 @@
     ripgrep
     fd
 
-    # The tab strip flag gives an installed web app tabs, such as the
-    # Herdr dashboard. allowScriptsToCloseWindows lets a page close its own
+    # The tab strip flag gives an installed web app tabs, such as
+    # all-my-agents. allowScriptsToCloseWindows lets a page close its own
     # tab after a navigation, for the dashboard's C-x k; every site gets it.
-    # See docs/keys.org in the herdr-dashboard repo.
+    # See docs/keys.org in the all-my-agents repo.
     (pkgs.latest.google-chrome.override {
       commandLineArgs = "--enable-features=DesktopPWAsTabStrip --blink-settings=allowScriptsToCloseWindows=true";
     })

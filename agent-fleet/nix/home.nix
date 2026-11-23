@@ -5,6 +5,8 @@
     ../../shared/linux-home/command-line.nix
     ../../shared/home/cli-proxy-api.nix
     ../../shared/home/pi.nix
+    # The reviews run as agents in Herdr panes.
+    ../../shared/home/pi-herdr.nix
   ];
 
   services.agent-files = {

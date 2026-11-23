@@ -31,7 +31,6 @@
     ast-outline.url = "github:aeroxy/ast-outline";
     llm-agents.url = "github:numtide/llm-agents.nix";
     herdr-nix.url = "github:rksm/herdr";
-    herdr-dashboard.url = "git+ssh://git@github.com/rksm/herdr-dashboard";
     flux-reconciler.url = "github:rksm/flux-reconciler";
     # A release tag, or a main commit until a release contains it.
     # `just update-worktrunk` moves it forward.
@@ -109,16 +108,16 @@
                     home-manager.useUserPackages = true;
                     home-manager.extraSpecialArgs = { inherit inputs user; machine = machine.name; };
                     home-manager.sharedModules = [
-                      ./herdr-dashboard.nix
-                      { services.herdr-dashboard.session = machine.name; }
+                      ({ pkgs, lib, ... }: {
+                        # Herdr, where the Macs' agents run. The Intel Mac gets codex from nixpkgs.
+                        home.packages = [ pkgs.herdr ]
+                          ++ lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [ pkgs.codex ];
+                      })
                     ];
                     home-manager.users.${user} = import ./hosts/${machine.name}/home;
                   }
 
                   ({ pkgs, ... }: {
-                    environment.systemPackages = [
-                      (pkgs.callPackage ./herdr-dashboard-app.nix { })
-                    ];
                     nixpkgs.overlays = [
                       overlays-nixpkgs
                       skillshare-nix.overlays.default

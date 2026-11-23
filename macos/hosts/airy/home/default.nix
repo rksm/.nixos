@@ -5,6 +5,8 @@
     ../../../herdr-skill.nix
     ../../../../shared/home/agent-files.nix
     ../../../../shared/home/pi.nix
+    # The Macs' agents run in Herdr panes.
+    ../../../../shared/home/pi-herdr.nix
     ../../../moshi.nix
     ../../../../shared/home/agent-tools.nix
     ../../../../shared/home/cli-proxy-api.nix

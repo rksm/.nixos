@@ -28,6 +28,15 @@ in
     ./syncthing.nix
   ];
 
+  # The reviews of ./roberts-review-bot.nix run as agents in Herdr panes. Herdr's hooks report each agent's session, so
+  # a Herdr restart can resume them. They go in after the hooks of ../../shared/linux/moshi.nix.
+  systemd.user.services.moshi-hook.serviceConfig.ExecStartPre = lib.mkAfter [
+    "${herdr}/bin/herdr integration install claude"
+    "${herdr}/bin/herdr integration install codex"
+    "${pkgs.coreutils}/bin/mkdir -p /home/robert/.grok"
+    "${herdr}/bin/herdr integration install grok"
+  ];
+
   boot.loader = {
     efi.canTouchEfiVariables = false;
     grub = {

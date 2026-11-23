@@ -40,8 +40,6 @@
     };
     # A private repo, so fetch it over SSH with my GitHub key. It keeps its own
     # nixpkgs: the executable contains the Bun that its tests ran with.
-    herdr-dashboard.url = "git+ssh://git@github.com/rksm/herdr-dashboard";
-    # A private repo too. It runs agents itself, without Herdr.
     all-my-agents.url = "git+ssh://git@github.com/rksm/all-my-agents";
   };
 

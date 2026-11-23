@@ -36,10 +36,6 @@ in
       WorkingDirectory = "%h";
       ExecStartPre = [
         "${moshiHook}/bin/moshi-hook install"
-        "${herdr}/bin/herdr integration install claude"
-        "${herdr}/bin/herdr integration install codex"
-        "${pkgs.coreutils}/bin/mkdir -p /home/${user}/.grok"
-        "${herdr}/bin/herdr integration install grok"
       ];
       ExecStart = "${moshiHook}/bin/moshi-hook serve";
       Restart = "on-failure";

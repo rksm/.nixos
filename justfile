@@ -149,7 +149,6 @@ update-ai:
         cd macos
         set -- \
           ast-outline \
-          herdr-dashboard \
           herdr-nix \
           llm-agents \
           skillshare-nix
@@ -160,7 +159,6 @@ update-ai:
           ai-quotas \
           all-my-agents \
           ast-outline \
-          herdr-dashboard \
           herdr-nix \
           hex \
           llm-agents \
@@ -187,7 +185,10 @@ update-ai:
         git commit -m "$commit_message" -- $updated_files
         cd "$root"
         just switch
-        ./scripts/herdr-install
+        # Herdr's hooks, only where the agents run in Herdr panes: on the Macs.
+        if [ "$(uname)" = "Darwin" ]; then
+            ./scripts/herdr-install
+        fi
     else
         cd "$root"
     fi
