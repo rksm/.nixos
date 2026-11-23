@@ -35,6 +35,8 @@ in
     after = [
       "network-online.target"
       "tailscaled.service"
+      # Concurrent serve config writes fail with an etag mismatch.
+      "tailscale-serve-herdr-dashboard.service"
     ];
     requires = [ "tailscaled.service" ];
     wants = [ "network-online.target" ];
