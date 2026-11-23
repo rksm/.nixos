@@ -78,7 +78,10 @@
                   import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
                 # lessismore: stable cargo-release needs Rust 1.97. Revisit when stable Rust reaches 1.97.
                 cargo-release = final.latest.cargo-release;
-                ast-outline = ast-outline.packages.${machine.system}.default;
+                # Upstream's source filter drops src/installers/pi_extension.ts, which
+                # the crate embeds with include_str!. Build from the full source.
+                # lessismore: works around an upstream filter bug. Revisit when upstream keeps .ts files.
+                ast-outline = ast-outline.packages.${machine.system}.default.overrideAttrs { src = ast-outline; };
                 llm-agents = llm-agents.packages.${machine.system};
                 flux-reconciler = flux-reconciler.packages.${machine.system}.default;
                 worktrunk = worktrunk-nix.packages.${machine.system}.default;
