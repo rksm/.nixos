@@ -106,7 +106,10 @@
         rksm = import nixpkgs-rksm { inherit system nixpkgs; };
         tuxedo-control-center = tuxedo-nixos.packages.${system}.default;
 
-        ast-outline = ast-outline.packages.${system}.default;
+        # Upstream's source filter drops src/installers/pi_extension.ts, which
+        # the crate embeds with include_str!. Build from the full source.
+        # lessismore: works around an upstream filter bug. Revisit when upstream keeps .ts files.
+        ast-outline = ast-outline.packages.${system}.default.overrideAttrs { src = ast-outline; };
         llm-agents = llm-agents.packages.${system};
         flux-reconciler = flux-reconciler.packages.${system}.default;
         worktrunk = worktrunk-nix.packages.${system}.default;
