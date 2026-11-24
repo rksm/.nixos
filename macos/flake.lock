@@ -25,11 +25,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1795402928,
-        "narHash": "sha256-E7QKfKY0rcKv3CVoItj6kg+5FbYvoGJMLjJpQywX0Dk=",
+        "lastModified": 1795492569,
+        "narHash": "sha256-DytUkl9IWKK1ADAwnR6FWFbZv25WuBAMvhuTJCRF35I=",
         "owner": "aeroxy",
         "repo": "ast-outline",
-        "rev": "dd5dbb86ee71e07b398759a112b51bba2b36bbd9",
+        "rev": "bd8b05f77554797c3793c65c3a3ab0e007d2f034",
         "type": "github"
       },
       "original": {
@@ -361,11 +361,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1795416666,
-        "narHash": "sha256-b1GmfrMPoZ2ANkR0we9Q9KQN6n1e+vNyDqt1p4CNEAY=",
+        "lastModified": 1795495638,
+        "narHash": "sha256-hhROWq9062PdIznKMqiQuy3L9F7l4LHwofEVrcncfZM=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "5330ee115c06d2b43f49e902130125eab579b22f",
+        "rev": "45e6e554481f962d4134021d3a63c96d8755f395",
         "type": "github"
       },
       "original": {
