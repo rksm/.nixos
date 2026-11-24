@@ -124,7 +124,7 @@ in
       home.file.".config/all-my-agents/config.yaml".source =
         fromConfigs "all-my-agents/config.linux.yaml";
       # The folder keeps the name of the Herdr dashboard, which the snippets came from.
-      home.file.".config/all-my-agents/snippets".source = fromConfigs "herdr-dashboard/snippets";
+      home.file.".config/all-my-agents/snippets".source = fromConfigs "all-my-agents/snippets";
 
       home.packages = [
         # The dashboard's completion.copilot-command: GitHub's Copilot language
