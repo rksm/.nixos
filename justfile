@@ -148,20 +148,22 @@ update-ai:
     if [ "$(uname)" = "Darwin" ]; then
         cd macos
         set -- \
+          all-my-agents \
           ast-outline \
           herdr-nix \
-          llm-agents \
           skillshare-nix
         commit_message="macos: update ai"
     else
         just update-mbx
+        # all-my-agents checks the harnesses and pushes them to its main, which
+        # llm-agents follows here.
+        just --justfile "$HOME/projects/ai/all-my-agents/justfile" update-harnesses
         set -- \
           ai-quotas \
           all-my-agents \
           ast-outline \
           herdr-nix \
           hex \
-          llm-agents \
           skillshare-nix
         commit_message="linux: update ai"
     fi

@@ -23,7 +23,9 @@
 
     skillshare-nix.url = "github:hypervideo/skillshare-nix";
     ast-outline.url = "github:aeroxy/ast-outline";
-    llm-agents.url = "github:numtide/llm-agents.nix";
+    # The harnesses that all-my-agents checked: its lock pins them, and
+    # just update-harnesses there moves them (just update-ai runs it).
+    llm-agents.follows = "all-my-agents/llm-agents";
     herdr-nix.url = "github:rksm/herdr";
     # My fork with the GNOME Wayland delivery changes, checked out at
     # ~/projects/ai/hex. Push there, then `nix flake update hex`.

@@ -29,7 +29,9 @@
 
     skillshare-nix.url = "github:hypervideo/skillshare-nix";
     ast-outline.url = "github:aeroxy/ast-outline";
-    llm-agents.url = "github:numtide/llm-agents.nix";
+    # The harnesses that all-my-agents checked: its lock pins them, and
+    # just update-harnesses there moves them (just update-ai runs it).
+    llm-agents.follows = "all-my-agents/llm-agents";
     herdr-nix.url = "github:rksm/herdr";
     # A private repo, so fetch it over SSH with my GitHub key. It keeps its own
     # nixpkgs: the executable contains the Bun that its tests ran with.
