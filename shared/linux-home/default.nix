@@ -13,6 +13,7 @@
     ./computer-use.nix
     ./packages.nix
     ../home/pi.nix
+    ../home/pi-herdr.nix
   ];
 
   home.username = "${user}";
