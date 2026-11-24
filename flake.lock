@@ -26,11 +26,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1795452502,
-        "narHash": "sha256-MCgyHJAPkGTr1NP+dkUcx9p8KNAfGW20t1V1t7Q3Pk8=",
+        "lastModified": 1795459372,
+        "narHash": "sha256-nqWYQMpU2e0Y21Q2GwvmcQO9IkANcp/bjva7fxNGUTE=",
         "ref": "refs/heads/main",
-        "rev": "67efe839880b565873b95bf979015a786d1718b1",
-        "revCount": 933,
+        "rev": "567f8d76a7778b657f61c04e3045c0572910dfed",
+        "revCount": 937,
         "type": "git",
         "url": "ssh://git@github.com/rksm/all-my-agents"
       },
@@ -46,11 +46,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1795402928,
-        "narHash": "sha256-E7QKfKY0rcKv3CVoItj6kg+5FbYvoGJMLjJpQywX0Dk=",
+        "lastModified": 1795492569,
+        "narHash": "sha256-DytUkl9IWKK1ADAwnR6FWFbZv25WuBAMvhuTJCRF35I=",
         "owner": "aeroxy",
         "repo": "ast-outline",
-        "rev": "dd5dbb86ee71e07b398759a112b51bba2b36bbd9",
+        "rev": "bd8b05f77554797c3793c65c3a3ab0e007d2f034",
         "type": "github"
       },
       "original": {
@@ -396,11 +396,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1795395764,
-        "narHash": "sha256-OR+ahE/QRMHSS3mPB/XjbXfvaIN8IgqGfD+Jsnh4n3Q=",
+        "lastModified": 1795495638,
+        "narHash": "sha256-hhROWq9062PdIznKMqiQuy3L9F7l4LHwofEVrcncfZM=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "6a434b94efa2b508f04f5cd3c2327a8a571b553b",
+        "rev": "45e6e554481f962d4134021d3a63c96d8755f395",
         "type": "github"
       },
       "original": {
@@ -416,16 +416,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1794255730,
-        "narHash": "sha256-Smz5HWY8LWuwsE6dyJ1bjURF8kDmt9AevdIa0NM+awo=",
+        "lastModified": 1795479734,
+        "narHash": "sha256-82Sr5wxviQm21QonS5I/OyShjWXG+H1+XjDJiRfS1H4=",
         "owner": "jdx",
         "repo": "mr-boxington",
-        "rev": "2299ea69519d142d85b5903cbd0e2690419b7bed",
+        "rev": "5248965f61bfb414a3faae30e547bcef45ea9d44",
         "type": "github"
       },
       "original": {
         "owner": "jdx",
-        "ref": "v1.30.0",
+        "ref": "v1.31.0",
         "repo": "mr-boxington",
         "type": "github"
       }

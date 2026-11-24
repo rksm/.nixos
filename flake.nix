@@ -32,7 +32,7 @@
     # A release tag, or a main commit until a release contains it.
     # `just update-worktrunk` moves it forward.
     worktrunk-nix.url = "github:max-sixty/worktrunk/v0.83.0";
-    mr-boxington.url = "github:jdx/mr-boxington/v1.30.0";
+    mr-boxington.url = "github:jdx/mr-boxington/v1.31.0";
     mr-boxington.inputs.nixpkgs.follows = "nixpkgs";
     ai-quotas = {
       url = "github:rksm/ai-quotas";
