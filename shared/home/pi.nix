@@ -61,9 +61,12 @@ in
     force = true;
   };
 
-  # Interactive question tool for the grilling skill. Pi ships it only as an example.
+  # Interactive question tool for the grilling skill. It is Pi's example
+  # extension, changed to also ask through dialogs in RPC mode, as for agents
+  # that ama runs (all-my-agents, docs/runtime/S5.3.org). It no longer follows
+  # Pi's example when Pi updates.
   home.file."${lib.removePrefix "${config.home.homeDirectory}/" piAgentDir}/extensions/questionnaire.ts".source =
-    "${pkgs.llm-agents.pi}/libexec/pi/examples/extensions/questionnaire.ts";
+    ./pi-extensions/questionnaire.ts;
 
   home.activation.configurePiAuth = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [[ -v DRY_RUN ]]; then
