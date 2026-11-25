@@ -6,11 +6,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1795516885,
-        "narHash": "sha256-aCNf09QIVxHa3l2n22IU8MWeg/r8YrSt9MC3VLsG7R8=",
+        "lastModified": 1795607671,
+        "narHash": "sha256-kjoSuk49+e1cDne2bj0faWz/FNgpMwnWXPSKdzEXc3A=",
         "ref": "refs/heads/main",
-        "rev": "4ae33331868ccc5ee894888c64527cb1299be33b",
-        "revCount": 959,
+        "rev": "b6fb6e08e693db795cc532bae354ab011cd8e9e0",
+        "revCount": 987,
         "type": "git",
         "url": "ssh://git@github.com/rksm/all-my-agents"
       },
@@ -26,11 +26,11 @@
         "nixpkgs": "nixpkgs_3"
       },
       "locked": {
-        "lastModified": 1795492569,
-        "narHash": "sha256-DytUkl9IWKK1ADAwnR6FWFbZv25WuBAMvhuTJCRF35I=",
+        "lastModified": 1795570543,
+        "narHash": "sha256-e0oU9omWTxmn58iheQh+ztwe8vRe/uB8n6x/iQXJ7wU=",
         "owner": "aeroxy",
         "repo": "ast-outline",
-        "rev": "bd8b05f77554797c3793c65c3a3ab0e007d2f034",
+        "rev": "9025f8605361b38b9c5dfac99dcdcf87db1a9f5d",
         "type": "github"
       },
       "original": {
@@ -367,11 +367,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1795495638,
-        "narHash": "sha256-hhROWq9062PdIznKMqiQuy3L9F7l4LHwofEVrcncfZM=",
+        "lastModified": 1795534330,
+        "narHash": "sha256-HUVg1F7c3btLD++JDjdTsSAwp50NvrciqTMFdCKEfAg=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "45e6e554481f962d4134021d3a63c96d8755f395",
+        "rev": "d70dfebdbd4616aa852fdb47c16588ec1ba8fc6f",
         "type": "github"
       },
       "original": {
@@ -643,11 +643,11 @@
         "nixpkgs": "nixpkgs_6"
       },
       "locked": {
-        "lastModified": 1795328132,
-        "narHash": "sha256-sGaF2qU04ke3WpHTKm0cibXB53iw0X7hUPD0fMLnEmU=",
+        "lastModified": 1795587416,
+        "narHash": "sha256-b9TR0PjVJeUcbooKee7jsQIoNnyqXTX/44xz7p0WUXY=",
         "owner": "hypervideo",
         "repo": "skillshare-nix",
-        "rev": "085f406a522968bcd2de29a2c3b8e8149e932259",
+        "rev": "9cb04121ca4a25e63710ee4d81476697b7972cf9",
         "type": "github"
       },
       "original": {
