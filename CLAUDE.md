@@ -8,7 +8,6 @@ at ./flake.nix:
 
 at ./macos/flake.nix:
 - airy: Macbook Air 2025
-- Roberts-MacBook-Pro: Macbook Pro 2019
 
 # Commands
 
@@ -39,24 +38,14 @@ just switch build
 ├── macos
 │   ├── flake.nix
 │   ├── hosts
-│   │   ├── airy
-│   │   │   ├── default.nix
-│   │   │   ├── home
-│   │   │   │   ├── default.nix
-│   │   │   │   ├── devenv.nix
-│   │   │   │   ├── devops.nix
-│   │   │   │   └── rust.nix
-│   │   │   └── packages.nix
-│   │   └── Roberts-MacBook-Pro
-│   │       ├── default.nix
-│   │       ├── home
-│   │       │   ├── default.nix
-│   │       │   ├── devenv.nix
-│   │       │   ├── devops.nix
-│   │       │   ├── firefox.nix
-│   │       │   └── rust.nix
-│   │       ├── infra.nix
-│   │       └── packages.nix
+│   │   └── airy
+│   │       ├── default.nix
+│   │       ├── home
+│   │       │   ├── default.nix
+│   │       │   ├── devenv.nix
+│   │       │   ├── devops.nix
+│   │       │   └── rust.nix
+│   │       └── packages.nix
 │   └── justfile
 ├── packages                                 # vendored packages
 │   └── awesome-tiles

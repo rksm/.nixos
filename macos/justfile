@@ -5,7 +5,7 @@ switch cmd="switch" *args="":
     #!/usr/bin/env sh
     set -e
 
-    # impure b/c hosts/Roberts-MacBook-Pro/packages.nix access abs path
+    # impure b/c the host configs read absolute paths under /Users
     echo "building for darwin on $(hostname)"
     [ -f /etc/nix/nix.custom.conf ] && sudo rm /etc/nix/nix.custom.conf
     if [ "{{ cmd }}" = "switch" ]; then

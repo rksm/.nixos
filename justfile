@@ -7,7 +7,7 @@ switch cmd="switch" *args="":
     #!/usr/bin/env sh
     set -e
     if [ "$(uname)" = "Darwin" ]; then
-        # impure b/c hosts/Roberts-MacBook-Pro/packages.nix access abs path
+        # impure b/c the host configs read absolute paths under /Users
         cd macos && just switch {{ cmd }} {{ args }}
     else
         # Evaluate and build as robert, who can fetch private inputs over SSH.

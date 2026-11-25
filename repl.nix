@@ -3,7 +3,7 @@ let
   nixos = builtins.getFlake "/etc/nixos";
 
   :lf .
-  config = darwinConfigurations.Roberts-MacBook-Pro.config;
+  config = darwinConfigurations.airy.config;
   home = config.home-manager.users.robert;
 
 in

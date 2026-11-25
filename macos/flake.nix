@@ -64,10 +64,6 @@
       user = "robert";
       machines = [
         {
-          name = "Roberts-MacBook-Pro";
-          system = "x86_64-darwin";
-        }
-        {
           name = "airy";
           system = "aarch64-darwin";
         }
@@ -79,9 +75,7 @@
             let
               overlays-nixpkgs = final: prev: {
                 inherit (inputs.attic.packages.${machine.system}) attic attic-client attic-server;
-                # Unstable no longer supports Intel Macs.
-                latest = if machine.system == "x86_64-darwin" then prev else
-                  import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
+                latest = import nixpkgs-latest { inherit (machine) system; config.allowUnfree = true; };
                 # lessismore: stable cargo-release needs Rust 1.97. Revisit when stable Rust reaches 1.97.
                 cargo-release = final.latest.cargo-release;
                 # Upstream's source filter drops src/installers/pi_extension.ts, which
@@ -120,10 +114,9 @@
                     };
                     home-manager.sharedModules = [
                       ../shared/home/mr-boxington.nix
-                      ({ pkgs, lib, ... }: {
-                        # Herdr, where the Macs' agents run. The Intel Mac gets codex from nixpkgs.
-                        home.packages = [ pkgs.herdr ]
-                          ++ lib.optionals pkgs.stdenv.hostPlatform.isx86_64 [ pkgs.codex ];
+                      ({ pkgs, ... }: {
+                        # Herdr, where the Macs' agents run.
+                        home.packages = [ pkgs.herdr ];
                       })
                     ];
                     home-manager.users.${user} = import ./hosts/${machine.name}/home;

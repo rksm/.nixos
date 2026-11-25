@@ -1,4 +1,4 @@
-{ lib, inputs, config, pkgs, options, user, ... }:
+{ inputs, config, pkgs, options, user, ... }:
 {
   # Set primary user for nix-darwin options that require it
   system.primaryUser = user;
@@ -75,9 +75,6 @@
       experimental-features = "nix-command flakes";
     };
     package = pkgs.nixVersions.latest;
-    extraOptions = lib.optionalString (pkgs.system == "x86_64-darwin") ''
-      extra-platforms = x86_64-darwin aarch64-darwin
-    '';
     # configureBuildUsers is deprecated and removed in newer nix-darwin
     # https://github.com/NixOS/nix/issues/2982#issuecomment-2477618346
     channel.enable = false;
@@ -102,7 +99,6 @@
   ##############
 
   # The platform the configuration will be used on.
-  # nixpkgs.hostPlatform = "x86_64-darwin";
   nixpkgs.hostPlatform = "aarch64-darwin";
 
   #https://github.com/LnL7/nix-darwin/blob/master/modules/examples/lnl.nix
