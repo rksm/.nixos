@@ -380,6 +380,27 @@
         "type": "github"
       }
     },
+    "mr-boxington": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs-darwin"
+        ]
+      },
+      "locked": {
+        "lastModified": 1795479734,
+        "narHash": "sha256-82Sr5wxviQm21QonS5I/OyShjWXG+H1+XjDJiRfS1H4=",
+        "owner": "jdx",
+        "repo": "mr-boxington",
+        "rev": "5248965f61bfb414a3faae30e547bcef45ea9d44",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jdx",
+        "ref": "v1.31.0",
+        "repo": "mr-boxington",
+        "type": "github"
+      }
+    },
     "nix-github-actions": {
       "inputs": {
         "nixpkgs": [
@@ -589,6 +610,7 @@
           "all-my-agents",
           "llm-agents"
         ],
+        "mr-boxington": "mr-boxington",
         "nixpkgs-darwin": "nixpkgs-darwin",
         "nixpkgs-latest": "nixpkgs-latest",
         "skillshare-nix": "skillshare-nix",

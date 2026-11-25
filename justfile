@@ -83,18 +83,20 @@ update-cf:
 update-ramp-cli:
     nix shell --inputs-from . nixpkgs#curl nixpkgs#gnused -c packages/ramp-cli/update.sh
 
-# Pin Worktrunk to its newest release if that release has the locked commit.
-update-worktrunk:
+# Pin a flake input of this platform's flake to its newest GitHub release.
+update-release input:
     #!/usr/bin/env sh
     set -e
     flake_dir=.
     if [ "$(uname)" = "Darwin" ]; then
         flake_dir=macos
     fi
-    nix shell --inputs-from . nixpkgs#python3 -c python3 scripts/update_flake_release.py "$flake_dir" worktrunk-nix
+    nix shell --inputs-from . nixpkgs#python3 -c python3 scripts/update_flake_release.py "$flake_dir" {{input}}
 
-update-mbx:
-    nix shell --inputs-from . nixpkgs#python3 -c python3 scripts/update_flake_release.py . mr-boxington
+# Worktrunk moves only if that release has the locked commit.
+update-worktrunk: (update-release "worktrunk-nix")
+
+update-mbx: (update-release "mr-boxington")
 
 update-computer-use:
     nix develop .#computer-use -c nix-update --flake --use-github-releases computer-use-linux
@@ -144,6 +146,7 @@ update-ai:
     just update-cf
     just update-ramp-cli
     just update-worktrunk
+    just update-mbx
     updated_files="$root/packages/linear-cli/package.nix $root/packages/cf/package.nix $root/packages/cf/package-lock.json $root/packages/ramp-cli/package.nix"
     if [ "$(uname)" = "Darwin" ]; then
         cd macos
@@ -154,7 +157,6 @@ update-ai:
           skillshare-nix
         commit_message="macos: update ai"
     else
-        just update-mbx
         # all-my-agents checks the harnesses and pushes them to its main, which
         # llm-agents follows here.
         just --justfile "$HOME/projects/ai/all-my-agents/justfile" update-harnesses

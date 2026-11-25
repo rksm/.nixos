@@ -2,14 +2,22 @@
   config,
   inputs,
   isFleetHost,
+  lib,
   pkgs,
   ...
 }:
 let
-  mbx = inputs.mr-boxington.packages.${pkgs.stdenv.hostPlatform.system}.mbx;
+  inherit (pkgs.stdenv.hostPlatform) isDarwin isLinux system;
+  mbx = inputs.mr-boxington.packages.${system}.mbx;
   # Long-running agents keep this path across mbx upgrades.
   shim = ".local/libexec/mbx";
   shimDir = "${config.home.homeDirectory}/${shim}";
+  # mbx reads its config from the platform's config directory.
+  configDir =
+    if isDarwin then
+      "${config.home.homeDirectory}/Library/Application Support"
+    else
+      config.xdg.configHome;
 in
 {
   home.packages = [ mbx ];
@@ -17,9 +25,11 @@ in
   home.sessionPath = [ shimDir ];
 
   # NixOS sets PATH in 50-systemd-path.conf. New agent units inherit it here.
-  xdg.configFile."environment.d/60-mbx.conf".text = ''
-    PATH=${shimDir}:$PATH
-  '';
+  xdg.configFile."environment.d/60-mbx.conf" = lib.mkIf isLinux {
+    text = ''
+      PATH=${shimDir}:$PATH
+    '';
+  };
 
   # A new login pane may inherit an old Herdr server's Home Manager session guard.
   programs.bash.profileExtra = ''
@@ -43,7 +53,7 @@ in
     }
   '';
 
-  xdg.configFile."mbx/config.toml".text = ''
+  home.file."${configDir}/mbx/config.toml".text = ''
     [gc]
     max_total_size = "${if isFleetHost then "100GiB" else "500GiB"}"
   '';

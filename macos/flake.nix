@@ -40,6 +40,8 @@
     # A release tag, or a main commit until a release contains it.
     # `just update-worktrunk` moves it forward.
     worktrunk-nix.url = "github:max-sixty/worktrunk/v0.83.0";
+    mr-boxington.url = "github:jdx/mr-boxington/v1.31.0";
+    mr-boxington.inputs.nixpkgs.follows = "nixpkgs-darwin";
   };
 
   outputs =
@@ -111,8 +113,13 @@
                   {
                     home-manager.useGlobalPkgs = true;
                     home-manager.useUserPackages = true;
-                    home-manager.extraSpecialArgs = { inherit inputs user; machine = machine.name; };
+                    home-manager.extraSpecialArgs = {
+                      inherit inputs user;
+                      machine = machine.name;
+                      isFleetHost = false;
+                    };
                     home-manager.sharedModules = [
+                      ../shared/home/mr-boxington.nix
                       ({ pkgs, lib, ... }: {
                         # Herdr, where the Macs' agents run. The Intel Mac gets codex from nixpkgs.
                         home.packages = [ pkgs.herdr ]
