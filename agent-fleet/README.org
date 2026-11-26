@@ -228,15 +228,17 @@ Codex comes from =llm-agents.nix=. Use =codex= through CLI Proxy API or
 =codex-plain= without the proxy. Skillshare comes from =skillshare-nix= and is
 available as =skillshare=.
 
-CLI Proxy API runs only on =agent-1= by default. Claude, Codex, and Grok on
-Storm and Tuxedo connect to =http://agent-1.taileff843.ts.net:8317= over
+CLI Proxy API runs only on =agent-1= by default. Agy, Claude, Codex, and Grok
+on Storm and Tuxedo connect to =https://agent-1.taileff843.ts.net:8317= over
 Tailscale. Agents on =agent-1= use its loopback address. The remote wrappers do
 not require a local proxy service. The =*-plain= commands bypass the proxy.
 
-Tailscale Serve forwards TCP port =8317= to =127.0.0.1:8317= on =agent-1=.
-This includes the API and control panel. The port is available only on the
-tailnet. The public firewall stays closed. The Syncthing HTTPS endpoint stays
-on port =443=. Clients need a Tailscale connection and access to port =8317=.
+Tailscale Serve terminates HTTPS on port =8317= and forwards it to
+=http://127.0.0.1:8317= on =agent-1=. Agy accepts a plain =http://= gateway
+only on the same machine. This includes the API and control panel. The port is
+available only on the tailnet. The public firewall stays closed. The Syncthing
+HTTPS endpoint stays on port =443=. Clients need a Tailscale connection and
+access to port =8317=.
 
 To use a local proxy on Storm or Tuxedo, add this flag inside the configuration
 in =hosts/storm/home.nix= or =hosts/tuxedo/home.nix=:

@@ -89,11 +89,10 @@
     cachix
     # devbox
 
-    # Managed via cli-proxy-api.nix
+    # Managed via cli-proxy-api.nix: agy, claude, codex, grok
     # llm-agents.claude-code
     # codex-cli
 
-    llm-agents.antigravity-cli
     llm-agents.ccusage
     llm-agents.rtk
     skillshare

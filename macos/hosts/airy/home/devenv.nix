@@ -259,13 +259,12 @@ in
     cachix
     # devbox
 
-    # claude, codex, and grok come from shared/home/cli-proxy-api.nix
+    # agy, claude, codex, and grok come from shared/home/cli-proxy-api.nix
     llm-agents.rtk
     herdr
     skillshare
     ast-outline
     worktrunk
-    llm-agents.antigravity-cli
     vale
 
     # emacs

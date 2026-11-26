@@ -8,7 +8,7 @@
 
 let
   localProxy = config.services.cli-proxy-api.enableLocal;
-  proxyUrl = if localProxy then "http://127.0.0.1:8317" else "http://agent-1.taileff843.ts.net:8317";
+  proxyUrl = if localProxy then "http://127.0.0.1:8317" else "https://agent-1.taileff843.ts.net:8317";
   authDir = "${config.home.homeDirectory}/configs/ai/cli-proxy-api/auths/${machine}";
 
   claudeCode = pkgs.llm-agents.claude-code;
@@ -120,6 +120,48 @@ let
 
         ln -s ${lib.getExe grokCli} "$out/bin/grok-plain"
       '';
+
+  agyCli = pkgs.llm-agents.antigravity-cli;
+  # agy keeps only 32 of the models the proxy lists, so name the useful ones.
+  # agy sends Gemini models without their effort suffix, such as
+  # gemini-4-hydrogen. The oauth-model-alias entries in config.yaml map those
+  # names back.
+  agyModels = [
+    "gemini-4-hydrogen-xhigh"
+    "gemini-4-neon-xhigh"
+    "gemini-4-argon-high"
+    "gemini-4-carbon-high"
+    "gemini-3.8-flash-high"
+    "claude-fable-5-2"
+    "claude-opus-5-5"
+    "claude-sonnet-5-5"
+    "claude-haiku-5-5"
+    "gpt-6-astra"
+    "gpt-6-astra-fast"
+    "gpt-5.6-sol"
+    "gpt-5.6-luna"
+    "grok-4.7"
+  ];
+
+  agyCommands =
+    pkgs.runCommand "agy-commands"
+      {
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+      }
+      ''
+        mkdir -p "$out/bin"
+
+        # The default genai protocol drops tool call IDs when the proxy
+        # translates to Claude, so Claude models fail on their first tool call.
+        makeWrapper ${lib.getExe agyCli} "$out/bin/agy" \
+          --run ${lib.escapeShellArg requireCliProxyApi} \
+          --set AGY_LLM_GATEWAY_URL "${proxyUrl}" \
+          --set AGY_LLM_GATEWAY_API_KEY ${lib.escapeShellArg cliProxyKey} \
+          --set AGY_LLM_GATEWAY_WIRE_PROTOCOL "openai" \
+          --set AGY_LLM_GATEWAY_MODELS ${lib.escapeShellArg (lib.concatStringsSep "," agyModels)}
+
+        ln -s ${lib.getExe agyCli} "$out/bin/agy-plain"
+      '';
 in
 {
   options.services.cli-proxy-api.enableLocal = lib.mkOption {
@@ -168,6 +210,7 @@ in
     };
 
     home.packages = [
+      agyCommands
       grokCommands
       codexCommands
       claudeCommands

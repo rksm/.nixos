@@ -18,12 +18,13 @@ let
       wrappers = builtins.filter (
         p:
         builtins.elem (p.name or "") [
+          "agy-commands"
           "claude-commands"
           "codex-commands"
           "grok-commands"
         ]
       ) home.home.packages;
-      endpoint = if enabled then "http://127.0.0.1:8317" else "http://agent-1.taileff843.ts.net:8317";
+      endpoint = if enabled then "http://127.0.0.1:8317" else "https://agent-1.taileff843.ts.net:8317";
     in
     assert home.services.cli-proxy-api.enableLocal == enabled;
     assert (home.systemd.user.services ? cli-proxy-api) == enabled;
@@ -31,7 +32,7 @@ let
     assert (home.home.file ? ".cli-proxy-api/config.yaml") == enabled;
     assert (home.home.activation ? cliProxyApiAuthDir) == enabled;
     assert builtins.elem evaluated.pkgs.cliproxyapi home.home.packages == enabled;
-    assert builtins.length wrappers == 3;
+    assert builtins.length wrappers == 4;
     assert builtins.all (p: lib.hasInfix endpoint p.buildCommand) wrappers;
     assert builtins.all (
       p: lib.hasInfix "systemctl --user is-active" p.buildCommand == enabled

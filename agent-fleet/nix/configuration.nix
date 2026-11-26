@@ -90,8 +90,8 @@ in
             RestartSec = "5s";
             # A switch that restarts tailscaled starts this unit before the backend runs.
             ExecStartPre = "${pkgs.tailscale}/bin/tailscale wait --timeout=60s";
-            ExecStart = "${pkgs.tailscale}/bin/tailscale serve --bg --yes --tcp=8317 tcp://127.0.0.1:8317";
-            ExecStop = "${pkgs.tailscale}/bin/tailscale serve --tcp=8317 off";
+            ExecStart = "${pkgs.tailscale}/bin/tailscale serve --bg --yes --https=8317 http://127.0.0.1:8317";
+            ExecStop = "${pkgs.tailscale}/bin/tailscale serve --https=8317 off";
           };
         };
 
@@ -188,7 +188,6 @@ in
 
     aiQuotas
     allMyAgents
-    agents.antigravity-cli
     agents.ccusage
     ast-outline
     fluxReconciler
