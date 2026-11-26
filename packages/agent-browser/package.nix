@@ -13,11 +13,11 @@ let
   natives = {
     x86_64-linux = {
       package = "cli-linux-x64-gnu";
-      hash = "sha256-vSfANv6ziEc5fRlXqbWJz47jxyZ29Bs9GZA6G3o8GJA=";
+      hash = "sha256-b5S0njOT5B1Mc1XcpGHQ1lCt2/OtzB3cqKmvM16+BPY=";
     };
     aarch64-darwin = {
       package = "cli-darwin-arm64";
-      hash = "sha256-41V44ZPoOo/Yetbkg8ZlUco/34z1lmC/taxCCzW1Jpg=";
+      hash = "sha256-y25Qgz/jZEMhbisKNWgwEeu1ktP9ED5NDDj7iZahRpA=";
     };
   };
   native = natives.${stdenvNoCC.hostPlatform.system};
@@ -30,12 +30,12 @@ in
 stdenvNoCC.mkDerivation (finalAttrs: {
   pname = "agent-browser";
   # `just update-agent-browser` pins the browser recommended by this extension.
-  version = "0.44.0";
-  passthru.piAgentBrowserNativeVersion = "0.9.42";
+  version = "0.45.0";
+  passthru.piAgentBrowserNativeVersion = "0.9.46";
 
   src = fetchurl {
     url = "https://registry.npmjs.org/agent-browser/-/agent-browser-${finalAttrs.version}.tgz";
-    hash = "sha256-XCZSLkh21VF6EqqHjzV92lNTlngrQlOAvCMUnlyFzAw=";
+    hash = "sha256-gdw0F1KJG35HwMWCJqns/lYwZsXmn+0WKPHgG8m3icE=";
   };
 
   nativeSrc = fetchurl {
