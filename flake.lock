@@ -27,11 +27,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1795718835,
-        "narHash": "sha256-0Y1Ye2VxL5/QEvLeMcI5oF5g4I7r6M8NGuFz/sGBGvU=",
+        "lastModified": 1795772069,
+        "narHash": "sha256-xOkN2CdeQtH0Fygbq4HHpGCGiOW/xi/X7cJOT0D/6Yk=",
         "ref": "refs/heads/main",
-        "rev": "6875f583a23e6e871e3ce53ad4a4ef4fbbf54678",
-        "revCount": 1132,
+        "rev": "8b91fa198e86ae9a792e410ecb73bf651e28a7b6",
+        "revCount": 1177,
         "type": "git",
         "url": "ssh://git@github.com/rksm/all-my-agents"
       },
@@ -402,11 +402,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1795702923,
-        "narHash": "sha256-OvSz3gO7ualG+RziLMyiKecxfkqVlt43YUzAbh/+UwU=",
+        "lastModified": 1795764997,
+        "narHash": "sha256-dkX4GGtumxtSOcdwTsS6Dy5LyPv9Nx6Ya6yRx1i3y1o=",
         "owner": "numtide",
         "repo": "llm-agents.nix",
-        "rev": "9e137fb04294426cdd3a8f97d5a6835c9124e13f",
+        "rev": "ccf868b7a2a8de6713c0a572885657739a448cf0",
         "type": "github"
       },
       "original": {
@@ -736,11 +736,11 @@
         "nixpkgs": "nixpkgs_8"
       },
       "locked": {
-        "lastModified": 1795587416,
-        "narHash": "sha256-b9TR0PjVJeUcbooKee7jsQIoNnyqXTX/44xz7p0WUXY=",
+        "lastModified": 1795760209,
+        "narHash": "sha256-Wn1oY7fLt8pLidbBab07lB+ecyXhp1TuLLoTNw5NF+Y=",
         "owner": "hypervideo",
         "repo": "skillshare-nix",
-        "rev": "9cb04121ca4a25e63710ee4d81476697b7972cf9",
+        "rev": "424e99d427708c52aaac32f5cee5bacf74399b46",
         "type": "github"
       },
       "original": {
