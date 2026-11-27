@@ -123,14 +123,28 @@ let
 
   agyCli = pkgs.llm-agents.antigravity-cli;
   # agy keeps only 32 of the models the proxy lists, so name the useful ones.
-  # agy sends Gemini models without their effort suffix, such as
-  # gemini-4-hydrogen. The oauth-model-alias entries in config.yaml map those
-  # names back.
+  # agy offers each ID listed here, also one that the proxy does not list.
+  # For a Gemini ID, it sends the name without the effort suffix, such as
+  # gemini-4-hydrogen, and the effort as reasoning_effort, which the proxy
+  # passes on. The oauth-model-alias entries in config.yaml map the bare names
+  # to the proxy's models. So each effort of a family needs its ID here.
   agyModels = [
+    "gemini-4-hydrogen-low"
+    "gemini-4-hydrogen-medium"
+    "gemini-4-hydrogen-high"
     "gemini-4-hydrogen-xhigh"
+    "gemini-4-neon-low"
+    "gemini-4-neon-medium"
+    "gemini-4-neon-high"
     "gemini-4-neon-xhigh"
+    "gemini-4-argon-low"
+    "gemini-4-argon-medium"
     "gemini-4-argon-high"
+    "gemini-4-carbon-low"
+    "gemini-4-carbon-medium"
     "gemini-4-carbon-high"
+    "gemini-3.8-flash-low"
+    "gemini-3.8-flash-medium"
     "gemini-3.8-flash-high"
     "claude-fable-5-2"
     "claude-opus-5-5"
