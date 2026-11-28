@@ -23,13 +23,13 @@ let
 in
 (buildGoModule.override { go = go_1_26_10; }) (finalAttrs: {
   pname = "cliproxyapi";
-  version = "8.1.7-unstable-2026-11-27";
+  version = "8.1.8-unstable-2026-11-28";
 
   src = fetchFromGitHub {
     owner = "router-for-me";
     repo = "CLIProxyAPI";
-    rev = "91619936f39d11ccebd9fde0b6faf2935f065365";
-    hash = "sha256-D7J/Qme/ee5xDFyzHVNmbftO49f7kuBgu3srZw3Ue/E=";
+    rev = "6d4e9057edcd736f2bfa5ed5089b8c6491d58674";
+    hash = "sha256-s+Ax7VXlz4BgiCmMmTHbx5PXGYk+ABkzK7dURdftTDc=";
   };
 
   vendorHash = "sha256-WUbMD30d1CU1KWFey8dIG0K/lO4TCObiuDJowITRwk8=";
