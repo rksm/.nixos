@@ -19,8 +19,41 @@ _for-hosts recipe host="" *args:
         'if type == "object" and length > 0 then . else error("fleet must be a non-empty object") end' \
         nix/fleet.json)
 
+    # Remote recipes only target provisioned hosts; local builds can target any host in fleet.json.
+    require_provisioned=true
+    if [[ "$recipe" == "_build" ]]; then
+        require_provisioned=false
+    fi
+
+    server_ips='{}'
+    if [[ "$require_provisioned" == "true" ]]; then
+        outputs=$(tofu output -json)
+        server_ips=$(jq -ce '
+            if type == "object" then
+                if has("server_ips") then
+                    (.server_ips.value // error("missing server_ips value"))
+                    | if type == "object" then . else error("server_ips is not an object") end
+                else
+                    {}
+                end
+            else
+                error("tofu output is not an object")
+            end
+        ' <<<"$outputs")
+    fi
+
     if [[ -z "$requested_hosts" ]]; then
-        mapfile -t hosts < <(jq -r 'keys[]' <<<"$fleet")
+        if [[ "$require_provisioned" == "true" ]]; then
+            mapfile -t hosts < <(jq -r --argjson ips "$server_ips" \
+                'keys[] | select(($ips[.] // "") | (type == "string" and length > 0))' \
+                <<<"$fleet")
+            if [[ ${#hosts[@]} -eq 0 ]]; then
+                echo "No provisioned fleet hosts found." >&2
+                exit 1
+            fi
+        else
+            mapfile -t hosts < <(jq -r 'keys[]' <<<"$fleet")
+        fi
     else
         if [[ "$requested_hosts" == ,* || "$requested_hosts" == *, || "$requested_hosts" == *,,* ]]; then
             echo "Host lists cannot contain empty hostnames." >&2
@@ -33,6 +66,12 @@ _for-hosts recipe host="" *args:
         if ! jq -e --arg host "$host" 'has($host)' <<<"$fleet" >/dev/null; then
             echo "Unknown host: $host" >&2
             exit 1
+        fi
+        if [[ "$require_provisioned" == "true" ]]; then
+            if ! jq -e --arg host "$host" 'has($host) and (.[$host] | type == "string" and length > 0)' <<<"$server_ips" >/dev/null; then
+                echo "Host is not currently provisioned: $host" >&2
+                exit 1
+            fi
         fi
     done
 
@@ -91,10 +130,19 @@ ssh-config:
     main_config="$ssh_dir/config"
     fleet_config="$ssh_dir/agent-fleet"
     include='Include ~/.ssh/agent-fleet'
-    server_ips=$(tofu output -json server_ips 2>/dev/null || printf '{}')
-
-    jq -e 'type == "object" and all(.[]; type == "string")' \
-        <<<"$server_ips" >/dev/null
+    outputs=$(tofu output -json)
+    server_ips=$(jq -ce '
+        if type == "object" then
+            if has("server_ips") then
+                (.server_ips.value // error("missing server_ips value"))
+                | if type == "object" and all(.[]; type == "string") then . else error("server_ips must be an object of strings") end
+            else
+                {}
+            end
+        else
+            error("tofu output is not an object")
+        end
+    ' <<<"$outputs")
 
     mkdir -p "$ssh_dir"
     chmod 700 "$ssh_dir"
@@ -195,6 +243,7 @@ _sync host:
     openrouter_key="/etc/nixos/shared/secrets/openrouter.key"
     review_bot_env="/etc/nixos/shared/secrets/roberts-review-bot.env"
     review_bot_key="/etc/nixos/shared/secrets/roberts-review-bot.pem"
+    fleet_ssh_key="/etc/nixos/shared/secrets/agent-fleet-ssh.key"
     test -f "$agent_files_env"
     test -f "$netrc_file"
     test -f "$syncthing_password"
@@ -202,6 +251,9 @@ _sync host:
     test -s "$openrouter_key"
     test -s "$review_bot_env"
     test -s "$review_bot_key"
+    if [[ "{{ host }}" == "agent-1" ]]; then
+        test -s "$fleet_ssh_key"
+    fi
     ip=$(just _host-ip {{ host }})
     repository_root=$(git rev-parse --show-toplevel)
     staging=$(mktemp -d)
@@ -264,6 +316,16 @@ _sync host:
         "$review_bot_env" \
         "$review_bot_key" \
         "robert@$ip:/etc/nixos/shared/secrets/"
+    # Give agent-1's roberts-review-bot controller SSH access to burst worker agent-2.
+    if [[ "{{ host }}" == "agent-1" ]]; then
+        rsync -a \
+            --chmod=F600 \
+            --chown=robert:users \
+            --rsync-path="sudo rsync" \
+            -e "${ssh[*]}" \
+            "$fleet_ssh_key" \
+            "robert@$ip:/etc/nixos/shared/secrets/agent-fleet-ssh.key"
+    fi
 
 # Activate the current root flake on the selected hosts.
 switch host="":
@@ -351,14 +413,60 @@ _sync-ai-resources host:
     just --justfile "$HOME/projects/ai/lessismore/justfile" sync
     REMOTE
 
-# Join the selected new hosts to the tailnet through browser authorization.
-tailscale-login host="":
-    just _for-hosts _tailscale-login "$@"
+# Join the selected new hosts to the tailnet (unattended via tailscale-auth.key, or pass --interactive).
+tailscale-login host="" *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [[ "${1:-}" == "--interactive" ]]; then
+        shift
+        just _for-hosts _tailscale-login "" --interactive "$@"
+    else
+        just _for-hosts _tailscale-login "$@"
+    fi
 
 [private]
-_tailscale-login host:
-    just _ssh {{ host }} sudo tailscale up
-    just _ssh {{ host }} sudo systemctl restart tailscale-serve-syncthing.service
+_tailscale-login host *args:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    host=$1
+    shift
+
+    interactive=false
+    for arg in "$@"; do
+        case "$arg" in
+            --interactive)
+                interactive=true
+                ;;
+            *)
+                echo "Unknown option for tailscale-login: $arg" >&2
+                exit 1
+                ;;
+        esac
+    done
+
+    auth_key_file="/etc/nixos/shared/secrets/tailscale-auth.key"
+    auth_key=""
+    if [[ "$interactive" == "false" && -s "$auth_key_file" ]]; then
+        auth_key=$(tr -d '\r\n' < "$auth_key_file")
+    fi
+
+    if [[ -n "$auth_key" ]]; then
+        if ! {
+            printf 'auth_key=%q\n' "$auth_key"
+            cat <<'REMOTE'
+    set -euo pipefail
+    sudo tailscale up --authkey="$auth_key"
+    unset auth_key
+    REMOTE
+        } | just _ssh "$host" bash; then
+            echo "Tailscale auth key failed on $host; falling back to interactive login..." >&2
+            just _ssh "$host" sudo tailscale up
+        fi
+        unset auth_key
+    else
+        just _ssh "$host" sudo tailscale up
+    fi
+    just _ssh "$host" sudo systemctl restart tailscale-serve-syncthing.service
 
 # Show the Tailscale connection state for the selected hosts.
 tailscale-status host="":
@@ -497,3 +605,23 @@ update-moshi:
 # Pair one fleet host with the Moshi phone app.
 pair-moshi host:
     @./scripts/pair-moshi "{{ host }}"
+
+# Provision or resume burst worker agent-2 (newest snapshot or debian-12) and prefer it on agent-1.
+burst-on image="" fresh="false":
+    @./scripts/burst on "$1" "$2"
+
+# Show burst worker server, persistent volume, latest snapshot, and agent-1 controller status.
+burst-status:
+    @./scripts/burst status
+
+# Drain agent-2 reviews back to agent-1, stop Herdr cleanly, and power off agent-2.
+burst-off:
+    @./scripts/burst off
+
+# Drain agent-2, power it off, and create a labeled Hetzner snapshot (leaves agent-2 powered off).
+burst-snapshot:
+    @./scripts/burst snapshot
+
+# Drain, unmount /mnt/agent-2-data, optionally snapshot, and remove agent-2 compute (retains volume).
+burst-delete snapshot="true":
+    @./scripts/burst delete "$1"

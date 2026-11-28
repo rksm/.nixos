@@ -1,0 +1,838 @@
+#!/usr/bin/env bash
+set -euo pipefail
+shopt -s inherit_errexit
+
+repository_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
+readonly repository_dir
+cd "$repository_dir"
+
+readonly justfile="$repository_dir/justfile"
+readonly ssh_key="$repository_dir/../shared/secrets/agent-fleet-ssh.key"
+readonly known_hosts="$repository_dir/known_hosts"
+
+readonly controller_host="agent-1"
+readonly worker_host="agent-2"
+readonly worker_volume="agent-2-data"
+readonly worker_mount="/mnt/agent-2-data"
+readonly worker_service="herdr-roberts-review-bot.service"
+readonly snapshot_selector="fleet=agent-fleet,host=${worker_host}"
+
+readonly drain_timeout="${BURST_DRAIN_TIMEOUT:-1800}"
+readonly drain_poll_interval="${BURST_DRAIN_POLL_INTERVAL:-5}"
+readonly ssh_wait_timeout="${BURST_SSH_TIMEOUT:-300}"
+
+log() {
+  printf '[burst] %s\n' "$*"
+}
+
+warn() {
+  printf '[burst] Warning: %s\n' "$*" >&2
+}
+
+fail() {
+  printf '[burst] Error: %s\n' "$*" >&2
+  exit 1
+}
+
+pretty_json() {
+  local raw=$1
+  if jq -e . <<<"$raw" >/dev/null 2>&1; then
+    jq . <<<"$raw"
+  else
+    printf '%s\n' "$raw"
+  fi
+}
+
+read_server_ips() {
+  local outputs err_file err server_ips
+  err_file=$(mktemp)
+  if ! outputs=$(tofu output -json 2>"$err_file"); then
+    err=$(cat "$err_file")
+    rm -f "$err_file"
+    printf 'Failed to read OpenTofu outputs: %s\n' "${err:-unknown error}" >&2
+    return 1
+  fi
+  rm -f "$err_file"
+  if ! server_ips=$(jq -ce '
+    if type == "object" then
+      if has("server_ips") then
+        (.server_ips.value // error("missing server_ips value"))
+        | if type == "object" then . else error("server_ips is not an object") end
+      else
+        {}
+      end
+    else
+      error("outputs is not an object")
+    end
+  ' <<<"$outputs" 2>/dev/null); then
+    printf 'Failed to parse OpenTofu server_ips output.\n' >&2
+    return 1
+  fi
+  printf '%s\n' "$server_ips"
+}
+
+is_provisioned() {
+  local host=$1
+  local server_ips
+  if ! server_ips=$(read_server_ips); then
+    exit 1
+  fi
+  jq -e --arg host "$host" 'has($host) and (.[$host] | type == "string" and length > 0)' \
+    <<<"$server_ips" >/dev/null 2>&1
+}
+
+host_ip() {
+  local host=$1
+  just --justfile "$justfile" _host-ip "$host"
+}
+
+# Pipe bash commands via stdin so the remote fish login shell never interprets them.
+ssh_run() {
+  local host=$1
+  just --justfile "$justfile" _ssh "$host" bash
+}
+
+wait_for_ssh() {
+  local host=$1
+  local user=$2
+  local ip
+  ip=$(host_ip "$host")
+
+  log "Waiting for SSH host key on $host ($ip)..."
+  just --justfile "$justfile" _refresh-host-key "$host"
+
+  log "Waiting for SSH login as ${user}@${ip}..."
+  local deadline=$((SECONDS + ssh_wait_timeout))
+  while (( SECONDS < deadline )); do
+    if ssh \
+      -i "$ssh_key" \
+      -o IdentitiesOnly=yes \
+      -o ControlMaster=no \
+      -o ControlPath=none \
+      -o UserKnownHostsFile="$known_hosts" \
+      -o StrictHostKeyChecking=accept-new \
+      -o ConnectTimeout=5 \
+      -o BatchMode=yes \
+      "${user}@${ip}" true >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 3
+  done
+
+  fail "Timed out waiting for SSH login as ${user}@${ip} after ${ssh_wait_timeout}s."
+}
+
+latest_snapshots_json() {
+  hcloud image list \
+    --type snapshot \
+    --selector "$snapshot_selector" \
+    --sort created:desc \
+    --output json
+}
+
+latest_available_snapshot_id() {
+  local images_json
+  if ! images_json=$(latest_snapshots_json); then
+    fail "Failed to query Hetzner snapshots."
+  fi
+  if ! jq -e 'type == "array"' <<<"$images_json" >/dev/null 2>&1; then
+    fail "Received empty or invalid Hetzner snapshot list response."
+  fi
+  jq -r '
+    [ .[] | select(.status == "available") ]
+    | if length > 0 then (.[0].id | tostring) else "" end
+  ' <<<"$images_json"
+}
+
+server_json() {
+  local out err_file err
+  err_file=$(mktemp)
+  if out=$(hcloud server describe "$worker_host" -o json 2>"$err_file"); then
+    rm -f "$err_file"
+    if ! jq -e 'type == "object"' <<<"$out" >/dev/null 2>&1; then
+      fail "Received empty or invalid Hetzner server response for $worker_host."
+    fi
+    printf '%s\n' "$out"
+    return 0
+  fi
+  err=$(cat "$err_file")
+  rm -f "$err_file"
+  if grep -qi 'not found' <<<"$err"; then
+    return 0
+  fi
+  fail "Failed to query Hetzner server $worker_host: ${err:-unknown error}"
+}
+
+server_status() {
+  local info status
+  if ! info=$(server_json); then
+    return 1
+  fi
+  if [[ -z "$info" ]]; then
+    return 0
+  fi
+  if ! status=$(jq -er 'if type == "object" and (.status | type == "string") and (.status | length > 0) then .status else error("missing server status") end' <<<"$info"); then
+    fail "Failed to parse Hetzner server status for $worker_host."
+  fi
+  printf '%s\n' "$status"
+}
+
+wait_for_server_status() {
+  local desired=$1
+  local timeout=${2:-120}
+  local deadline=$((SECONDS + timeout))
+  local current=""
+  while (( SECONDS < deadline )); do
+    if current=$(server_status); then
+      if [[ "$current" == "$desired" ]]; then
+        return 0
+      fi
+    else
+      current="query-error"
+    fi
+    sleep 2
+  done
+  fail "Timed out waiting for $worker_host to reach status '$desired' (last status: '${current:-missing}')."
+}
+
+require_controller() {
+  is_provisioned "$controller_host" \
+    || fail "$controller_host is not provisioned; cannot reach roberts-review-bot controller."
+}
+
+controller_get() {
+  local path=$1
+  require_controller
+  {
+    printf 'path=%q\n' "$path"
+    cat <<'REMOTE'
+set -euo pipefail
+curl -fsS "http://127.0.0.1:3000${path}"
+REMOTE
+  } | ssh_run "$controller_host"
+}
+
+controller_post() {
+  local path=$1
+  local payload=$2
+  require_controller
+  {
+    printf 'path=%q\n' "$path"
+    printf 'payload=%q\n' "$payload"
+    cat <<'REMOTE'
+set -euo pipefail
+curl -fsS -X POST "http://127.0.0.1:3000${path}" \
+  -H 'content-type: application/json' \
+  -d "$payload"
+REMOTE
+  } | ssh_run "$controller_host"
+}
+
+# Normalize /api/control/status into active (starting/running) and held assignments for worker_host.
+summarize_worker_assignments() {
+  local status_json=$1
+  jq -ce --arg host "$worker_host" '
+    def host_assignments:
+      if (.assignments | type) == "array" then
+        [ .assignments[] | select((.host // "") == $host) ]
+      elif (.assignments | type) == "object" then
+        [ .assignments | to_entries[] | (.value + {id: (.value.id // .key)}) | select((.host // "") == $host) ]
+      elif (.hosts | type) == "object" and (.hosts[$host] | type) == "object" and (.hosts[$host].assignments | type) == "array" then
+        .hosts[$host].assignments
+      elif (.hosts | type) == "object" and (.hosts[$host] | type) == "object" and (.hosts[$host].assignments | type) == "object" then
+        [ .hosts[$host].assignments | to_entries[] | (.value + {id: (.value.id // .key)}) ]
+      elif (.hosts | type) == "array" then
+        [ .hosts[] | select((.host // .name // "") == $host)
+          | (.assignments // [])
+          | if type == "array" then .[] else to_entries[] | (.value + {id: (.value.id // .key)}) end ]
+      else
+        error("unrecognized /api/control/status schema: missing assignments/hosts")
+      end;
+
+    def state_of: ((.status // .state // "") | ascii_downcase);
+    def label_of: (.prKey // .key // .label // .jobId // .id // .pr // .pullUrl // "unknown");
+
+    host_assignments as $all
+    | [ $all[] | select(state_of == "starting" or state_of == "running")
+        | {label: label_of, state: state_of} ] as $active
+    | [ $all[] | select(state_of == "held" or state_of == "waiting" or state_of == "waiting_for_input" or state_of == "needs_input")
+        | {label: label_of, state: state_of} ] as $held
+    | {
+        active_count: ($active | length),
+        held_count: ($held | length),
+        active: $active,
+        held: $held
+      }
+  ' <<<"$status_json"
+}
+
+print_assignment_list() {
+  local title=$1
+  local items_json=$2
+  printf '  %s:\n' "$title" >&2
+  jq -r '.[] | "    - \(.label) (\(.state))"' <<<"$items_json" >&2
+}
+
+drain_worker() {
+  log "Draining $worker_host on $controller_host (new jobs shift back to $controller_host)..."
+  local drain_resp
+  drain_resp=$(controller_post "/api/control/drain" "{\"host\":\"${worker_host}\",\"draining\":true}")
+  pretty_json "$drain_resp"
+
+  log "Waiting for starting/running assignments on $worker_host to finish (timeout: ${drain_timeout}s)..."
+  local deadline=$((SECONDS + drain_timeout))
+  while true; do
+    local status_json summary active_count held_count active_items held_items
+    status_json=$(controller_get "/api/control/status")
+    if ! summary=$(summarize_worker_assignments "$status_json" 2>/dev/null); then
+      printf '%s\n' "$status_json" >&2
+      fail "Could not parse assignments from $controller_host /api/control/status."
+    fi
+
+    active_count=$(jq -r '.active_count' <<<"$summary")
+    held_count=$(jq -r '.held_count' <<<"$summary")
+    active_items=$(jq -c '.active' <<<"$summary")
+    held_items=$(jq -c '.held' <<<"$summary")
+
+    if (( active_count == 0 )); then
+      log "$worker_host has 0 starting/running assignments."
+      # Trigger one final report sync now that all active jobs on agent-2 have finished.
+      controller_post "/api/control/drain" "{\"host\":\"${worker_host}\",\"draining\":true}" >/dev/null || true
+      if (( held_count > 0 )); then
+        warn "$worker_host has $held_count held review(s) waiting on human input:"
+        print_assignment_list "Held reviews" "$held_items"
+      fi
+      return 0
+    fi
+
+    if (( SECONDS >= deadline )); then
+      warn "Timed out after ${drain_timeout}s while $worker_host still has active assignments."
+      print_assignment_list "Active assignments" "$active_items"
+      if (( held_count > 0 )); then
+        warn "There are also $held_count held review(s) waiting on human input:"
+        print_assignment_list "Held reviews" "$held_items"
+      fi
+      fail "Aborting because $worker_host is still running reviews."
+    fi
+
+    local msg="$active_count starting/running assignment(s) remaining on $worker_host"
+    if (( held_count > 0 )); then
+      msg="$msg ($held_count held / waiting on human input)"
+    fi
+    log "$msg; rechecking in ${drain_poll_interval}s..."
+    sleep "$drain_poll_interval"
+  done
+}
+
+require_zero_active_assignments() {
+  local status_json summary active_count held_count active_items held_items
+  status_json=$(controller_get "/api/control/status")
+  if ! summary=$(summarize_worker_assignments "$status_json" 2>/dev/null); then
+    printf '%s\n' "$status_json" >&2
+    fail "Could not parse assignments from $controller_host /api/control/status."
+  fi
+
+  active_count=$(jq -r '.active_count' <<<"$summary")
+  held_count=$(jq -r '.held_count' <<<"$summary")
+  active_items=$(jq -c '.active' <<<"$summary")
+  held_items=$(jq -c '.held' <<<"$summary")
+
+  if (( active_count > 0 )); then
+    warn "$worker_host still has $active_count starting/running assignment(s):"
+    print_assignment_list "Active assignments" "$active_items"
+    if (( held_count > 0 )); then
+      print_assignment_list "Held reviews" "$held_items"
+    fi
+    fail "Refusing to proceed while $worker_host has active reviews. Run 'just burst-off' or wait for them to finish."
+  fi
+
+  if (( held_count > 0 )); then
+    warn "$worker_host has $held_count held review(s) waiting on human input:"
+    print_assignment_list "Held reviews" "$held_items"
+  fi
+}
+
+stop_worker_services_and_poweroff() {
+  local mode=$1 # "off" or "delete"
+  local status
+  status=$(server_status)
+  if [[ -z "$status" ]]; then
+    log "$worker_host is not provisioned in Hetzner."
+    return 0
+  fi
+
+  if [[ "$status" == "off" ]]; then
+    log "$worker_host is already powered off."
+    return 0
+  fi
+
+  if [[ "$mode" == "delete" ]]; then
+    log "Stopping $worker_service and syncthing, and unmounting $worker_mount on $worker_host..."
+    {
+      printf 'worker_service=%q\n' "$worker_service"
+      printf 'worker_mount=%q\n' "$worker_mount"
+      cat <<'REMOTE'
+set -euo pipefail
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+
+if systemctl --user cat "$worker_service" >/dev/null 2>&1; then
+  systemctl --user stop "$worker_service" || true
+  if systemctl --user is-active --quiet "$worker_service"; then
+    echo "Failed to stop $worker_service" >&2
+    exit 1
+  fi
+fi
+
+if systemctl cat syncthing.service >/dev/null 2>&1; then
+  sudo systemctl stop syncthing.service || true
+fi
+
+sync
+if mountpoint -q "$worker_mount"; then
+  sudo umount "$worker_mount"
+fi
+if mountpoint -q "$worker_mount"; then
+  echo "$worker_mount is still mounted" >&2
+  exit 1
+fi
+sync
+REMOTE
+    } | ssh_run "$worker_host"
+  else
+    log "Stopping $worker_service and syncing disks on $worker_host..."
+    {
+      printf 'worker_service=%q\n' "$worker_service"
+      cat <<'REMOTE'
+set -euo pipefail
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+
+if systemctl --user cat "$worker_service" >/dev/null 2>&1; then
+  systemctl --user stop "$worker_service" || true
+  if systemctl --user is-active --quiet "$worker_service"; then
+    echo "Failed to stop $worker_service" >&2
+    exit 1
+  fi
+fi
+
+sync
+REMOTE
+    } | ssh_run "$worker_host"
+  fi
+
+  log "Powering off $worker_host..."
+  hcloud server poweroff "$worker_host"
+  wait_for_server_status "off" 120
+  log "$worker_host is powered off."
+}
+
+create_snapshot() {
+  local description
+  description="agent-2-$(date +%Y%m%d-%H%M%S)"
+  log "Creating Hetzner snapshot '$description' from $worker_host..."
+  hcloud server create-image \
+    --type snapshot \
+    --description "$description" \
+    --label fleet=agent-fleet \
+    --label "host=${worker_host}" \
+    "$worker_host"
+
+  local images_json snapshot_id
+  images_json=$(latest_snapshots_json)
+  snapshot_id=$(jq -r --arg desc "$description" '
+    if type == "array" then
+      ([ .[] | select(.description == $desc) ] | first // .[0])
+      | (.id // "") | tostring
+    else
+      ""
+    end
+  ' <<<"$images_json")
+
+  if [[ -n "$snapshot_id" ]]; then
+    log "Snapshot created: id=$snapshot_id description=$description labels=fleet=agent-fleet,host=${worker_host}"
+  else
+    warn "Snapshot was created, but its ID could not be resolved from hcloud image list."
+  fi
+}
+
+ensure_worker_ready_after_boot() {
+  log "Ensuring Tailscale is connected on $worker_host..."
+  local ts_state
+  ts_state=$(ssh_run "$worker_host" <<'REMOTE'
+set -euo pipefail
+sudo tailscale status --json 2>/dev/null | jq -r '.BackendState // ""' || true
+REMOTE
+  )
+  if [[ "$ts_state" != "Running" ]]; then
+    log "Tailscale state is '${ts_state:-unknown}'; running tailscale login on $worker_host..."
+    just --justfile "$justfile" _tailscale-login "$worker_host"
+  else
+    log "Tailscale is already Running on $worker_host."
+  fi
+
+  # Ensure the persistent volume has the expected ext4 label and is mounted before deploy.
+  log "Verifying $worker_mount is mounted on $worker_host..."
+  local vol_id=""
+  vol_id=$(tofu output -raw agent_2_volume_id 2>/dev/null || true)
+  {
+    printf 'worker_mount=%q\n' "$worker_mount"
+    printf 'vol_id=%q\n' "$vol_id"
+    cat <<'REMOTE'
+set -euo pipefail
+if [ ! -e /dev/disk/by-label/agent-2-data ] && [ -n "$vol_id" ] && [ -e "/dev/disk/by-id/scsi-0HC_Volume_${vol_id}" ]; then
+  sudo e2label "/dev/disk/by-id/scsi-0HC_Volume_${vol_id}" agent-2-data
+  sudo udevadm settle || true
+fi
+if ! mountpoint -q "$worker_mount"; then
+  sudo mount "$worker_mount" || true
+fi
+REMOTE
+  } | ssh_run "$worker_host"
+
+  local needs_deploy=false
+  case "${BURST_DEPLOY:-auto}" in
+    1|true|yes)
+      needs_deploy=true
+      ;;
+    0|false|no)
+      needs_deploy=false
+      ;;
+    auto)
+      local remote_state remote_system has_unit has_secrets desired_system
+      remote_state=$(
+        {
+          printf 'worker_service=%q\n' "$worker_service"
+          cat <<'REMOTE'
+set -euo pipefail
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+current=$(readlink -f /run/current-system || true)
+has_unit=false
+if systemctl --user cat "$worker_service" >/dev/null 2>&1; then
+  has_unit=true
+fi
+has_secrets=false
+if [[ -s /etc/nixos/shared/secrets/roberts-review-bot.env ]]; then
+  has_secrets=true
+fi
+printf '%s\t%s\t%s\n' "$current" "$has_unit" "$has_secrets"
+REMOTE
+        } | ssh_run "$worker_host"
+      )
+      IFS=$'\t' read -r remote_system has_unit has_secrets <<<"$remote_state"
+      if [[ "$has_unit" != "true" || "$has_secrets" != "true" ]]; then
+        log "$worker_host is missing expected unit or secrets; deploy is needed."
+        needs_deploy=true
+      else
+        desired_system=$(nix eval --raw ..#nixosConfigurations.agent-2.config.system.build.toplevel.outPath 2>/dev/null || true)
+        if [[ -n "$desired_system" && "$remote_system" != "$desired_system" ]]; then
+          log "$worker_host system ($remote_system) differs from current flake ($desired_system); deploy is needed."
+          needs_deploy=true
+        fi
+      fi
+      ;;
+    *)
+      fail "Invalid BURST_DEPLOY value '${BURST_DEPLOY}' (use auto, true, or false)."
+      ;;
+  esac
+
+  if [[ "$needs_deploy" == "true" ]]; then
+    log "Running 'just deploy $worker_host'..."
+    just --justfile "$justfile" deploy "$worker_host"
+  else
+    log "$worker_host already matches current flake; skipping deploy (set BURST_DEPLOY=1 to force)."
+  fi
+
+  log "Verifying $worker_mount mount and $worker_service on $worker_host..."
+  {
+    printf 'worker_mount=%q\n' "$worker_mount"
+    printf 'worker_service=%q\n' "$worker_service"
+    cat <<'REMOTE'
+set -euo pipefail
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+
+if ! mountpoint -q "$worker_mount"; then
+  sudo mount "$worker_mount"
+fi
+mountpoint -q "$worker_mount" || { echo "$worker_mount is not mounted" >&2; exit 1; }
+
+if ! systemctl --user is-active --quiet "$worker_service"; then
+  systemctl --user start "$worker_service"
+fi
+systemctl --user is-active --quiet "$worker_service" \
+  || { echo "$worker_service is not active" >&2; exit 1; }
+REMOTE
+  } | ssh_run "$worker_host"
+
+  log "$worker_mount is mounted and $worker_service is active."
+}
+
+cmd_on() {
+  local requested_image=${1:-}
+  local fresh=${2:-false}
+  case "$fresh" in
+    true|false) ;;
+    *) fail "Invalid 'fresh' value '$fresh' (expected 'true' or 'false')." ;;
+  esac
+
+  local image="$requested_image"
+  local existing=false
+
+  if is_provisioned "$worker_host"; then
+    existing=true
+    if [[ -n "$requested_image" ]]; then
+      fail "$worker_host is already provisioned. Run 'just burst-on' without an image to resume it, or 'just burst-delete' first to recreate from '$requested_image'."
+    fi
+
+    local status
+    status=$(server_status)
+    if [[ "$status" == "off" ]]; then
+      log "$worker_host is already provisioned but powered off; powering it on..."
+      hcloud server poweron "$worker_host"
+      wait_for_server_status "running" 120
+    elif [[ "$status" == "running" ]]; then
+      log "$worker_host is already provisioned and running."
+    else
+      log "$worker_host current Hetzner status is '${status:-unknown}'; waiting for running..."
+      wait_for_server_status "running" 120
+    fi
+    just --justfile "$justfile" ssh-config
+  else
+    if [[ -z "$image" ]]; then
+      log "Looking up newest available $worker_host snapshot..."
+      image=$(latest_available_snapshot_id)
+      if [[ -n "$image" ]]; then
+        log "Using newest snapshot ID: $image"
+      else
+        image="debian-12"
+        log "No $worker_host snapshot found; falling back to '$image'."
+      fi
+    else
+      log "Using requested image: $image"
+    fi
+
+    log "Provisioning $worker_host with OpenTofu (agent_2_enabled=true, agent_2_image=$image)..."
+    tofu apply -auto-approve \
+      -var agent_2_enabled=true \
+      -var "agent_2_image=$image"
+    just --justfile "$justfile" ssh-config
+  fi
+
+  if [[ "$existing" == "false" && "$image" == "debian-12" ]]; then
+    wait_for_ssh "$worker_host" "root"
+    if [[ "$fresh" == "true" ]]; then
+      log "fresh=true set; installing NixOS on $worker_host..."
+      just --justfile "$justfile" _install "$worker_host"
+      cat <<EOF
+
+[burst] NixOS installation on $worker_host finished.
+Next steps to finish bootstrapping $worker_host before routing reviews:
+  1. just sync $worker_host
+  2. just sync-auth $worker_host
+  3. Pair/verify Syncthing and run: just deploy $worker_host
+  4. Enable burst routing: just burst-on
+  5. Take a warmed snapshot for fast future bursts: just burst-snapshot
+EOF
+      return 0
+    fi
+
+    cat <<EOF
+
+[burst] $worker_host is provisioned from base image 'debian-12' (NixOS is not installed yet).
+Next steps:
+  1. Run: just install $worker_host
+  2. Run: just sync $worker_host && just sync-auth $worker_host
+  3. After Syncthing completes, run: just deploy $worker_host
+  4. Re-run 'just burst-on' to route reviews to $worker_host and 'just burst-snapshot' to save a warm snapshot.
+EOF
+    return 0
+  fi
+
+  # Restored from snapshot or resumed existing NixOS server: never run nixos-anywhere!
+  log "Skipping nixos-anywhere install ($worker_host is restored from snapshot or already installed)."
+  wait_for_ssh "$worker_host" "robert"
+
+  # Guard against resuming an un-installed Debian server.
+  if ! ssh_run "$worker_host" <<<'test -e /etc/NIXOS' >/dev/null 2>&1; then
+    fail "$worker_host does not appear to be running NixOS (/etc/NIXOS missing). Run 'just install $worker_host' first."
+  fi
+
+  ensure_worker_ready_after_boot
+
+  # Drop any stale host key for agent-2 from the controller's bot known_hosts before verify=true.
+  ssh_run "$controller_host" <<'REMOTE'
+set -euo pipefail
+known="$HOME/.local/state/roberts-review-bot/known_hosts"
+if [ -f "$known" ]; then
+  ssh-keygen -R agent-2 -f "$known" >/dev/null 2>&1 || true
+fi
+REMOTE
+
+  log "Clearing drain flag on $worker_host and asking $controller_host to prefer $worker_host..."
+  controller_post "/api/control/drain" "{\"host\":\"${worker_host}\",\"draining\":false}" >/dev/null
+  local prefer_resp
+  prefer_resp=$(controller_post "/api/control/prefer" "{\"host\":\"${worker_host}\",\"verify\":true}")
+  pretty_json "$prefer_resp"
+  log "Burst mode is ON ($worker_host is preferred)."
+}
+
+describe_hcloud_resource() {
+  local kind=$1
+  local name=$2
+  local out err_file err
+  err_file=$(mktemp)
+  if out=$(hcloud "$kind" describe "$name" 2>"$err_file"); then
+    rm -f "$err_file"
+    printf '%s\n' "$out"
+    return 0
+  fi
+  err=$(cat "$err_file")
+  rm -f "$err_file"
+  if grep -qi 'not found' <<<"$err"; then
+    printf '%s: not provisioned\n' "$name"
+    return 0
+  fi
+  printf 'Failed to query Hetzner %s %s: %s\n' "$kind" "$name" "${err:-unknown error}" >&2
+  return 1
+}
+
+cmd_status() {
+  local had_error=0
+
+  printf '=== Hetzner server: %s ===\n' "$worker_host"
+  if ! describe_hcloud_resource server "$worker_host"; then
+    had_error=1
+  fi
+
+  printf '\n=== Hetzner volume: %s ===\n' "$worker_volume"
+  if ! describe_hcloud_resource volume "$worker_volume"; then
+    had_error=1
+  fi
+
+  printf '\n=== Latest %s snapshot ===\n' "$worker_host"
+  local images_json snap_err_file snap_err
+  snap_err_file=$(mktemp)
+  if images_json=$(latest_snapshots_json 2>"$snap_err_file"); then
+    rm -f "$snap_err_file"
+    if ! jq -e 'type == "array"' <<<"$images_json" >/dev/null 2>&1; then
+      printf 'Failed to parse Hetzner snapshots output.\n' >&2
+      had_error=1
+    elif jq -e 'length > 0' <<<"$images_json" >/dev/null 2>&1; then
+      jq '.[0] | {id, description, status, created, image_size, disk_size, labels}' <<<"$images_json"
+    else
+      printf 'No %s snapshots found.\n' "$worker_host"
+    fi
+  else
+    snap_err=$(cat "$snap_err_file")
+    rm -f "$snap_err_file"
+    printf 'Failed to query Hetzner snapshots: %s\n' "${snap_err:-unknown error}" >&2
+    had_error=1
+  fi
+
+  printf '\n=== Controller status (%s) ===\n' "$controller_host"
+  local server_ips
+  if ! server_ips=$(read_server_ips); then
+    had_error=1
+  elif jq -e --arg host "$controller_host" 'has($host) and (.[$host] | type == "string" and length > 0)' <<<"$server_ips" >/dev/null 2>&1; then
+    local status_json ctrl_err_file ctrl_err
+    ctrl_err_file=$(mktemp)
+    if status_json=$(controller_get "/api/control/status" 2>"$ctrl_err_file"); then
+      rm -f "$ctrl_err_file"
+      pretty_json "$status_json"
+    else
+      ctrl_err=$(cat "$ctrl_err_file")
+      rm -f "$ctrl_err_file"
+      printf 'Failed to query http://127.0.0.1:3000/api/control/status on %s: %s\n' "$controller_host" "${ctrl_err:-unknown error}" >&2
+      had_error=1
+    fi
+  else
+    printf '%s: not provisioned\n' "$controller_host"
+  fi
+
+  return "$had_error"
+}
+
+cmd_off() {
+  drain_worker
+  stop_worker_services_and_poweroff "off"
+  log "Burst mode is OFF ($worker_host powered off; new reviews run on $controller_host)."
+}
+
+cmd_snapshot() {
+  local status
+  status=$(server_status)
+  [[ -n "$status" ]] || fail "$worker_host is not provisioned; nothing to snapshot."
+
+  drain_worker
+  require_zero_active_assignments
+  stop_worker_services_and_poweroff "off"
+  create_snapshot
+  log "$worker_host remains powered off after snapshotting. Run 'just burst-on' when ready to resume."
+}
+
+cmd_delete() {
+  local take_snapshot=${1:-true}
+  case "$take_snapshot" in
+    true|false) ;;
+    *) fail "Invalid 'snapshot' value '$take_snapshot' (expected 'true' or 'false')." ;;
+  esac
+
+  drain_worker
+  require_zero_active_assignments
+
+  local status
+  status=$(server_status)
+  if [[ -n "$status" ]]; then
+    stop_worker_services_and_poweroff "delete"
+    if [[ "$take_snapshot" == "true" ]]; then
+      create_snapshot
+    else
+      log "Skipping snapshot creation (snapshot=false)."
+    fi
+  else
+    log "$worker_host is not currently provisioned in Hetzner."
+  fi
+
+  # Never invoke tf-destroy; remove only agent-2 compute and its volume attachment.
+  log "Applying OpenTofu with agent_2_enabled=false (preserving $controller_host and $worker_volume)..."
+  tofu apply -var agent_2_enabled=false
+  just --justfile "$justfile" ssh-config
+
+  log "Setting preferredHost to $controller_host and clearing drain flag for $worker_host..."
+  local prefer_resp drain_resp status_json
+  prefer_resp=$(controller_post "/api/control/prefer" "{\"host\":\"${controller_host}\"}")
+  pretty_json "$prefer_resp"
+  drain_resp=$(controller_post "/api/control/drain" "{\"host\":\"${worker_host}\",\"draining\":false}")
+  pretty_json "$drain_resp"
+
+  status_json=$(controller_get "/api/control/status")
+  local preferred
+  preferred=$(jq -r '.preferredHost // .preferred_host // ""' <<<"$status_json" 2>/dev/null || true)
+  if [[ -n "$preferred" && "$preferred" != "$controller_host" ]]; then
+    warn "Controller reports preferredHost='$preferred' instead of '$controller_host'."
+  fi
+  log "Burst worker $worker_host deleted ($worker_volume retained)."
+}
+
+usage() {
+  cat <<'EOF' >&2
+Usage: scripts/burst <on|status|off|snapshot|delete> [args...]
+  on [image] [fresh]   Provision or resume agent-2 (newest snapshot or debian-12) and prefer it
+  status               Show Hetzner server/volume/snapshot and agent-1 controller status
+  off                  Drain agent-2, stop herdr-roberts-review-bot, and power it off
+  snapshot             Drain agent-2, stop Herdr, power off, and create a Hetzner snapshot (leaves it off)
+  delete [snapshot]    Drain, unmount /mnt/agent-2-data, optionally snapshot, delete agent-2 compute
+EOF
+  exit 1
+}
+
+[[ $# -ge 1 ]] || usage
+subcommand=$1
+shift
+
+case "$subcommand" in
+  on)       cmd_on "$@" ;;
+  status)   cmd_status "$@" ;;
+  off)      cmd_off "$@" ;;
+  snapshot) cmd_snapshot "$@" ;;
+  delete)   cmd_delete "$@" ;;
+  *)        usage ;;
+esac

@@ -7,11 +7,15 @@ manages the cloud resources. The root NixOS flake installs and updates NixOS.
 
 The file =nix/fleet.json= is the fleet inventory. OpenTofu creates every server in that file. The Nix flake creates a matching NixOS configuration for every server.
 
-The initial fleet contains one =cx43= server, =agent-1=, in =nbg1=.
+The initial fleet contains one =cx43= server, =agent-1=, in =nbg1=, plus an optional on-demand =ccx43= burst worker, =agent-2= (=ephemeral: true=).
 
 =agent-1= mounts its 250 GB Hetzner Cloud volume at =/home=. Both the volume
 and boot disk use stable device IDs. See the [[file:docs/agent-1-volume-migration.org][migration record]] for the
 cleanup history, backup location, and recovery constraints.
+
+=agent-2= keeps =/=, =/nix=, and =/tmp= on its local NVMe root disk and mounts a
+persistent 250 GB Hetzner Cloud volume (=agent-2-data=, labeled =agent-2-data=)
+at =/mnt/agent-2-data= for =~/reviews=, preserved Cargo target lanes, and Cargo caches.
 
 * Enter the development shell
 
@@ -169,19 +173,71 @@ The helper calls =op signin --account my.1password.com=. The session expires aft
 * Review bot
 
 =agent-1= runs [[https://github.com/hypervideo/roberts-review-bot][roberts-review-bot]] from the Syncthing copy of its repository at
-=~/projects/hyper/roberts-review-bot=. The module [[file:nix/roberts-review-bot.nix][nix/roberts-review-bot.nix]] defines three units:
+=~/projects/hyper/roberts-review-bot=. The module [[file:nix/roberts-review-bot.nix][nix/roberts-review-bot.nix]] configures
+=agent-1= as the controller + local fallback worker and =agent-2= as an optional
+burst worker:
 
-- =roberts-review-bot= is a user service that runs the bot. Each start installs its npm dependencies.
-- =herdr-roberts-review-bot= is a user service that runs the Herdr session =roberts-review-bot=, which holds the
-  reviews. A switch leaves it running, because a restart ends all running reviews.
-- =tailscale-funnel-roberts-review-bot= is a system service that publishes the webhook at
-  =https://agent-1.taileff843.ts.net:8443/api/github/webhooks=. The tailnet policy must allow Funnel for =agent-1=.
+- On =agent-1=:
+  - =roberts-review-bot= is a user service that runs the webhook server, sweep scheduler, and SQLite state store (=~/.local/state/roberts-review-bot/state.sqlite=). Each start installs its npm dependencies.
+  - =herdr-roberts-review-bot= is a user service that runs the Herdr session =roberts-review-bot= (=MemoryMax=11G=). A switch leaves it running, because a restart ends all running reviews.
+  - =tailscale-funnel-roberts-review-bot= is a system service that publishes the webhook at =https://agent-1.taileff843.ts.net:8443/api/github/webhooks=. The tailnet policy must allow Funnel for =agent-1=.
+- On =agent-2=:
+  - Runs only =herdr-roberts-review-bot= (=MemoryMax=52G=, =CARGO_HOME=/mnt/agent-2-data/cargo-cache=).
+  - Isolates =~/.config/herdr= locally (symlinking only =config.toml= and =config.hyper-robbot.toml= from =~/configs/herdr=) so Herdr session state never collides with =agent-1= over Syncthing.
+  - Uses standalone =~/configs/ai/codex/config.agent-2.toml= and =~/configs/ai/claude/settings.agent-2.json=.
 
 =just deploy= copies the App's settings and private key, =shared/secrets/roberts-review-bot.env= and
-=shared/secrets/roberts-review-bot.pem=, to the server. The bot's own justfile restarts the units: =just restart= after
+=shared/secrets/roberts-review-bot.pem=, to the server (and copies =agent-fleet-ssh.key= to =agent-1= so it can reach =agent-2= over Tailscale SSH). The bot's own justfile restarts the units: =just restart= after
 a code change, and =just restart-herdr= after a Herdr update.
 
-Attach to the review session with =herdr --remote agent-1 --session roberts-review-bot=.
+Attach to the review session with =herdr --remote agent-1 --session roberts-review-bot= or =herdr --remote agent-2 --session roberts-review-bot=.
+
+* Burst worker (=agent-2=)
+
+Hetzner Cloud still bills powered-off compute, so =agent-2= (=ccx43=, 16 dedicated
+vCPUs, 64 GB RAM) is provisioned on demand while retaining =agent-2-data= and a
+warm root snapshot across deletions.
+
+** First-time bootstrap
+
+1. Provision =ccx43= + =agent-2-data= and install NixOS with =nixos-anywhere=:
+   #+BEGIN_SRC sh
+   cd /etc/nixos/agent-fleet && nix develop ..#agent-fleet
+   just burst-on debian-12 true
+   #+END_SRC
+2. Copy flake/secrets, OAuth credentials, and print its Syncthing device ID:
+   #+BEGIN_SRC sh
+   just sync agent-2
+   just sync-auth agent-2
+   just syncthing-id agent-2
+   #+END_SRC
+3. Paste the printed ID into =nix/fleet.json= under =agent-2.syncthingId=, then
+   deploy =agent-1= (and rebuild local =storm= with =just switch= in =/etc/nixos=)
+   so existing peers accept =agent-2=.
+4. Wait for Syncthing folders (=configs=, =projects/ai=, =projects/hyper=) to finish
+   syncing on =agent-2= with =just sync-status agent-2=, then run:
+   #+BEGIN_SRC sh
+   just deploy agent-2
+   #+END_SRC
+5. Optionally warm the =hyper.video= Nix dev shell on =agent-2=, then save a
+   warmed snapshot and activate burst routing:
+   #+BEGIN_SRC sh
+   just burst-snapshot
+   just burst-on
+   #+END_SRC
+
+** Day-to-day burst workflow
+
+| Command                      | Purpose                                                                      |
+|------------------------------+------------------------------------------------------------------------------|
+| =just burst-on=              | Provision/restore =agent-2= from newest snapshot (skips =install=), verify readiness, prefer it on =agent-1= |
+| =just burst-status=          | Show =agent-2= server/volume/snapshot state and =agent-1= controller status  |
+| =just burst-off=             | Drain =agent-2= back to =agent-1=, sync reports, stop Herdr, power off       |
+| =just burst-snapshot=        | Require 0 active reviews, stop Herdr, power off, save a labeled snapshot     |
+| =just burst-delete=          | Drain, sync reports, unmount =/mnt/agent-2-data=, snapshot, delete compute   |
+
+Pass =false= to =just burst-delete false= to skip taking a new snapshot. Never
+use =just tf-destroy= to tear down =agent-2=; =burst-delete= runs =tofu apply -var agent_2_enabled=false= so =agent-1= and persistent volumes remain intact.
 
 * Common commands
 

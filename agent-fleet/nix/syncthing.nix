@@ -1,4 +1,9 @@
-{ lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 {
   imports = [ ../../shared/linux/syncthing.nix ];
 
@@ -23,9 +28,9 @@
       "network-online.target"
       "syncthing.service"
       "tailscaled.service"
-      # Concurrent serve config writes fail with an etag mismatch.
-      "tailscale-serve-cli-proxy-api.service"
-    ];
+    ]
+    # Concurrent serve config writes fail with an etag mismatch.
+    ++ lib.optional (config.networking.hostName == "agent-1") "tailscale-serve-cli-proxy-api.service";
     requires = [
       "syncthing.service"
       "tailscaled.service"

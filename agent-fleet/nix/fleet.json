@@ -3,5 +3,12 @@
     "image": "debian-12",
     "location": "nbg1",
     "serverType": "cx43"
+  },
+  "agent-2": {
+    "image": "debian-12",
+    "location": "nbg1",
+    "serverType": "ccx43",
+    "ephemeral": true,
+    "syncthingId": "3O7HIEP-ZA4FGHZ-BEBO7DD-TXZ7BUM-AOB3F3T-IPFOIJN-VFJP26V-MV6AUA3"
   }
 }

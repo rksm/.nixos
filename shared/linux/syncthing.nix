@@ -8,6 +8,11 @@
 }:
 let
   otherDevices = builtins.filter (device: device != machine);
+  fleet = builtins.fromJSON (builtins.readFile ../../agent-fleet/nix/fleet.json);
+  rawAgent2SyncthingId = fleet.agent-2.syncthingId or "";
+  agent2SyncthingId = if builtins.isString rawAgent2SyncthingId then rawAgent2SyncthingId else "";
+  hasAgent2 = agent2SyncthingId != "";
+  optionalAgent2 = lib.optional hasAgent2 "agent-2";
 in
 {
   options = {
@@ -84,36 +89,44 @@ in
             inherit user password;
           };
 
-        devices = builtins.removeAttrs {
-          "storm" = {
-            id = "CLPXG4D-HFUVBBU-UVFTOKW-K6RTSPB-4SRS3V2-FAEOK5Y-W577FYA-LG4PTAQ";
-            autoAcceptFolders = false;
-          };
-          "mbp" = {
-            id = "ESRECEY-LRO4O4F-W6T4MCD-JJEUB23-UEMKLC6-3CAPFXO-B75BGCG-V2SIQA6";
-            autoAcceptFolders = false;
-          };
-          "nas" = {
-            id = "5WBWSJB-OUNGDKD-HMT7CDM-TTMOZ7J-3F7CJMA-ED6RHAQ-P2LYPKR-ISZ5JQY";
-            autoAcceptFolders = false;
-          };
-          "tuxedo" = {
-            id = "ZBIN2HO-EGA5WIN-UVJES3W-VMQJWSR-YKCZ5LS-ZZLZHHK-NTR75Z3-SDMGXA4";
-            autoAcceptFolders = false;
-          };
-          "airy" = {
-            id = "3RES5O5-HOBSBFM-WGADO2O-ODCAW7Y-PRP3FGS-POM2OTY-XUP5WZG-SVJUYAW";
-            autoAcceptFolders = false;
-          };
-          "agent-1" = {
-            id = "OQTRMZU-SR5253H-TOX724P-7M3Y3HB-VN7SBMC-WUCZD7P-3DPYBMF-NNVGEAB";
-            autoAcceptFolders = false;
-          };
-          "khoone-1" = {
-            id = "H5U7PXD-I6IJ7G6-VPIRNSG-LVUX4OY-Q37WSWP-KUVR5OS-HZ7V3US-5YNVJQC";
-            autoAcceptFolders = false;
-          };
-        } [ machine ];
+        devices = builtins.removeAttrs (
+          {
+            "storm" = {
+              id = "CLPXG4D-HFUVBBU-UVFTOKW-K6RTSPB-4SRS3V2-FAEOK5Y-W577FYA-LG4PTAQ";
+              autoAcceptFolders = false;
+            };
+            "mbp" = {
+              id = "ESRECEY-LRO4O4F-W6T4MCD-JJEUB23-UEMKLC6-3CAPFXO-B75BGCG-V2SIQA6";
+              autoAcceptFolders = false;
+            };
+            "nas" = {
+              id = "5WBWSJB-OUNGDKD-HMT7CDM-TTMOZ7J-3F7CJMA-ED6RHAQ-P2LYPKR-ISZ5JQY";
+              autoAcceptFolders = false;
+            };
+            "tuxedo" = {
+              id = "ZBIN2HO-EGA5WIN-UVJES3W-VMQJWSR-YKCZ5LS-ZZLZHHK-NTR75Z3-SDMGXA4";
+              autoAcceptFolders = false;
+            };
+            "airy" = {
+              id = "3RES5O5-HOBSBFM-WGADO2O-ODCAW7Y-PRP3FGS-POM2OTY-XUP5WZG-SVJUYAW";
+              autoAcceptFolders = false;
+            };
+            "agent-1" = {
+              id = "OQTRMZU-SR5253H-TOX724P-7M3Y3HB-VN7SBMC-WUCZD7P-3DPYBMF-NNVGEAB";
+              autoAcceptFolders = false;
+            };
+            "khoone-1" = {
+              id = "H5U7PXD-I6IJ7G6-VPIRNSG-LVUX4OY-Q37WSWP-KUVR5OS-HZ7V3US-5YNVJQC";
+              autoAcceptFolders = false;
+            };
+          }
+          // lib.optionalAttrs hasAgent2 {
+            "agent-2" = {
+              id = agent2SyncthingId;
+              autoAcceptFolders = false;
+            };
+          }
+        ) [ machine ];
 
         folders =
           { }
@@ -147,15 +160,18 @@ in
             "configs" = {
               id = "configs";
               path = "/home/${user}/configs";
-              devices = otherDevices [
-                "storm"
-                "mbp"
-                "nas"
-                "tuxedo"
-                "airy"
-                "agent-1"
-                "khoone-1"
-              ];
+              devices = otherDevices (
+                [
+                  "storm"
+                  "mbp"
+                  "nas"
+                  "tuxedo"
+                  "airy"
+                  "agent-1"
+                  "khoone-1"
+                ]
+                ++ optionalAgent2
+              );
             };
           })
           // (lib.optionalAttrs config.syncthing.enable-emacs {
@@ -178,13 +194,16 @@ in
             "projects/ai" = {
               id = "projects/ai";
               path = "/home/${user}/projects/ai";
-              devices = otherDevices [
-                "storm"
-                "nas"
-                "tuxedo"
-                "airy"
-                "agent-1"
-              ];
+              devices = otherDevices (
+                [
+                  "storm"
+                  "nas"
+                  "tuxedo"
+                  "airy"
+                  "agent-1"
+                ]
+                ++ optionalAgent2
+              );
             };
           })
 
@@ -218,13 +237,16 @@ in
             "projects/home" = {
               id = "projects/home";
               path = "/home/${user}/projects/home";
-              devices = otherDevices [
-                "storm"
-                "nas"
-                "tuxedo"
-                "airy"
-                "agent-1"
-              ];
+              devices = otherDevices (
+                [
+                  "storm"
+                  "nas"
+                  "tuxedo"
+                  "airy"
+                  "agent-1"
+                ]
+                ++ optionalAgent2
+              );
             };
           })
 
@@ -232,13 +254,16 @@ in
             "projects/hyper" = {
               id = "projects/hyper";
               path = "/home/${user}/projects/hyper";
-              devices = otherDevices [
-                "storm"
-                "nas"
-                "tuxedo"
-                "airy"
-                "agent-1"
-              ];
+              devices = otherDevices (
+                [
+                  "storm"
+                  "nas"
+                  "tuxedo"
+                  "airy"
+                  "agent-1"
+                ]
+                ++ optionalAgent2
+              );
             };
           })
 

@@ -16,6 +16,8 @@ let
   skillshare = inputs.skillshare-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
   worktrunk = inputs.worktrunk-nix.packages.${pkgs.stdenv.hostPlatform.system}.default;
   sshKey = lib.removeSuffix "\n" (builtins.readFile ../ssh/id_ed25519.pub);
+  isAgent1 = config.networking.hostName == "agent-1";
+  isAgent2 = config.networking.hostName == "agent-2";
 in
 {
   imports = [
@@ -56,58 +58,122 @@ in
   services.resolved.enable = true;
   security.polkit.enable = true;
   services.tailscale.enable = true;
-  # Without swap, the kernel's OOM killer can take 15+ minutes to act. Until then the server reloads program code from
-  # disk nonstop and stops answering SSH and Tailscale. earlyoom kills the largest process before that happens.
+  # Compressed in-RAM swap absorbs short memory spikes before earlyoom kills a build process.
+  zramSwap.enable = true;
+  # Without earlyoom, the kernel's OOM killer can take 15+ minutes to act while thrashing and
+  # dropping SSH and Tailscale. earlyoom kills the largest process before that happens.
   services.earlyoom.enable = true;
 
   # Attaching a volume can change the kernel's disk enumeration order.
-  disko.devices.disk.main.device = lib.mkIf (
-    config.networking.hostName == "agent-1"
-  ) "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_125107444";
+  # On agent-2, disk-config.nix defaults disko.devices.disk.main.device to /dev/sda so /, /nix,
+  # and /tmp stay on ccx43's fast local NVMe root disk.
+  disko.devices.disk.main.device =
+    lib.mkIf isAgent1 "/dev/disk/by-id/scsi-0QEMU_QEMU_HARDDISK_125107444";
 
-  fileSystems."/home" = lib.mkIf (config.networking.hostName == "agent-1") {
+  fileSystems."/home" = lib.mkIf isAgent1 {
     device = "/dev/disk/by-id/scsi-0HC_Volume_106845129";
     fsType = "ext4";
     neededForBoot = true;
   };
 
-  systemd.services = lib.mkIf (config.networking.hostName == "agent-1") {
-    tailscale-serve-cli-proxy-api =
-      lib.mkIf config.home-manager.users.robert.services.cli-proxy-api.enableLocal
-        {
-          description = "Expose CLI Proxy API to the tailnet";
-          after = [
-            "network-online.target"
-            "tailscaled.service"
-          ];
-          requires = [ "tailscaled.service" ];
-          wants = [ "network-online.target" ];
-          wantedBy = [ "multi-user.target" ];
-          serviceConfig = {
-            Type = "oneshot";
-            RemainAfterExit = true;
-            Restart = "on-failure";
-            RestartSec = "5s";
-            # A switch that restarts tailscaled starts this unit before the backend runs.
-            ExecStartPre = "${pkgs.tailscale}/bin/tailscale wait --timeout=60s";
-            ExecStart = "${pkgs.tailscale}/bin/tailscale serve --bg --yes --https=8317 http://127.0.0.1:8317";
-            ExecStop = "${pkgs.tailscale}/bin/tailscale serve --https=8317 off";
-          };
-        };
-
-    # Stop home writers if the volume mount disappears.
-    syncthing = {
-      unitConfig.RequiresMountsFor = [ "/home" ];
-      bindsTo = [ "home.mount" ];
-      after = [ "home.mount" ];
-    };
-    "user@1000" = {
-      overrideStrategy = "asDropin";
-      unitConfig.RequiresMountsFor = [ "/home" ];
-      bindsTo = [ "home.mount" ];
-      after = [ "home.mount" ];
-    };
+  fileSystems."/mnt/agent-2-data" = lib.mkIf isAgent2 {
+    device = "/dev/disk/by-label/agent-2-data";
+    fsType = "ext4";
+    options = [
+      "nofail"
+      "x-systemd.device-timeout=15s"
+      "noatime"
+    ];
   };
+
+  systemd.services = lib.mkMerge [
+    (lib.mkIf isAgent1 {
+      tailscale-serve-cli-proxy-api =
+        lib.mkIf config.home-manager.users.robert.services.cli-proxy-api.enableLocal
+          {
+            description = "Expose CLI Proxy API to the tailnet";
+            after = [
+              "network-online.target"
+              "tailscaled.service"
+            ];
+            requires = [ "tailscaled.service" ];
+            wants = [ "network-online.target" ];
+            wantedBy = [ "multi-user.target" ];
+            serviceConfig = {
+              Type = "oneshot";
+              RemainAfterExit = true;
+              Restart = "on-failure";
+              RestartSec = "5s";
+              # A switch that restarts tailscaled starts this unit before the backend runs.
+              ExecStartPre = "${pkgs.tailscale}/bin/tailscale wait --timeout=60s";
+              ExecStart = "${pkgs.tailscale}/bin/tailscale serve --bg --yes --https=8317 http://127.0.0.1:8317";
+              ExecStop = "${pkgs.tailscale}/bin/tailscale serve --https=8317 off";
+            };
+          };
+
+      # Stop home writers if the volume mount disappears.
+      syncthing = {
+        unitConfig.RequiresMountsFor = [ "/home" ];
+        bindsTo = [ "home.mount" ];
+        after = [ "home.mount" ];
+      };
+      "user@1000" = {
+        overrideStrategy = "asDropin";
+        unitConfig.RequiresMountsFor = [ "/home" ];
+        bindsTo = [ "home.mount" ];
+        after = [ "home.mount" ];
+      };
+    })
+
+    (lib.mkIf isAgent2 {
+      agent-2-data-layout = {
+        description = "Prepare persistent directories and ~/reviews symlink on /mnt/agent-2-data";
+        after = [
+          "local-fs.target"
+          "mnt-agent\\x2d2\\x2ddata.mount"
+        ];
+        wantedBy = [
+          "multi-user.target"
+          "mnt-agent\\x2d2\\x2ddata.mount"
+        ];
+        unitConfig.ConditionPathIsMountPoint = "/mnt/agent-2-data";
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+        };
+        script = ''
+          ${pkgs.coreutils}/bin/install -d -m 0755 -o robert -g users \
+            /mnt/agent-2-data/reviews \
+            /mnt/agent-2-data/cargo-targets \
+            /mnt/agent-2-data/cargo-cache
+
+          if [ -L /home/robert/reviews ] || [ ! -e /home/robert/reviews ]; then
+            ${pkgs.coreutils}/bin/ln -sfn /mnt/agent-2-data/reviews /home/robert/reviews
+            ${pkgs.coreutils}/bin/chown -h robert:users /home/robert/reviews
+          elif [ -d /home/robert/reviews ] && [ -z "$(${pkgs.coreutils}/bin/ls -A /home/robert/reviews)" ]; then
+            ${pkgs.coreutils}/bin/rmdir /home/robert/reviews
+            ${pkgs.coreutils}/bin/ln -s /mnt/agent-2-data/reviews /home/robert/reviews
+            ${pkgs.coreutils}/bin/chown -h robert:users /home/robert/reviews
+          else
+            echo "Warning: /home/robert/reviews exists and is non-empty; leaving untouched" >&2
+          fi
+        '';
+      };
+
+      # Order user services after the persistent volume layout without blocking SSH if unmounted.
+      "user@1000" = {
+        overrideStrategy = "asDropin";
+        after = [
+          "mnt-agent\\x2d2\\x2ddata.mount"
+          "agent-2-data-layout.service"
+        ];
+        wants = [
+          "mnt-agent\\x2d2\\x2ddata.mount"
+          "agent-2-data-layout.service"
+        ];
+      };
+    })
+  ];
 
   services.openssh = {
     enable = true;
@@ -210,10 +276,17 @@ in
       dates = "daily";
       options = "--delete-older-than 1d";
     };
-    settings.trusted-substituters = [
-      "https://nix-community.cachix.org"
-      "https://hyper-video.cachix.org"
-    ];
+    settings = {
+      trusted-substituters = [
+        "https://nix-community.cachix.org"
+        "https://hyper-video.cachix.org"
+      ];
+    }
+    // lib.optionalAttrs isAgent2 {
+      # Bound Nix daemon parallelism so Nix builds do not starve or OOM active reviews.
+      max-jobs = 4;
+      cores = 4;
+    };
   };
 
   systemd.tmpfiles.rules = [
