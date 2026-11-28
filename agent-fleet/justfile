@@ -6,6 +6,9 @@ set positional-arguments
 ssh_key := justfile_directory() + "/../shared/secrets/agent-fleet-ssh.key"
 known_hosts := justfile_directory() + "/known_hosts"
 
+default:
+    @just --list
+
 [private]
 _for-hosts recipe host="" *args:
     #!/usr/bin/env bash
@@ -78,9 +81,6 @@ _for-hosts recipe host="" *args:
     for host in "${hosts[@]}"; do
         just "$recipe" "$host" "$@"
     done
-
-default:
-    @just --list
 
 # Format Terraform and Nix files.
 fmt:
