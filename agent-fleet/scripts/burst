@@ -20,6 +20,7 @@ readonly snapshot_selector="fleet=agent-fleet,host=${worker_host}"
 readonly drain_timeout="${BURST_DRAIN_TIMEOUT:-1800}"
 readonly drain_poll_interval="${BURST_DRAIN_POLL_INTERVAL:-5}"
 readonly ssh_wait_timeout="${BURST_SSH_TIMEOUT:-300}"
+readonly keep_snapshots="${BURST_KEEP_SNAPSHOTS:-2}"
 
 log() {
   printf '[burst] %s\n' "$*"
@@ -425,6 +426,50 @@ REMOTE
   log "$worker_host is powered off."
 }
 
+prune_old_snapshots() {
+  local new_snapshot_id=$1
+  local images_json=$2
+
+  if [[ ! "$keep_snapshots" =~ ^[1-9][0-9]*$ ]]; then
+    warn "Invalid BURST_KEEP_SNAPSHOTS='$keep_snapshots' (must be a positive integer); skipping snapshot pruning."
+    return 0
+  fi
+
+  if ! jq -e --arg new_id "$new_snapshot_id" '
+    type == "array"
+    and any(.[]; (.id | tostring) == $new_id and .status == "available")
+  ' <<<"$images_json" >/dev/null 2>&1; then
+    warn "New snapshot $new_snapshot_id is not confirmed available yet; skipping snapshot pruning."
+    return 0
+  fi
+
+  local -a stale=()
+  mapfile -t stale < <(
+    jq -r --argjson keep "$keep_snapshots" --arg new_id "$new_snapshot_id" '
+      [ .[] | select(.status == "available") ]
+      | .[$keep:]
+      | .[]
+      | select((.id | tostring) != $new_id and ((.protection.delete // false) | not))
+      | "\(.id)\t\(.description // "")"
+    ' <<<"$images_json"
+  )
+
+  if (( ${#stale[@]} == 0 )); then
+    return 0
+  fi
+
+  log "Pruning ${#stale[@]} older $worker_host snapshot(s) (keeping newest $keep_snapshots)..."
+  local entry old_id old_desc
+  for entry in "${stale[@]}"; do
+    IFS=$'\t' read -r old_id old_desc <<<"$entry"
+    if hcloud image delete "$old_id"; then
+      log "Deleted old snapshot: id=$old_id description=$old_desc"
+    else
+      warn "Failed to delete old snapshot id=$old_id description=$old_desc"
+    fi
+  done
+}
+
 create_snapshot() {
   local description
   description="agent-2-$(date +%Y%m%d-%H%M%S)"
@@ -437,10 +482,13 @@ create_snapshot() {
     "$worker_host"
 
   local images_json snapshot_id
-  images_json=$(latest_snapshots_json)
+  if ! images_json=$(latest_snapshots_json); then
+    warn "Snapshot was created, but hcloud image list failed; skipping snapshot pruning."
+    return 0
+  fi
   snapshot_id=$(jq -r --arg desc "$description" '
     if type == "array" then
-      ([ .[] | select(.description == $desc) ] | first // .[0])
+      ([ .[] | select(.description == $desc) ] | first // empty)
       | (.id // "") | tostring
     else
       ""
@@ -449,8 +497,9 @@ create_snapshot() {
 
   if [[ -n "$snapshot_id" ]]; then
     log "Snapshot created: id=$snapshot_id description=$description labels=fleet=agent-fleet,host=${worker_host}"
+    prune_old_snapshots "$snapshot_id" "$images_json"
   else
-    warn "Snapshot was created, but its ID could not be resolved from hcloud image list."
+    warn "Snapshot was created, but its ID could not be resolved from hcloud image list; skipping snapshot pruning."
   fi
 }
 

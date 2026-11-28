@@ -233,10 +233,12 @@ warm root snapshot across deletions.
 | =just burst-on=              | Provision/restore =agent-2= from newest snapshot (skips =install=), verify readiness, prefer it on =agent-1= |
 | =just burst-status=          | Show =agent-2= server/volume/snapshot state and =agent-1= controller status  |
 | =just burst-off=             | Drain =agent-2= back to =agent-1=, sync reports, stop Herdr, power off       |
-| =just burst-snapshot=        | Require 0 active reviews, stop Herdr, power off, save a labeled snapshot     |
+| =just burst-snapshot=        | Drain =agent-2=, stop Herdr, power off, save a labeled snapshot (keeps newest 2) |
 | =just burst-delete=          | Drain, sync reports, unmount =/mnt/agent-2-data=, snapshot, delete compute   |
 
-Pass =false= to =just burst-delete false= to skip taking a new snapshot. Never
+Pass =false= to =just burst-delete false= to skip taking a new snapshot. Whenever
+a new snapshot succeeds, older labeled =agent-2= snapshots beyond
+=BURST_KEEP_SNAPSHOTS= (default =2=) are pruned automatically. Never
 use =just tf-destroy= to tear down =agent-2=; =burst-delete= runs =tofu apply -var agent_2_enabled=false= so =agent-1= and persistent volumes remain intact.
 
 * Common commands
